@@ -66,3 +66,27 @@ export const Departments = gql`
     }
   }
 `;
+export const GetUserByrealname = gql`
+  query GetUserByrealname {
+    getUserByrealname{
+      username
+      realname
+      gender
+      isEnable
+      age
+      id
+  }
+}
+`;
+export const GetUserByusername = gql`
+  query GetUserByrealname {
+    getUserByusername {
+      username
+      realname
+      gender
+      isEnable
+      age
+      id
+  }
+}
+`;
