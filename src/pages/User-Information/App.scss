@@ -1,0 +1,30 @@
+.User-Information-Ctrl {
+    text-align: center;
+
+    .User-Search-Input {
+        margin-top: 10px;
+        margin-left: 20px;
+
+        .Username-Input {
+            margin-right: 50px;
+        }
+
+        .User-Input {
+            margin-right: 50px;
+        }
+    }
+
+    .Add-User {
+        position: absolute;
+        right: 40px;
+        top: 100px
+    }
+
+    .User-Information-Show{
+        text-align:center;
+    }
+    
+    .Operator>button{
+        margin-right:20px;
+    }
+}

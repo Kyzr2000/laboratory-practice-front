@@ -1,0 +1,95 @@
+.modal-title-layer {
+  display: flex;
+  justify-content: space-between;
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(0 0 0 / 85%);
+    line-height: 24px;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+  }
+
+  .modal-close-button {
+    height: 20px;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+}
+
+.modal-one {
+  width: 520px;
+  margin-right: 35px;
+}
+
+.modal-left-text {
+  margin-left: 35px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.modal-right-text {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.modal-left {
+  width: 250px;
+  height: 40px;
+  margin-left: 35px;
+  margin-bottom: 10px;
+}
+
+.modal-right {
+  width: 250px;
+  height: 40px;
+  margin-right: 35px;
+  margin-bottom: 10px;
+}
+
+.modal-upload-button {
+  width: 520px;
+  margin-right: 35px;
+  margin-left: 35px;
+  margin-top: 10px;
+  background-color: #fff;
+  border: 2px solid rgba(0 0 0 / 15%);
+  height: 40px;
+
+  :hover {
+    background-color: #fff;
+  }
+}
+
+.modal-upload-text {
+  font-size: 16px;
+  color: rgba(0 0 0 / 35%);
+  position: absolute;
+  left: 10px;
+}
+
+.link-outter-div {
+  display: flex;
+  flex-wrap: wrap;
+  place-content: center;
+  font-size: 13px;
+}
+
+.link-inner-div {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.image-placeholader {
+  width: 240px;
+  height: 120px;
+  background: rgb(0 0 0 / 4%);
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
