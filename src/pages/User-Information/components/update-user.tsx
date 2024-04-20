@@ -90,14 +90,6 @@ function UpdateUserButton(user: User) {
       >
         <Form onFinish={handleFormSubmmitClicked}>
           <Form.Item
-            name="username"
-            label="账号"
-            rules={[{ required: true, message: '请输入账号!' }]}
-            initialValue={user.username}
-          >
-            <Input placeholder="请输入账号" />
-          </Form.Item>
-          <Form.Item
             name="realname"
             label="姓名"
             rules={[{ required: true, message: '请输入姓名!' }]}
