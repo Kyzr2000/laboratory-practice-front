@@ -1,8 +1,15 @@
+import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
+import { __DEV__ } from '@apollo/client/utilities/globals';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import MyRoutes from './router';
+
+if (__DEV__) {
+  loadDevMessages();
+  loadErrorMessages();
+}
 
 const theme = createTheme({
   palette: {

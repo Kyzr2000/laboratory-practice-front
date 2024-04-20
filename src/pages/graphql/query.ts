@@ -66,27 +66,28 @@ export const Departments = gql`
     }
   }
 `;
-export const GetUserByrealname = gql`
-  query GetUserByrealname {
-    getUserByrealname{
+export const GET_ALL_USERS = gql`
+  query GetAllUsers($pages: Int!, $username: String, $realname: String) {
+    getAllUsers(pages: $pages, username: $username, realname: $realname) {
       username
       realname
       gender
       isEnable
       age
       id
+      uuid
+    }
   }
-}
 `;
-export const GetUserByusername = gql`
-  query GetUserByrealname {
-    getUserByusername {
-      username
-      realname
-      gender
-      isEnable
-      age
-      id
+export const GET_USER_COUNT = gql`
+  query GetAllUserCount($username: String, $realname: String) {
+    getAllUserCount(username: $username, realname: $realname)
   }
-}
+`;
+export const GET_USER_ACCOUNT = gql`
+  query GetUserAccount($username: String!) {
+    getUsername(username: $username) {
+      username
+    }
+  }
 `;

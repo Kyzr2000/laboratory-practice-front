@@ -1,9 +1,6 @@
-import {
-  Assessment,
-  ExpandLess,
-  ExpandMore,
-  Settings,
-} from '@mui/icons-material';
+import '../menu/menu.scss';
+
+import { Assessment, ExpandLess, ExpandMore, Settings } from '@mui/icons-material';
 import {
   AppBar,
   Avatar,
@@ -43,17 +40,13 @@ const menuItems: MenuItem[] = [
   {
     text: '量表管理',
     icon: <Assessment />,
-    submenus: [
-      { text: '量表基本信息', component: <BaseInformation /> },
-    ],
+    submenus: [{ text: '量表基本信息', component: <BaseInformation /> }],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
   {
     text: '基础设置',
     icon: <Settings />,
-    submenus: [
-      { text: '用户管理', component: <TestDemo></TestDemo> },
-    ],
+    submenus: [{ text: '用户管理', component: <TestDemo></TestDemo> }],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
 ];
@@ -147,7 +140,7 @@ export const Sidebar: React.FC = () => {
                     alignItems: 'center',
                     cursor: 'pointer',
                   }}
-                // onClick={handleOpenUserMenu}
+                  // onClick={handleOpenUserMenu}
                 >
                   <Avatar alt="Remy Sharp" src="/src/assets/top_touxiang@2x.png" />
                   <Typography
@@ -159,7 +152,8 @@ export const Sidebar: React.FC = () => {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '50px' }}
+              className="MenuBoard"
+              sx={{ mt: '50px', zIndex: '1000px' }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
@@ -184,6 +178,7 @@ export const Sidebar: React.FC = () => {
                     backgroundColor: 'rgba(3,138,151,0.08)', // 修改背景颜色
                     color: '#038A97',
                   },
+                  zIndex: '1000px',
                 }}
                 onMouseEnter={() => {
                   document
@@ -216,11 +211,13 @@ export const Sidebar: React.FC = () => {
               width: 240,
               boxSizing: 'border-box',
               backgroundColor: 'white',
+              zIndex: 100,
             },
           }}
         >
-          <Toolbar sx={{ backgroundColor: '#1ca49c', color: 'white' }}>
-          </Toolbar>
+          <Toolbar
+            sx={{ backgroundColor: '#1ca49c', color: 'white', zIndex: '1000px' }}
+          ></Toolbar>
           <List>
             {menuItems.map((item, index) => {
               if (item.auth.includes(currentUserType))
@@ -232,6 +229,7 @@ export const Sidebar: React.FC = () => {
                         primary={item.text}
                         sx={{
                           color: activeIndex === index ? '#1ca49c' : 'gray',
+                          zIndex: '1000px',
                         }}
                       />
                       {item.submenus &&
@@ -247,8 +245,8 @@ export const Sidebar: React.FC = () => {
             })}
           </List>
         </Drawer>
-        <Box sx={{ flexGrow: 1, p: 3 }}>
-          <Paper sx={{ height: 'calc(100vh - 112px)', overflow: 'auto' }}>
+        <Box sx={{ flexGrow: 1, p: 3, zIndex: '100px' }}>
+          <Paper sx={{ height: 'calc(100vh - 112px)', overflow: 'auto', zIndex: 100 }}>
             {renderContent()}
           </Paper>
         </Box>
