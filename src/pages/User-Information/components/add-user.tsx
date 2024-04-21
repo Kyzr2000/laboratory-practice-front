@@ -53,8 +53,8 @@ function AddUser() {
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
     console.log(uuid());
     console.log(typeof username);
-    await getUser({ variables: { username: username } });
-    if (data.getUserAccount !== null) {
+    getUser({ variables: { username: username } });
+    if (data && data.getUserAccount !== null) {
       const timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
       await add({
         variables: {
@@ -73,24 +73,30 @@ function AddUser() {
         },
       });
       console.log('用户创建成功');
+      setVisible(false);
     } else {
       console.log('用户名已经存在', data);
       alert('用户已经存在');
     }
-    await RefreshPage(); // 等待RefreshPage函数执行完毕
+    RefreshPage(); // 等待RefreshPage函数执行完毕
   };
 
   const RefreshPage = async () => {
     try {
       let pageNumber = pages - 1;
-      await getUsers({
+      getUsers({
         variables: {
           pages: pageNumber,
           username: tmpUser[0].username,
           realname: tmpUser[0].realname,
         }
       });
-      await getUserCount();
+      getUserCount({
+        variables: {
+          username: tmpUser[0].username,
+          realname: tmpUser[0].realname,
+        },
+      });
       if (data1 && data2) {
         setVisible(false);
       }
