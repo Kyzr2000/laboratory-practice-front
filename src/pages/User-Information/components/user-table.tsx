@@ -47,6 +47,10 @@ export const tmpUserData = atom({
   ],
 });
 
+const CustomTableHearderCell = ({ children }) => {
+  return <th style={{ color: '#038A97', height: '40px' }}>{children}</th>;
+};
+
 function UserTable() {
   const [dataSource, setDataSource] = useRecoilState(columnsState);
   const [pages, setPages] = useRecoilState(NowPage);
@@ -62,20 +66,24 @@ function UserTable() {
 
   const columns = [
     {
-      title: '序号',
+      title: <CustomTableHearderCell>序号</CustomTableHearderCell>,
       dataIndex: 'num',
+      className: 'User-columns',
       render: (text, record, index) => `${(pages - 1) * 10 + index + 1}`,
     },
     {
-      title: '账号',
+      title: <CustomTableHearderCell>账号</CustomTableHearderCell>,
       dataIndex: 'username',
+      className: 'User-columns',
     },
     {
-      title: '姓名',
+      title: <CustomTableHearderCell>姓名</CustomTableHearderCell>,
       dataIndex: 'realname',
+      className: 'User-columns',
     },
     {
-      title: '性别',
+      title: <CustomTableHearderCell>性别</CustomTableHearderCell>,
+      className: 'User-columns',
       dataIndex: 'gender',
       render: (text: number) => {
         if (!text) return <div>无数据</div>;
@@ -88,7 +96,8 @@ function UserTable() {
       },
     },
     {
-      title: '年龄',
+      title: <CustomTableHearderCell>年龄</CustomTableHearderCell>,
+      className: 'User-columns',
       dataIndex: 'age',
       render: (text: number) => {
         if (!text) return <div>无数据</div>;
@@ -96,7 +105,8 @@ function UserTable() {
       },
     },
     {
-      title: '是否启用',
+      title: <CustomTableHearderCell>是否启用</CustomTableHearderCell>,
+      className: 'User-columns',
       dataIndex: 'isEnable',
       render: (text: boolean) => {
         if (text === true) return <div>是</div>;
@@ -104,7 +114,8 @@ function UserTable() {
       },
     },
     {
-      title: '操作',
+      title: <CustomTableHearderCell>操作</CustomTableHearderCell>,
+      className: 'User-columns',
       key: 'operation',
       render: (text: User) => {
         const people = {
@@ -132,7 +143,7 @@ function UserTable() {
         variables: {
           username: tmpUser[0].username,
           realname: tmpUser[0].realname,
-        }
+        },
       });
       let pagesnumber = pages - 1;
       getUsers({
@@ -173,12 +184,14 @@ function UserTable() {
     <>
       <Table
         rowKey="username"
+        className="User-Table"
         dataSource={dataSource}
         columns={columns}
         pagination={{
+          className: 'User-Table-page',
           defaultPageSize: 10,
           defaultCurrent: 1,
-          current:pages,
+          current: pages,
           showQuickJumper: true,
           pageSizeOptions: [10],
           locale: {

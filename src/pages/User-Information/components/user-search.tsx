@@ -1,4 +1,4 @@
-import { Button, Form, Input, Row } from 'antd';
+import { Button, Form, Input, message, Row } from 'antd';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -10,7 +10,6 @@ function UserSearch() {
   const setSearchUser = useSetRecoilState(tmpUserData);
   const setPages = useSetRecoilState(NowPage);
 
-
   const handleSearch = () => {
     setSearchUser([
       {
@@ -18,6 +17,9 @@ function UserSearch() {
         realname: realname,
       },
     ]);
+    if (!username || !realname) {
+      message.success('正在查询!');
+    }
     setPages(1);
   };
 
@@ -37,6 +39,7 @@ function UserSearch() {
           </Form.Item>
           <Form.Item name="userInput" className="User-Input">
             <Input
+              className="Search-Realname"
               placeholder="请输入要搜索的姓名"
               onChange={(e) => {
                 const realname = e.target.value;
@@ -45,7 +48,7 @@ function UserSearch() {
             ></Input>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" className="SearchButton">
               搜索
             </Button>
           </Form.Item>

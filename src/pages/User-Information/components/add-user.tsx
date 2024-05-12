@@ -1,5 +1,5 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { Button, Form, Input, Modal, Select } from 'antd';
+import { Button, Form, Input, message, Modal, Select } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
@@ -48,37 +48,42 @@ function AddUser() {
   };
 
   const handleFormSubmit = async (values: User) => {
-    console.log('正在创建用户');
-    console.log(values);
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
-    console.log(uuid());
-    console.log(typeof username);
-    getUser({ variables: { username: username } });
-    if (data && data.getUserAccount !== null) {
-      const timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
-      await add({
-        variables: {
-          createUserInput: {
-            username: values.username,
-            realname: values.realname,
-            gender: values.gender,
-            age: Number(values.age),
-            isEnable: values.isEnable,
-            password: '123456',
-            role: 'USER',
-            uuid: uuid(),
-            createdAt: timestamp,
-            updatedAt: timestamp,
+    try {
+      console.log('正在创建用户');
+      await getUser({ variables: { username: username } });
+      console.log(data);
+      if (data && data.getUsername === null) {
+        const timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+        await add({
+          variables: {
+            createUserInput: {
+              username: values.username,
+              realname: values.realname,
+              gender: values.gender,
+              age: Number(values.age),
+              isEnable: values.isEnable,
+              password: '123456',
+              role: 'USER',
+              uuid: uuid(),
+              createdAt: timestamp,
+              updatedAt: timestamp,
+            },
           },
-        },
-      });
-      console.log('用户创建成功');
-      setVisible(false);
-    } else {
-      console.log('用户名已经存在', data);
-      alert('用户已经存在');
+        });
+        // console.log('用户创建成功');
+        message.success('用户创建成功', 3);
+        setVisible(false);
+      } else {
+        // console.log('用户名已经存在', data);
+        if (data && data.getUsername !== undefined) {
+          message.error('用户已经存在', 3);
+        }
+        // alert('用户已经存在');
+      }
+      RefreshPage(); // 等待RefreshPage函数执行完毕
+    } catch (e) {
+      console.log(e);
     }
-    RefreshPage(); // 等待RefreshPage函数执行完毕
   };
 
   const RefreshPage = async () => {
@@ -89,7 +94,7 @@ function AddUser() {
           pages: pageNumber,
           username: tmpUser[0].username,
           realname: tmpUser[0].realname,
-        }
+        },
       });
       getUserCount({
         variables: {
@@ -116,7 +121,9 @@ function AddUser() {
 
   return (
     <>
-      <Button onClick={handleButtonClick}>新增用户</Button>
+      <Button onClick={handleButtonClick} className="AddNewUserButton">
+        新增用户
+      </Button>
       <Modal title="Form" visible={visible} onCancel={handleCancel} footer={null}>
         <Form onFinish={handleFormSubmit} form={form}>
           <Form.Item
@@ -125,6 +132,7 @@ function AddUser() {
             rules={[{ required: true, message: '请输入账号!' }]}
           >
             <Input
+              className="Update-Input"
               placeholder="请输入账号"
               onChange={(e) => {
                 const username = e.target.value;
@@ -137,7 +145,7 @@ function AddUser() {
             label="姓名"
             rules={[{ required: true, message: '请输入姓名!' }]}
           >
-            <Input placeholder="请输入姓名"></Input>
+            <Input placeholder="请输入姓名" className="Update-Input"></Input>
           </Form.Item>
           <Form.Item
             name="gender"
@@ -154,7 +162,7 @@ function AddUser() {
             label="年龄"
             rules={[{ required: true, message: '请输入用户年龄!' }]}
           >
-            <Input placeholder="请输入用户年龄"></Input>
+            <Input placeholder="请输入用户年龄" className="Update-Input"></Input>
           </Form.Item>
           <Form.Item
             name="isEnable"
@@ -167,7 +175,7 @@ function AddUser() {
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" className="Submit-btn">
               Submit
             </Button>
           </Form.Item>

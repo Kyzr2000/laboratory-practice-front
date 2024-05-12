@@ -1,5 +1,5 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { DelUser } from '../../graphql/mutations';
@@ -30,15 +30,18 @@ function DeleteUserButton(text) {
         pages: pageNumber,
         realname: tmpUser[0].realname,
         username: tmpUser[0].username,
-      }
+      },
     });
     console.log(data2);
+    await message.success('删除成功', 3);
     await setDataSource(data2.getAllUsers);
   };
 
   return (
     <>
-      <Button onClick={OnClicked}>删除</Button>
+      <Button onClick={OnClicked} className="User-Delete-btn">
+        删除
+      </Button>
     </>
   );
 }

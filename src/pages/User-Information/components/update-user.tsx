@@ -1,5 +1,5 @@
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
-import { Button, Form, Input, Modal, Select } from 'antd';
+import { Button, Form, Input, message, Modal, Select } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -61,10 +61,12 @@ function UpdateUserButton(user: User) {
           pages: pageNumber,
           username: tmpUser[0].username,
           realname: tmpUser[0].realname,
-        }
+        },
       });
+      message.success('修改成功', 3);
     } catch (e) {
       console.log(e);
+      message.success('修改失败', 3);
     }
   };
 
@@ -81,7 +83,9 @@ function UpdateUserButton(user: User) {
 
   return (
     <>
-      <Button onClick={OnClicked}>编辑</Button>
+      <Button onClick={OnClicked} className="User-Update-btn">
+        编辑
+      </Button>
       <Modal
         title="UpdateModal"
         visible={visible}
@@ -95,7 +99,7 @@ function UpdateUserButton(user: User) {
             rules={[{ required: true, message: '请输入姓名!' }]}
             initialValue={user.realname}
           >
-            <Input placeholder="请输入姓名"></Input>
+            <Input placeholder="请输入姓名" className="Update-Input"></Input>
           </Form.Item>
           <Form.Item
             name="gender"
@@ -103,7 +107,7 @@ function UpdateUserButton(user: User) {
             rules={[{ required: true, message: '请选择用户性别!' }]}
             initialValue={user.gender}
           >
-            <Select placeholder="请输入用户性别">
+            <Select placeholder="请输入用户性别" className="Update-Input">
               <Select.Option value={1}>男</Select.Option>
               <Select.Option value={2}>女</Select.Option>
             </Select>
@@ -114,21 +118,25 @@ function UpdateUserButton(user: User) {
             rules={[{ required: true, message: '请输入用户年龄!' }]}
             initialValue={user.age}
           >
-            <Input placeholder="请输入用户年龄"></Input>
+            <Input placeholder="请输入用户年龄" className="Update-Input"></Input>
           </Form.Item>
           <Form.Item
+            className="Update-Input"
             name="isEnable"
             label="是否启用"
             rules={[{ required: true, message: '请选择账号是否启用!' }]}
             initialValue={user.isEnable}
           >
-            <Select placeholder="请选择是否启用该账号">
+            <Select
+              placeholder="请选择是否启用该账号"
+              className="Update-Input Select-hover-Style"
+            >
               <Select.Option value={true}>启用</Select.Option>
               <Select.Option value={false}>不启用</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" className="Submit-btn">
               Submit
             </Button>
           </Form.Item>
