@@ -1,0 +1,20 @@
+.updata-user-modal{
+    width: 648px !important;
+
+    form{
+        padding-top: 20px;
+        
+        *{
+            vertical-align: middle;
+        }
+
+        .update-user-footer{
+            text-align: right;
+
+            .update-user-button{
+                text-align: right;
+                margin-left: 20px !important;
+            }
+        }
+    }
+}

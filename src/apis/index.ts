@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GetDemoDashData = gql`
   query getDemoDashData($endTime: Int!) {
@@ -26,10 +26,12 @@ export const GetDemoDashData = gql`
 `;
 
 // 获取量表基本信息
-export const GET_BASE_INFORMATION_TABLE_DATA = gql`
-  query getBaseInformationTableData($data: GetBaseInformationTableData!) {
-    totalCount(data: $data)
-    getBaseInformationTableData(data: $data) {
+export const GET_SCALE_BASE_INFORMATION_TABLE_DATA = gql`
+  query getScaleBaseInformationTableData(
+    $data: GetScaleBaseInformationTableData!
+  ) {
+    scaleTotalCount(data: $data)
+    getScaleBaseInformationTableData(data: $data) {
       id
       name
       isEnable
@@ -263,3 +265,58 @@ export const DELETE_QUESITON_DATA = gql`
     }
   }
 `;
+
+// 获取用户基本信息列表
+export const GET_USER_BASE_INFORMATION_LIST = gql`
+  query getUserBaseInformationList($data: GetUserBaseInformationTableData!) {
+    userTotalCount(data: $data)
+    getUserBaseInformationList(data: $data) {
+      id
+      realname
+      username
+      gender
+      age
+      isEnable
+    }
+  }
+`;
+
+// 根据id获取单个用户的详细信息
+export const GET_USER_DETAIL = gql`
+  query getUserDetail($data: Int!) {
+    getUserDetail(data: $data) {
+      address
+      age
+      email
+      gender
+      introduction
+      isEnable
+      realname
+      role
+      username
+    }
+  }
+`;
+
+// 更新（添加）用户信息
+export const UPDATE_USER_INFORMATION = gql`
+  mutation updateUser($data: UpdateUserInput!, $userId: Int) {
+    updateUser(data: $data, userId: $userId) {
+      user {
+        id
+        username
+        realname
+        age
+        email
+        isEnable
+        isAdmin
+        role
+      }
+      message
+      result
+    }
+  }
+`;
+
+
+

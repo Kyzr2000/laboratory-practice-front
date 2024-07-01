@@ -25,7 +25,7 @@ import {
 import React, { useState } from 'react';
 
 import BaseInformation from '../scale-base-information';
-
+import UserInformation from '../user-base-information';
 type MenuItem = {
   text: string;
   icon: JSX.Element;
@@ -44,6 +44,7 @@ const menuItems: MenuItem[] = [
     icon: <Assessment />,
     submenus: [
       { text: '量表基本信息', component: <BaseInformation /> },
+      { text: '量表基本信息', component: <BaseInformation /> },
     ],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
@@ -51,7 +52,7 @@ const menuItems: MenuItem[] = [
     text: '基础设置（练习）',
     icon: <Settings />,
     submenus: [
-      { text: '用户管理', component: <div>用户管理</div> },
+      { text: '用户管理', component: <UserInformation /> },
     ],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },

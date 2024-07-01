@@ -4,12 +4,12 @@ import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { GET_BASE_INFORMATION_TABLE_DATA, GET_SCALE_TYPES } from '@/apis/index';
+import { GET_SCALE_BASE_INFORMATION_TABLE_DATA, GET_SCALE_TYPES } from '@/apis/index';
 
 import AddAndImport from './components/add-import';
 import Search from './components/search';
 import BaseInformationTable from './components/table';
-import type { QueryData, Scale, ScaleType, ScaleTypes, TableData } from './type';
+import type { QueryData, Scale, ScaleType, ScaleTypes, TableData } from './type'; 
 
 const theme = createTheme({
   palette: {
@@ -32,12 +32,14 @@ const BaseInformation = () => {
   const [addOpen, setAddOpen] = useState<boolean>(false); // 新增（编辑）按钮
   const modifyId = useRef<number>(0);
 
-  const { loading, refetch: getBaseInformationTableData } = useQuery<
+  // useQuery<查询结果的约束,查询变量的约束>
+  const { loading, refetch: getScaleBaseInformationTableData } = useQuery<
     TableData,
     QueryData
-  >(GET_BASE_INFORMATION_TABLE_DATA, {
+  >(GET_SCALE_BASE_INFORMATION_TABLE_DATA, {
     onCompleted(data) {
-      const { totalCount, getBaseInformationTableData: tableData } = data || {};
+      const { totalCount, getScaleBaseInformationTableData: tableData } = data || {};
+      // getBaseInformationTableData: tableData这里不是ts中的类型约束，而是将data中的getBaseInformationTableData重新命名为tableData
       if (totalCount) setTotalCount(totalCount);
       setScales([...tableData]);
     },
@@ -51,14 +53,14 @@ const BaseInformation = () => {
   });
 
   useEffect(() => {
-    getBaseInformationTableData({
+    getScaleBaseInformationTableData({
       data: {
         currentPage: page,
         pageNumber: pageNumber.current,
         ...searchData,
       },
     });
-  }, [getBaseInformationTableData, page, searchData]);
+  }, [getScaleBaseInformationTableData, page, searchData]);
 
   const pageCount = useMemo(() => {
     return Math.ceil(totalCount / pageNumber.current);
@@ -85,7 +87,7 @@ const BaseInformation = () => {
               setAddOpen={setAddOpen}
               scaleTypes={scaleTypes}
               modifyId={modifyId}
-              getBaseInformationTableData={getBaseInformationTableData}
+              getBaseInformationTableData={getScaleBaseInformationTableData}
               pageNumber={pageNumber}
             />
           </div>

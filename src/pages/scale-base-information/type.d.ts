@@ -45,14 +45,14 @@ export type ScaleTypes = {
 
 export type TableData = {
   totalCount: number;
-  getBaseInformationTableData: Scale[];
+  getScaleBaseInformationTableData: Scale[];
 };
 
 export type QueryData = {
   data: {
-    currentPage: number;
-    pageNumber: number;
-    scaleType?: number;
+    currentPage: number;  // 当前所在的页码数
+    pageNumber: number;   // 每页中可以展示的数据条数
+    scaleType?: number;   
     scaleName?: string;
   };
 };
