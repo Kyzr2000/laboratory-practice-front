@@ -83,11 +83,16 @@ export type UpdateUserInput = {
 };
 
 export type UserOperateResponse = {
-  updateUser: {
+  updateUser ?: {
     user: User | null;
     message: string;
     result: string;
   };
+  delUser ?: {
+    user: User | null;
+    message: string;
+    result: string;
+  }
 };
 
 export type UserInformationBase = {
@@ -115,10 +120,3 @@ export const Role = {
   DOCTOR: 'DOCTOR',
   USER: 'USER',
 };
-
-// export enum Role {
-//   ADMIN = 'ADMIN',
-//   DIRECTIOR = 'DIRECTIOR',
-//   DOCTOR = 'DOCTOR',
-//   USER = 'USER'
-// }

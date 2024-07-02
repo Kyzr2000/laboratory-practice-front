@@ -318,5 +318,13 @@ export const UPDATE_USER_INFORMATION = gql`
   }
 `;
 
-
+// 删除用户
+export const DELETE_USER = gql`
+  mutation DelUser($delUserId: Int!) {
+    delUser(id: $delUserId) {
+      message
+      result
+    }
+  }
+`;
 

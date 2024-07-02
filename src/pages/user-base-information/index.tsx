@@ -11,6 +11,7 @@ import AddUser from './components/add-user.jsx';
 import Search from './components/search.jsx';
 import UserTable from './components/user-table.jsx';
 import UpdateUserModal from './components/update-user-modal';
+import DeleteUserModal from './components/delete-user-modal';
 import type { QueryData, TableData, User } from './type';
 
 
@@ -21,8 +22,10 @@ export default function UserInformation() {
   const [currentPage, setCurrentPage] = useState<number>(1); // 当前页面
   const [totalCount, setTotalCount] = useState<number>(1); // 数据总个数
   const [open, setUpdateUserOpen] = useState(false);
+  const [openDeleteModal, setDeleteUserOpen] = useState(false);
 
-  const [userId, setUserId] = useState<number | null>(null);
+  const [updateUserId, setUpdateUserId] = useState<number | null>(null);
+  const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
   const [searchData, setSearchData] = useState<{
     username?: string;
     realname?: string
@@ -108,18 +111,28 @@ export default function UserInformation() {
           setCurrentPage={setCurrentPage}
           setIsQuerying={setIsQuerying}
           setUpdateUserOpen={setUpdateUserOpen}
-          setUserId={setUserId}
+          setUpdateUserId={setUpdateUserId}          
+          setDeleteUserOpen={setDeleteUserOpen}
+          setDeleteUserId={setDeleteUserId}
         >
         </UserTable>
       </div>
       <UpdateUserModal
         open={open}
         setUpdateUserOpen={setUpdateUserOpen}
-        userId={userId}
-        setUserId={setUserId}
+        updateUserId={updateUserId}
+        setUpdateUserId={setUpdateUserId}
         setCurrentPage={setCurrentPage}
         setIsQuerying={setIsQuerying}
       ></UpdateUserModal>
+      <DeleteUserModal    
+        setDeleteUserId={setDeleteUserId}
+        openDeleteModal={openDeleteModal}
+        setIsQuerying={setIsQuerying}
+        deleteUserId={deleteUserId}  
+        setDeleteUserOpen={setDeleteUserOpen}
+      >
+      </DeleteUserModal>
     </div>
   );
 }

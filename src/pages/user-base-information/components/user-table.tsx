@@ -15,7 +15,9 @@ type PropsConfig = {
   totalCount: number;
   setIsQuerying: React.Dispatch<React.SetStateAction<boolean>>;
   setUpdateUserOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setUserId: React.Dispatch<React.SetStateAction<number | null>>;
+  setUpdateUserId: React.Dispatch<React.SetStateAction<number | null>>;
+  setDeleteUserOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setDeleteUserId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
 const UserTable = ({
@@ -26,8 +28,10 @@ const UserTable = ({
   setCurrentPage,
   totalCount,
   setIsQuerying,
-  setUserId,
+  setUpdateUserId,
   setUpdateUserOpen,
+  setDeleteUserId,
+  setDeleteUserOpen
 }: PropsConfig) => {
   const columns: ColumnsType<User> = [
     {
@@ -95,7 +99,7 @@ const UserTable = ({
       render: (_, record) => (
         <Space size='middle'>
           <a onClick={() => showUpdataUserModal(record)}>编辑</a>
-          <a>删除</a>
+          <a onClick={() => showDeleteUserModal(record)}>删除</a>
         </Space>
       ),
     },
@@ -104,9 +108,16 @@ const UserTable = ({
   const showUpdataUserModal = (record: User) => {
     const {id: userId} = record;
     console.log(userId);
-    setUserId(Number(userId));
+    setUpdateUserId(Number(userId));
     setUpdateUserOpen(true);
   };
+
+  const showDeleteUserModal = (record: User) => {
+    const {id: userId} = record;
+    setDeleteUserId(Number(userId));
+    setDeleteUserOpen(true);
+  };
+
 
   return (
     <div>

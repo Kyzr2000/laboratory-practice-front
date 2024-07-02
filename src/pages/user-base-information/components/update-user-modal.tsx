@@ -49,8 +49,8 @@ const { TextArea } = Input;
 type PropsConfig = {
   open: boolean;
   setUpdateUserOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userId: number | null;
-  setUserId: React.Dispatch<React.SetStateAction<number | null>>;
+  updateUserId: number | null;
+  setUpdateUserId: React.Dispatch<React.SetStateAction<number | null>>;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   setIsQuerying: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -58,8 +58,8 @@ type PropsConfig = {
 const UpdateUserModal = ({
   open,
   setUpdateUserOpen,
-  userId,
-  setUserId,
+  updateUserId,
+  setUpdateUserId,
   setIsQuerying,
 }: PropsConfig) => {
   const [updateUserData, setUpdateUserData] = useState<UpdateUserData>({
@@ -68,7 +68,7 @@ const UpdateUserModal = ({
 
   const { loading: loading2, refetch: getUserInformationById } =
     useQuery<UserInformationBase>(GET_USER_DETAIL, {
-      skip: userId === null, // 如果userId为null，则跳过查询
+      skip: updateUserId === null, // 如果updateUserId为null，则跳过查询
       onCompleted(data) {
         console.log(data.getUserDetail);
         setUpdateUserData(data.getUserDetail);
@@ -79,19 +79,19 @@ const UpdateUserModal = ({
     });
 
   let title = '';
-  if (userId) {
+  if (updateUserId) {
     title = '更改用户信息';
   } else {
     title = '添加用户';
   }
 
   useEffect(() => {
-    if (userId) {
+    if (updateUserId) {
       getUserInformationById({
-        data: userId,
+        data: updateUserId,
       });
     }
-  }, [getUserInformationById, userId]);
+  }, [getUserInformationById, updateUserId]);
 
   const [updateUser, { loading }] = useMutation<
     UserOperateResponse,
@@ -99,12 +99,12 @@ const UpdateUserModal = ({
   >(UPDATE_USER_INFORMATION, {
     onCompleted(data) {
       console.log(data);
-      if (data.updateUser.result === 'success') {
+      if (data.updateUser?.result === 'success') {
         message.success(data.updateUser.message);
         setIsQuerying(true); // 重新查询一些用户列表
         hideModal();
       } else {
-        message.error(data.updateUser.message);
+        message.error(data.updateUser?.message);
       }
     },
     onError(error) {
@@ -118,7 +118,7 @@ const UpdateUserModal = ({
     setUpdateUserData({
       ...initUserUpdateData
     });
-    setUserId(null);
+    setUpdateUserId(null);
   };
 
   const submitUser = () => {
@@ -126,14 +126,14 @@ const UpdateUserModal = ({
       data: {
         ...updateUserData,
       },
-      userId: userId,
+      userId: updateUserId,
     });
     updateUser({
       variables: {
         data: {
           ...updateUserData,
         },
-        userId: userId,
+        userId: updateUserId,
       },
     });
   };
@@ -181,7 +181,7 @@ const UpdateUserModal = ({
                 ]}
               >
                 <Input
-                  disabled={userId !== null}
+                  disabled={updateUserId !== null}
                   onChange={(e) => {
                     setUpdateUserData((prevState) => ({
                       ...prevState,
@@ -317,7 +317,7 @@ const UpdateUserModal = ({
                 <Input
                   disabled={true}
                   value={
-                    userId !== null
+                    updateUserId !== null
                       ? '不能对密码进行更改！'
                       : '默认密码为用户名！'
                   }
