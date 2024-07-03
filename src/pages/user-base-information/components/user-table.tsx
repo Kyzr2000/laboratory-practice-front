@@ -11,7 +11,6 @@ type PropsConfig = {
   currentPage: number;
   pageNumber: React.MutableRefObject<number>;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  pageAllCount: number;
   totalCount: number;
   setIsQuerying: React.Dispatch<React.SetStateAction<boolean>>;
   setUpdateUserOpen: React.Dispatch<React.SetStateAction<boolean>>;

@@ -1,21 +1,17 @@
-import './user-base-information.scss';
+import "./user-base-information.scss";
 
-import { useQuery } from '@apollo/client';
-import { Col, Row, message } from 'antd';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useQuery } from "@apollo/client";
+import { Col, Row, message } from "antd";
+import { useEffect, useRef, useState } from "react";
 
-import { GET_USER_BASE_INFORMATION_LIST } from '@/apis';
+import { GET_USER_BASE_INFORMATION_LIST } from "@/apis";
 
-
-import AddUser from './components/add-user.jsx';
-import Search from './components/search.jsx';
-import UserTable from './components/user-table.jsx';
-import UpdateUserModal from './components/update-user-modal';
-import DeleteUserModal from './components/delete-user-modal';
-import type { QueryData, TableData, User } from './type';
-
-
-
+import AddUser from "./components/add-user.jsx";
+import Search from "./components/search.jsx";
+import UserTable from "./components/user-table.jsx";
+import UpdateUserModal from "./components/update-user-modal";
+import DeleteUserModal from "./components/delete-user-modal";
+import type { QueryData, TableData, User } from "./type";
 
 export default function UserInformation() {
   const [users, setUsers] = useState<User[]>([]); // 页面数据
@@ -28,7 +24,7 @@ export default function UserInformation() {
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
   const [searchData, setSearchData] = useState<{
     username?: string;
-    realname?: string
+    realname?: string;
   }>({});
   const pageNumber = useRef<number>(10); // 每页显示的数量
 
@@ -39,83 +35,81 @@ export default function UserInformation() {
     QueryData
   >(GET_USER_BASE_INFORMATION_LIST, {
     variables: {
-      data:{
+      data: {
         currentPage: currentPage,
-        pageNumber: pageNumber.current
-      }      
+        pageNumber: pageNumber.current,
+      },
     },
     onCompleted(data: TableData) {
-      console.log('数据获取请求完成');
-      console.log(data);
-      const { userTotalCount, getUserBaseInformationList: userList } = data || {};
+      const { userTotalCount, getUserBaseInformationList: userList } =
+        data || {};
+
       if (userTotalCount) setTotalCount(userTotalCount);
       setUsers(userList);
     },
     onError(error) {
-      console.log('数据获取请求发生错误');
-      message.error('数据获取请求发生错误！！！');
+      console.log("数据获取请求发生错误");
+      message.error("数据获取请求发生错误！！！");
       console.log(error);
     },
   });
 
-
-  const pageAllCount = useMemo(() => {
-    return Math.ceil(totalCount / pageNumber.current);
-  }, [totalCount,pageNumber]);
+  // const pageAllCount = useMemo(() => { // 这个是用来计算总共有多少页面的，暂时不需要这个函数
+  //   return Math.ceil(totalCount / pageNumber.current);
+  // }, [totalCount, pageNumber]);
 
   // 当页码发生变化、查询条件发生变化时，重新进行数据查询
   useEffect(() => {
-    if (isQuerying) { // 有时页面和查询数据会同时发生变化，为了防止短时间查询两次，使用isQuerying限制查询次数，避免无效查询
+    if (isQuerying) {
+      // 有时页面和查询数据会同时发生变化，为了防止短时间查询两次，使用isQuerying限制查询次数，避免无效查询
       getUserBaseInformationForTableData({
-        data:{
+        data: {
           currentPage,
-          pageNumber:pageNumber.current,
+          pageNumber: pageNumber.current,
           realname: searchData.realname ? searchData.realname : undefined,
           username: searchData.username ? searchData.username : undefined,
-        }
+        },
       });
     }
     setIsQuerying(false);
-  },[getUserBaseInformationForTableData, isQuerying, pageNumber, currentPage, searchData]);
-
-
-
+  }, [
+    getUserBaseInformationForTableData,
+    isQuerying,
+    pageNumber,
+    currentPage,
+    searchData,
+  ]);
 
   return (
-    <div className='user-information'>
-      <div className='top-bar'>
+    <div className="user-information">
+      <div className="top-bar">
         <Row>
-          <Col className='top-bar-left' span={12}>
-            <Search 
+          <Col className="top-bar-left" span={12}>
+            <Search
               setSearchData={setSearchData}
               setCurrentPage={setCurrentPage}
               setIsQuerying={setIsQuerying}
-            >
-            </Search>
+            ></Search>
           </Col>
-          <Col className='top-bar-right' span={12}>
-            <AddUser
-              setUpdateUserOpen={setUpdateUserOpen}
-            ></AddUser>
+          <Col className="top-bar-right" span={12}>
+            <AddUser setUpdateUserOpen={setUpdateUserOpen}></AddUser>
           </Col>
         </Row>
       </div>
-      <div className='table-box'>
+      <div className="table-box">
         <UserTable
           users={users}
-          totalCount={totalCount}  // 总共有多少个数据条数
-          loading={loading}  
+          totalCount={totalCount} // 总共有多少个数据条数
+          loading={loading}
           currentPage={currentPage} // 当前所在的页码
-          pageNumber={pageNumber}   // 每一页所包含的数据条数
-          pageAllCount={pageAllCount} // 总共有多少页
+          pageNumber={pageNumber} // 每一页所包含的数据条数
           setCurrentPage={setCurrentPage}
           setIsQuerying={setIsQuerying}
           setUpdateUserOpen={setUpdateUserOpen}
-          setUpdateUserId={setUpdateUserId}          
+          setUpdateUserId={setUpdateUserId}
           setDeleteUserOpen={setDeleteUserOpen}
           setDeleteUserId={setDeleteUserId}
-        >
-        </UserTable>
+        ></UserTable>
       </div>
       <UpdateUserModal
         open={open}
@@ -125,15 +119,17 @@ export default function UserInformation() {
         setCurrentPage={setCurrentPage}
         setIsQuerying={setIsQuerying}
       ></UpdateUserModal>
-      <DeleteUserModal    
+      <DeleteUserModal
         setDeleteUserId={setDeleteUserId}
         openDeleteModal={openDeleteModal}
         setIsQuerying={setIsQuerying}
-        deleteUserId={deleteUserId}  
+        deleteUserId={deleteUserId}
         setDeleteUserOpen={setDeleteUserOpen}
-      >
-      </DeleteUserModal>
+        setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
+        totalCount={totalCount}
+        pageNumber={pageNumber}
+      ></DeleteUserModal>
     </div>
   );
 }
-

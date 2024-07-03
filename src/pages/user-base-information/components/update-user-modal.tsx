@@ -1,6 +1,6 @@
-import './css/update-user-modal.scss';
-import { useMutation, useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import "./css/update-user-modal.scss";
+import { useMutation, useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
 
 import {
   Row,
@@ -13,22 +13,23 @@ import {
   Switch,
   message,
   Button,
-} from 'antd';
+} from "antd";
 
 import type {
   UpdateUserData,
   UserOperateResponse,
   UpdateUserInput,
   UserInformationBase,
-} from '../type';
-import { UPDATE_USER_INFORMATION, GET_USER_DETAIL } from '@/apis';
-// import { GET_USER_BASE_INFORMATION_LIST } from '@/apis';
+  // TableData,
+} from "../type";
+import { UPDATE_USER_INFORMATION, GET_USER_DETAIL } from "@/apis";
+// import { GET_USER_BASE_INFORMATION_LIST } from "@/apis";
 
-const Role  = {
-  ADMIN: 'ADMIN',
-  DIRECTIOR: 'DIRECTIOR',
-  DOCTOR: 'DOCTOR',
-  USER: 'USER',
+const Role = {
+  ADMIN: "ADMIN",
+  DIRECTIOR: "DIRECTIOR",
+  DOCTOR: "DOCTOR",
+  USER: "USER",
 };
 
 const initUserUpdateData: UpdateUserData = {
@@ -63,14 +64,13 @@ const UpdateUserModal = ({
   setIsQuerying,
 }: PropsConfig) => {
   const [updateUserData, setUpdateUserData] = useState<UpdateUserData>({
-    ...initUserUpdateData
+    ...initUserUpdateData,
   });
 
   const { loading: loading2, refetch: getUserInformationById } =
     useQuery<UserInformationBase>(GET_USER_DETAIL, {
       skip: updateUserId === null, // 如果updateUserId为null，则跳过查询
       onCompleted(data) {
-        console.log(data.getUserDetail);
         setUpdateUserData(data.getUserDetail);
       },
       onError(error) {
@@ -78,11 +78,11 @@ const UpdateUserModal = ({
       },
     });
 
-  let title = '';
+  let title = "";
   if (updateUserId) {
-    title = '更改用户信息';
+    title = "更改用户信息";
   } else {
-    title = '添加用户';
+    title = "添加用户";
   }
 
   useEffect(() => {
@@ -98,8 +98,7 @@ const UpdateUserModal = ({
     UpdateUserInput
   >(UPDATE_USER_INFORMATION, {
     onCompleted(data) {
-      console.log(data);
-      if (data.updateUser?.result === 'success') {
+      if (data.updateUser?.result === "success") {
         message.success(data.updateUser.message);
         setIsQuerying(true); // 重新查询一些用户列表
         hideModal();
@@ -109,14 +108,45 @@ const UpdateUserModal = ({
     },
     onError(error) {
       console.log(error);
-      message.error('更新用户出现异常错误!!!');
+      message.error("更新用户出现异常错误!!!");
     },
+    // update: (cache, {data}) => {
+    //   console.log("写缓存");
+    //   console.log(data?.updateUser);
+    //   console.log("写缓存");
+    //   const cacheData = cache.readQuery<TableData>({
+    //     query: GET_USER_BASE_INFORMATION_LIST,
+    //   });
+    //   console.log("我是从缓存中读出的数据");
+    //   console.log(cacheData);
+    //   const { userTotalCount, getUserBaseInformationList: userList } =
+    //     cacheData || {};
+    //   if (updateUserId === null && data?.updateUser?.user && userList && userTotalCount) {
+    //     userList.push({
+    //       id: data?.updateUser?.user.id,
+    //       username: data.updateUser.user.username,
+    //       realname: data.updateUser.user.realname,
+    //       gender: data.updateUser.user.gender,
+    //       age: data.updateUser.user.age,
+    //       isEnable: data.updateUser.user.isEnable,
+    //     });
+    //     console.log("写入缓存,被缓存的内容为");
+    //     console.log(userList);
+    //     cache.writeQuery<TableData>({
+    //       query: GET_USER_BASE_INFORMATION_LIST,
+    //       data: {
+    //         userTotalCount,
+    //         getUserBaseInformationList: userList,
+    //       },
+    //     });
+    //   }
+    // },
   });
 
   const hideModal = () => {
     setUpdateUserOpen(false);
     setUpdateUserData({
-      ...initUserUpdateData
+      ...initUserUpdateData,
     });
     setUpdateUserId(null);
   };
@@ -141,39 +171,39 @@ const UpdateUserModal = ({
   const [form] = Form.useForm<UpdateUserData>();
   useEffect(() => {
     form.setFieldsValue(updateUserData);
-  }, [form,updateUserData]);
+  }, [form, updateUserData]);
   return (
     <>
       <Modal
-        className='update-user-modal'
+        className="update-user-modal"
         title={title}
         open={open}
         onCancel={hideModal}
         zIndex={1999}
         okButtonProps={{ loading }}
         loading={loading2}
-        style={{ marginTop: '80px' }}
+        style={{ marginTop: "80px" }}
         footer={false}
       >
         <Form
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
-          layout='horizontal'
+          layout="horizontal"
           onFinish={submitUser}
           form={form}
-          validateTrigger='onBlur'
+          validateTrigger="onBlur"
         >
           <Row>
             <Col span={12}>
               <Form.Item
-                label='用户名'
-                name='username'
+                label="用户名"
+                name="username"
                 rules={[
                   {
                     validator(_, value) {
-                      const trimmedValue = value ? value.trim() : '';
+                      const trimmedValue = value ? value.trim() : "";
                       if (trimmedValue.length === 0) {
-                        return Promise.reject(new Error('Required'));
+                        return Promise.reject(new Error("Required"));
                       }
                       return Promise.resolve();
                     },
@@ -200,14 +230,14 @@ const UpdateUserModal = ({
             </Col>
             <Col span={12}>
               <Form.Item
-                label='真实姓名'
-                name='realname'
+                label="真实姓名"
+                name="realname"
                 rules={[
                   {
                     validator(_, value) {
-                      const trimmedValue = value ? value.trim() : '';
+                      const trimmedValue = value ? value.trim() : "";
                       if (trimmedValue.length === 0) {
-                        return Promise.reject(new Error('Required'));
+                        return Promise.reject(new Error("Required"));
                       }
                       return Promise.resolve();
                     },
@@ -230,7 +260,7 @@ const UpdateUserModal = ({
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label='性别' name='gender'>
+              <Form.Item label="性别" name="gender">
                 <Select
                   onSelect={(value) => {
                     setUpdateUserData((prevState) => ({
@@ -245,7 +275,7 @@ const UpdateUserModal = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label='年龄' name='age'>
+              <Form.Item label="年龄" name="age">
                 <InputNumber
                   min={0}
                   value={updateUserData.age}
@@ -261,9 +291,9 @@ const UpdateUserModal = ({
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label='邮箱' name='email'>
+              <Form.Item label="邮箱" name="email">
                 <Input
-                  value={updateUserData.email ? updateUserData.email : ''}
+                  value={updateUserData.email ? updateUserData.email : ""}
                   onChange={(e) => {
                     setUpdateUserData((prevState) => ({
                       ...prevState,
@@ -277,9 +307,9 @@ const UpdateUserModal = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label='地址' name='address'>
+              <Form.Item label="地址" name="address">
                 <Input
-                  value={updateUserData.address ? updateUserData.address : ''}
+                  value={updateUserData.address ? updateUserData.address : ""}
                   onChange={(e) => {
                     setUpdateUserData((prevState) => ({
                       ...prevState,
@@ -295,7 +325,7 @@ const UpdateUserModal = ({
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label='角色' name='role'>
+              <Form.Item label="角色" name="role">
                 <Select
                   value={updateUserData.role}
                   onSelect={(value) => {
@@ -305,21 +335,21 @@ const UpdateUserModal = ({
                     }));
                   }}
                 >
-                  <Select.Option value='USER'>USER</Select.Option>
-                  <Select.Option value='ADMIN'>ADMIN</Select.Option>
-                  <Select.Option value='DOCTOR'>DOCTOR</Select.Option>
-                  <Select.Option value='DIRECTIOR'>DIRECTIOR</Select.Option>
+                  <Select.Option value="USER">USER</Select.Option>
+                  <Select.Option value="ADMIN">ADMIN</Select.Option>
+                  <Select.Option value="DOCTOR">DOCTOR</Select.Option>
+                  <Select.Option value="DIRECTIOR">DIRECTIOR</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label='密码'>
+              <Form.Item label="密码">
                 <Input
                   disabled={true}
                   value={
                     updateUserId !== null
-                      ? '不能对密码进行更改！'
-                      : '默认密码为用户名！'
+                      ? "不能对密码进行更改！"
+                      : "默认密码为用户名！"
                   }
                 />
               </Form.Item>
@@ -327,7 +357,7 @@ const UpdateUserModal = ({
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label='个人介绍' name='introduction'>
+              <Form.Item label="个人介绍" name="introduction">
                 <TextArea
                   rows={3}
                   value={
@@ -352,9 +382,9 @@ const UpdateUserModal = ({
             </Col>
             <Col span={12}>
               <Form.Item
-                label='是否启用'
-                valuePropName='checked'
-                name='isEnable'
+                label="是否启用"
+                valuePropName="checked"
+                name="isEnable"
               >
                 <Switch
                   value={updateUserData.isEnable}
@@ -370,20 +400,20 @@ const UpdateUserModal = ({
           </Row>
           <Form.Item
             wrapperCol={{ span: 24 }}
-            style={{ textAlign: 'right', marginBottom: '0px' }}
+            style={{ textAlign: "right", marginBottom: "0px" }}
           >
             <Button
-              htmlType='button'
-              style={{ marginRight: '20px' }}
-              className='update-user-button'
+              htmlType="button"
+              style={{ marginRight: "20px" }}
+              className="update-user-button"
               onClick={hideModal}
             >
               取&nbsp;&nbsp;消
             </Button>
             <Button
-              htmlType='submit'
-              type='primary'
-              className='update-user-button'
+              htmlType="submit"
+              type="primary"
+              className="update-user-button"
               loading={loading || loading2}
             >
               确&nbsp;&nbsp;认
