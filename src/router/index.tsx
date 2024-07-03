@@ -4,7 +4,8 @@ import type { RouteObject } from 'react-router-dom';
 import { Navigate, useRoutes } from 'react-router-dom';
 
 import { Sidebar } from '@/pages/menu';
-
+import Login from '@/pages/login-register/login';
+import Register from '@/pages/login-register/register';
 import type { routerConfigType } from './routerConfigType';
 
 const routeConfig: routerConfigType[] = [
@@ -15,7 +16,7 @@ const routeConfig: routerConfigType[] = [
       {
         path: '',
         auth: ['', 'USER', 'ADMIN', 'DIRECTIOR', 'DOCTOR'],
-        element: <Navigate to="index" replace />,
+        element: <Navigate to="login" replace />,
       },
       {
         path: 'info',
@@ -27,6 +28,24 @@ const routeConfig: routerConfigType[] = [
         ),
       },
     ],
+  },
+  {
+    path: 'login',
+    auth: ['', 'USER', 'ADMIN', 'DIRECTIOR', 'DOCTOR'],
+    element: (
+      <Suspense fallback={<CircularProgress size="40" />}>
+        <Login></Login>
+      </Suspense>
+    ),
+  },
+  {
+    path: 'register',
+    auth: ['', 'USER', 'ADMIN', 'DIRECTIOR', 'DOCTOR'],
+    element: (
+      <Suspense fallback={<CircularProgress size="40" />}>
+        <Register></Register>
+      </Suspense>
+    ),
   },
   {
     path: 'index',

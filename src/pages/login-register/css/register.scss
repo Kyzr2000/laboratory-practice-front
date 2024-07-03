@@ -1,0 +1,83 @@
+    .register-card {
+        margin: auto;
+        margin-top: 260px;
+        border-radius: 20px;
+        padding: 30px 60px;
+        width: 400px;
+        background-color: #f5f5f5;
+        // opacity: .7;
+
+        .register-title {
+            margin-bottom: 20px;
+            font-size: 30px;
+            font-weight: 600;
+            color: #000;
+            line-height: 30px;
+            height: 30px;
+            padding-bottom: 10px;
+            width: 100%;
+            text-align: left;
+            user-select: none;
+        }
+
+        .form-box {
+            max-width: 600px;
+
+            .input-bar {
+                width: 400px;
+                height: 40px;
+                font-size: 15px
+            }
+
+            .register-button {
+                margin-bottom: -20px;
+                width: 400px;
+                height: 40px;
+                border-radius: 10px;
+                border: none;
+                background-color: rgb(132 132 231);
+                font-size: 18px;
+                letter-spacing: 10px;
+                font-weight: 600;
+                cursor: pointer;
+                user-select: none;
+                color: #d3d1d1;
+
+                &:hover {
+                    background-color: rgb(87 87 177) !important;
+                }
+
+                &:active {
+                    background-color: rgb(74 74 136) !important;
+                }
+            }
+
+            .register-link {
+                display: flex;
+                justify-content: right;
+                margin-top: 10px;
+                height: 20px;
+                line-height: 20px;
+
+                div {
+                    height: 20px;
+                    line-height: 20px;
+                    font-size: 14px;
+                    color: #222;
+                    opacity: .6;
+                    cursor: pointer;
+                    user-select: none;
+                }
+            }
+
+            .bottom-text {
+                margin-top: 10px;
+                line-height: 15px;
+                font-size: 14px;
+                text-align: center;
+                height: 20px;
+                color: #222;
+            }
+        }
+
+    }

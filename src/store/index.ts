@@ -12,3 +12,19 @@ export const USERNAME = atom({
   key: 'USERNAME',
   default: username,
 });
+
+interface UserStoreType {
+  id: null,
+  username: string,
+  role: string
+}
+
+
+export const userStore = atom<UserStoreType>({
+  key: 'userStore',
+  default: {
+    id: null,
+    username: '',
+    role: ''
+  }
+});
