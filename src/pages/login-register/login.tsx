@@ -21,7 +21,7 @@ const LOGIN_QUERY = gql`
       user {
         username
       }
-    }
+    }       
   }
 `;
 

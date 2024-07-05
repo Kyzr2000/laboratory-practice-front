@@ -219,10 +219,7 @@ const UpdateUserModal = ({
                         e.target.value.trim().length === 0
                           ? null
                           : e.target.value,
-                      password:
-                        e.target.value.trim().length === 0
-                          ? null
-                          : e.target.value,
+                      password: '12345678',
                     }));
                   }}
                 />
@@ -349,7 +346,7 @@ const UpdateUserModal = ({
                   value={
                     updateUserId !== null
                       ? "不能对密码进行更改！"
-                      : "默认密码为用户名！"
+                      : "默认密码为12345678！"
                   }
                 />
               </Form.Item>

@@ -57,7 +57,7 @@ const DeleteUserModal = ({
           });
           setDeleteUserId(null);
           // 如果删除的是本页面的最后一条数据，则应该去更新一下currentPage
-          if (totalCount - (currentPage - 1) * pageNumber.current === 1) { 
+          if (totalCount - (currentPage - 1) * pageNumber.current === 1 && currentPage > 1) { 
             setCurrentPage(currentPage - 1);
           }
           setIsQuerying(true);
