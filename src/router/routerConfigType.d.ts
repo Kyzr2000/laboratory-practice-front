@@ -1,6 +1,6 @@
 export type routerConfigType = {
   path: string;
-  auth?: (number | string)[];
+  auth?: string[];
   element?: FC<{}>;
   children?: routerConfigType[] | RouteObject[];
 };

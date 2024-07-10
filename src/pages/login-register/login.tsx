@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Input, Button, message, Form } from "antd";
 import { useNavigate } from "react-router-dom";
-import './css/login.scss';
-import { userStore } from "@/store";
-import { useRecoilState } from "recoil";
-import { gql, useLazyQuery } from "@apollo/client";
+import "./css/login.scss";
+import { useMutation } from "@apollo/client";
 import type { UserLoginReturn, UserLoginInput } from "./type";
+import { LOGIN, GET_USERINFO } from "@/apis";
 
 interface LoginFormType {
   username: string;
@@ -13,45 +12,60 @@ interface LoginFormType {
   code?: string;
 }
 
-const LOGIN_QUERY = gql`
-  query Login($username: String!, $password: String!, $code: String!) {
-    login(username: $username, password: $password, code: $code) {
-      res
-      message
-      user {
-        username
-      }
-    }       
-  }
-`;
-
 const Login = () => {
   const navigate = useNavigate();
-  const [, setUserData] = useRecoilState(userStore);
-  // const [imageUrl, setImageUrl] = useState("http://localhost:9999/user/code");
+  const accessToken = localStorage.getItem("accessToken");
   const [loginInput] = useState<LoginFormType>({
     username: "",
     password: "",
   });
+
+  const [getUserInfo] = useMutation(GET_USERINFO, {
+    onCompleted({getUserInfo}) {
+      console.log(getUserInfo);
+      if (getUserInfo.id) {
+        localStorage.setItem('role',getUserInfo.role);
+        localStorage.setItem('username',getUserInfo.username);
+        navigate("/index");
+      }
+    },
+    onError(error) {
+      message.error(error.message);
+    },
+  });
+  
+  useEffect(() => {
+    if (accessToken && accessToken !== "") {
+      getUserInfo({
+        variables: {
+          accessToken,
+        },
+      });
+    }
+  },[accessToken,getUserInfo]);
+ 
+
   function toRegister() {
     navigate("/register");
   }
 
-  const [executLogin] = useLazyQuery<UserLoginReturn, UserLoginInput>(
-    LOGIN_QUERY,
+  const [executLogin] = useMutation<UserLoginReturn, UserLoginInput>(
+    LOGIN,
     {
       onCompleted: (data) => {
         console.log(data);
-        if (data.login.res === "success") {
-          setUserData({
-            id: data.login.user.id,
-            username: data.login.user.username,
-            role: data.login.user.role,
+        if (data.login.accessToken) {
+          localStorage.setItem("accessToken", data.login.accessToken);
+          localStorage.setItem("refreshToken", data.login.refreshToken);
+          getUserInfo({
+            variables: {
+              accessToken: data.login.accessToken,
+            },
           });
-          navigate("/main/about");
-        } else {
-          message.error(data.login.message);
         }
+      },
+      onError(error) {
+        message.error(error.message);
       },
     }
   );
@@ -61,18 +75,14 @@ const Login = () => {
     console.log(username + password + code);
     executLogin({
       variables: {
-        username: username,
-        password: password,
-        code: code,
+        data: {
+          username: username,
+          password: password,
+        },
       },
     });
   };
 
-  // const resetCode = () => {
-  //   // 通过添加时间戳来改变图片的URL，确保每次点击时都会重新请求图片
-  //   const newImageUrl = `${imageUrl}?timestamp=${Date.now()}`;
-  //   setImageUrl(newImageUrl);
-  // };
 
   const [form] = Form.useForm<LoginFormType>();
   useEffect(() => {
@@ -80,7 +90,7 @@ const Login = () => {
   }, [form, loginInput]);
 
   return (
-    <div className="login clearfix">
+    <div className="login-page clearfix">
       <div className="login-card">
         <div className="login-title">登录</div>
 
@@ -112,8 +122,13 @@ const Login = () => {
             name="password"
             rules={[
               {
-                required: true,
-                message: "Please input your password!",
+                validator(_, value) {
+                  const trimmedValue = value ? value.trim() : "";
+                  if (trimmedValue.length < 8) {
+                    return Promise.reject(new Error("密码长度不小于8！"));
+                  }
+                  return Promise.resolve();
+                },
               },
             ]}
           >
@@ -121,36 +136,9 @@ const Login = () => {
               className="input-bar"
               type="password"
               placeholder="请输入密码"
+              
             />
           </Form.Item>
-          {/* 验证码 */}
-          {/* <Row>
-            <Col span={16}>
-              <Form.Item
-                name="code"
-                rules={[
-                  {
-                    // required: true,
-                    message: "Please input your code!",
-                  },
-                ]}
-              >
-                <Input
-                  className="input-bar-code"
-                  type="text"
-                  placeholder="请输入验证码"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <img
-                className="code-img"
-                src={imageUrl}
-                alt=""
-                onClick={resetCode}
-              />
-            </Col>
-          </Row> */}
 
           <Form.Item
             wrapperCol={{

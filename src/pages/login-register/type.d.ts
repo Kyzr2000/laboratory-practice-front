@@ -1,17 +1,14 @@
 export type UserLoginReturn = {
   login: {
-    res: string;
-    message: string;
-    user: {
-      id: null;
-      username: string;
-      role: string;
-    };
+    accessToken: string;
+    refreshToken: string;
   };
 };
 
 export type UserLoginInput = {
-  username: username;
-  password: password;
-  code?: code;
+  data: {
+    username: username;
+    password: password;
+    code?: code;
+  };
 };

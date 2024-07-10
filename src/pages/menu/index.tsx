@@ -63,7 +63,7 @@ export const Sidebar: React.FC = () => {
   const [activeSubMenuIndex, setActiveSubMenuIndex] = useState<number | null>(null);
   const [userMenu, setUserMenu] = useState<boolean>(false);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const currentUserType = 'ADMIN';
+  const currentUserType = localStorage.getItem('role')!;
   const handleClick = (index: number) => {
     setActiveSubMenuIndex(null);
     setActiveIndex(activeIndex === index ? null : index);
@@ -153,7 +153,7 @@ export const Sidebar: React.FC = () => {
                   <Typography
                     sx={{ marginLeft: '8px', fontSize: '14px', color: 'white' }}
                   >
-                    你好,ADMIN
+                    你好,{localStorage.getItem('username')}
                   </Typography>
                 </Box>
               </IconButton>

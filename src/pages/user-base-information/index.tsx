@@ -48,9 +48,7 @@ export default function UserInformation() {
       setUsers(userList);
     },
     onError(error) {
-      console.log("数据获取请求发生错误");
-      message.error("数据获取请求发生错误！！！");
-      console.log(error);
+      message.error(error.message);
     },
   });
 

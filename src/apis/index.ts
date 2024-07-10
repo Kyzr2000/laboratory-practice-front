@@ -328,3 +328,31 @@ export const DELETE_USER = gql`
   }
 `;
 
+export const LOGIN = gql`
+  mutation Login($data: LoginInput!) {
+    login(data: $data) {
+      accessToken
+      refreshToken
+    }
+  }
+`;
+
+export const GET_USERINFO = gql`
+  mutation GetUserInfo($accessToken: String!) {
+    getUserInfo(accessToken: $accessToken) {
+      id
+      username
+      realname
+      role
+    }
+  }
+`;
+
+export const REGISTER_MUTATION = gql`
+  mutation Signup($data: SignupInput!) {
+    signup(data: $data) {
+      accessToken
+      refreshToken
+    }
+  }
+`;

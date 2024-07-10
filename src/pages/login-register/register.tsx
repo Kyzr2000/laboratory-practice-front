@@ -1,7 +1,9 @@
 import { Input, Button, message, Form } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "antd/es/form/Form";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
+import { REGISTER_MUTATION } from "@/apis";
+import { useEffect,useState } from "react";
 import "./css/register.scss";
 
 interface RegisterFormValues {
@@ -10,58 +12,48 @@ interface RegisterFormValues {
   confirmPassword: string;
 }
 
-const REGISTER_MUTATION = gql`
-  mutation Register(
-    $username: String!
-    $password: String!
-    $confirmPassword: String!
-  ) {
-    register(
-      username: $username
-      password: $password
-      confirmPassword: $confirmPassword
-    ) {
-      res
-      message
-    }
-  }
-`;
-
 const Register = () => {
-  const [form] = useForm();
   const navigate = useNavigate();
+  const [form] = useForm<RegisterFormValues>();
+  const [registerInput] = useState<RegisterFormValues>({
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const [register, { data }] = useMutation(REGISTER_MUTATION, {
-    onCompleted: () => {
-      console.log(data);
-      if (data.register.res === "success") {
-        message.success("注册成功，将要跳转到登录页面");
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
-      } else {
-        message.error(data.register.message);
-      }
+  
+  const [register] = useMutation(REGISTER_MUTATION, {
+    onCompleted: ({ signup }) => {
+      localStorage.setItem("accessToken", signup.accessToken);
+      localStorage.setItem("refreshToken", signup.refreshToken);
+      message.success("注册成功，将要跳转到登录页面");
+      navigate("/login");
+    },
+    onError(error) {
+      message.error(error.message);
     },
   });
 
   const onFinish = (values: RegisterFormValues) => {
-    console.log("Success:", values);
-    let { username, password, confirmPassword } = values;
+    let { username, password } = values;
     username = username.trim();
     password = password.trim();
-    confirmPassword = confirmPassword.trim();
     register({
       variables: {
-        username,
-        password,
-        confirmPassword,
+        data: {
+          username,
+          password,
+        }
       },
     });
   };
 
+
+  useEffect(() => {
+    form.setFieldsValue(registerInput);
+  }, [form, registerInput]);
   return (
-    <div className="clearfix">
+    <div className="register-page clearfix">
       <div className="register-card">
         <div className="register-title" style={{ marginBottom: "20px" }}>
           注册
@@ -110,9 +102,9 @@ const Register = () => {
                 transform: (value) => value.trim(),
                 required: true,
                 message:
-                  "最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符",
+                  "最少8位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符",
                 pattern:
-                  /^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*?. ]).*$/,
+                  /^.*(?=.{8,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*?. ]).*$/,
               },
             ]}
           >

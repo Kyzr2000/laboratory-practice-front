@@ -74,7 +74,7 @@ const UpdateUserModal = ({
         setUpdateUserData(data.getUserDetail);
       },
       onError(error) {
-        console.log(error);
+        message.error(error.message);
       },
     });
 
@@ -107,40 +107,8 @@ const UpdateUserModal = ({
       }
     },
     onError(error) {
-      console.log(error);
-      message.error("更新用户出现异常错误!!!");
+      message.error(error.message);
     },
-    // update: (cache, {data}) => {
-    //   console.log("写缓存");
-    //   console.log(data?.updateUser);
-    //   console.log("写缓存");
-    //   const cacheData = cache.readQuery<TableData>({
-    //     query: GET_USER_BASE_INFORMATION_LIST,
-    //   });
-    //   console.log("我是从缓存中读出的数据");
-    //   console.log(cacheData);
-    //   const { userTotalCount, getUserBaseInformationList: userList } =
-    //     cacheData || {};
-    //   if (updateUserId === null && data?.updateUser?.user && userList && userTotalCount) {
-    //     userList.push({
-    //       id: data?.updateUser?.user.id,
-    //       username: data.updateUser.user.username,
-    //       realname: data.updateUser.user.realname,
-    //       gender: data.updateUser.user.gender,
-    //       age: data.updateUser.user.age,
-    //       isEnable: data.updateUser.user.isEnable,
-    //     });
-    //     console.log("写入缓存,被缓存的内容为");
-    //     console.log(userList);
-    //     cache.writeQuery<TableData>({
-    //       query: GET_USER_BASE_INFORMATION_LIST,
-    //       data: {
-    //         userTotalCount,
-    //         getUserBaseInformationList: userList,
-    //       },
-    //     });
-    //   }
-    // },
   });
 
   const hideModal = () => {
@@ -152,12 +120,6 @@ const UpdateUserModal = ({
   };
 
   const submitUser = () => {
-    console.log({
-      data: {
-        ...updateUserData,
-      },
-      userId: updateUserId,
-    });
     updateUser({
       variables: {
         data: {
@@ -186,8 +148,8 @@ const UpdateUserModal = ({
         footer={false}
       >
         <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 16 }}
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 15 }}
           layout="horizontal"
           onFinish={submitUser}
           form={form}
@@ -199,7 +161,7 @@ const UpdateUserModal = ({
                 label="用户名"
                 name="username"
                 rules={[
-                  {
+                  { required: true,
                     validator(_, value) {
                       const trimmedValue = value ? value.trim() : "";
                       if (trimmedValue.length === 0) {
@@ -230,7 +192,7 @@ const UpdateUserModal = ({
                 label="真实姓名"
                 name="realname"
                 rules={[
-                  {
+                  { required: true,
                     validator(_, value) {
                       const trimmedValue = value ? value.trim() : "";
                       if (trimmedValue.length === 0) {

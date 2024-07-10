@@ -13,7 +13,7 @@ export const USERNAME = atom({
   default: username,
 });
 
-interface UserStoreType {
+export type UserStoreType = {
   id: null,
   username: string,
   role: string
