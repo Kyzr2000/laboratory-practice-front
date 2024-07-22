@@ -25,6 +25,7 @@ import {
 import React, { useState } from 'react';
 
 import BaseInformation from '../scale-base-information';
+import Information from '../scale-base-information/index2';
 
 type MenuItem = {
   text: string;
@@ -51,7 +52,7 @@ const menuItems: MenuItem[] = [
     text: '基础设置（练习）',
     icon: <Settings />,
     submenus: [
-      { text: '用户管理', component: <div>用户管理</div> },
+      { text: '用户管理', component: <Information /> },
     ],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },

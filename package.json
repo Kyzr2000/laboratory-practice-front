@@ -16,6 +16,7 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
     "@apollo/client": "^3.6.5",
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.8",
@@ -32,7 +33,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
-    "recoil": "^0.7.3-alpha.2"
+    "recoil": "^0.7.7"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
@@ -54,6 +55,7 @@
     "eslint-plugin-react-hooks": "^4.4.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "husky": "^8.0.3",
+    "less": "^4.2.0",
     "prettier": "^2.6.2",
     "sass": "^1.62.1",
     "stylelint": "^15.6.1",

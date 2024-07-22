@@ -151,7 +151,7 @@ const AddModal = ({
             };
           }),
         )
-        .catch((error) => console.error('转换错误:', error));
+        .catch((error) => { throw new Error(`转换错误:${error}`); });
     }
   };
 
