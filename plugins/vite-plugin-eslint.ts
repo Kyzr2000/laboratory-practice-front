@@ -1,7 +1,7 @@
-import { createFilter } from '@rollup/pluginutils';
-import { ESLint } from 'eslint';
-import * as path from 'path';
-import type { PluginOption } from 'vite';
+import { createFilter } from "@rollup/pluginutils";
+import { ESLint } from "eslint";
+import * as path from "path";
+import type { PluginOption } from "vite";
 
 type Options = {
   fix?: boolean;
@@ -14,7 +14,11 @@ type Options = {
  * @param filePath File path
  */
 export function normalizePath(filePath: string): string {
-  return path.relative(process.cwd(), filePath).split('?')[0].split(path.sep).join('/');
+  return path
+    .relative(process.cwd(), filePath)
+    .split("?")[0]
+    .split(path.sep)
+    .join("/");
 }
 
 // Integrate eslint with vite
@@ -25,19 +29,19 @@ export default function viteEslintPlugin(
     fix: false,
     logWarnings: true,
     logErrors: true,
-  },
+  }
 ): PluginOption {
   const filter = createFilter(/.*\.(js|jsx|ts|tsx|vue)/, /node_modules/);
   const eslintOptions = {
     fix: opts.fix,
-    overrideConfigFile: path.resolve(__dirname, '../.config/.eslintrc.js'),
-    ignorePath: path.resolve(__dirname, '../.config/.eslintignore'),
+    overrideConfigFile: path.resolve(__dirname, "../.config/.eslintrc.js"),
+    ignorePath: path.resolve(__dirname, "../.config/.eslintignore"),
   };
   const eslint = new ESLint(eslintOptions);
   let formatter: ESLint.Formatter;
 
   return {
-    name: 'vite-plugin-eslint',
+    name: "vite-plugin-eslint",
     async transform(_, id) {
       const filePath = normalizePath(id);
 
@@ -46,11 +50,13 @@ export default function viteEslintPlugin(
       }
 
       if (!formatter) {
-        formatter = await eslint.loadFormatter('stylish');
+        formatter = await eslint.loadFormatter("stylish");
       }
 
       const lintResultList = await eslint.lintFiles(filePath);
-      const hasWarnings = lintResultList.some((item) => item.warningCount !== 0);
+      const hasWarnings = lintResultList.some(
+        (item) => item.warningCount !== 0
+      );
       const hasErrors = lintResultList.some((item) => item.errorCount !== 0);
       const result = formatter.format(lintResultList);
 
