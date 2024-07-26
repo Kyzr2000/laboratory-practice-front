@@ -2,7 +2,7 @@ import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from '@apollo/
 import { print } from 'graphql';
 import jwt_decode from 'jwt-decode';
 
-const httpLink = new HttpLink({ uri: 'http://localhost:7001/graphql' });
+const httpLink = new HttpLink({ uri: 'http://localhost:3001/graphql' });
 interface Decoded {
   exp: number;
 }
@@ -17,7 +17,7 @@ const RefreshToken = gql`
 `;
 // 判断是否在登录或注册 如果登录注册则不需要加请求头
 const requestURL = ['/', '/login'];
-let isInclude = requestURL.includes(window.location.pathname);
+const isInclude = requestURL.includes(window.location.pathname);
 
 const authLink = new ApolloLink((operation, forward) => {
   // 获取现有的token
@@ -55,7 +55,7 @@ const refreshAuthToken = async () => {
       // 如果refreshtoken没过期
       // 查询 refreshToken
       const query = print(RefreshToken);
-      const response = await fetch('http://localhost:7001/graphql', {
+      const response = await fetch('http://localhost:3001/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,6 +76,7 @@ const refreshAuthToken = async () => {
     }
   }
 };
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const errorLink = new ApolloLink((operation, forward) => {
   if (isInclude) {
@@ -124,7 +125,7 @@ const refresh = async () => {
     }
 
     const query = print(RefreshToken);
-    await fetch('http://localhost:7001/graphql', {
+    await fetch('http://localhost:3001/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

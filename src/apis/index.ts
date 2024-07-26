@@ -263,3 +263,88 @@ export const DELETE_QUESITON_DATA = gql`
     }
   }
 `;
+// 登录
+export const LOGIN_MUTATION = gql`
+  mutation Login($data: LoginInput!) {
+    login(data: $data) {
+      accessToken
+      refreshToken
+      user {
+        username
+        role
+      }
+    }
+  }
+`;
+// 注册
+export const REGISTER_MUTATION = gql`
+  mutation Signup($data: SignupInput!) {
+    signup(data: $data) {
+      accessToken
+      refreshToken
+      user {
+        username
+        role
+      }
+    }
+  }
+`;
+// 查询所有用户
+export const USERS_QUERY = gql`
+  query GetAllUsers {
+    getAllUsers {
+      users {
+        id
+        username
+        realname
+        gender
+        age
+        isEnable
+        isAdmin
+      }
+      total
+    }
+  }
+`;
+// 添加用户
+export const USER_ADD = gql`
+  mutation CreateUser($data: CreateUserInput!) {
+    createUser(data: $data) {
+      id
+      username
+      realname
+      gender
+      age
+      isEnable
+      role
+      isAdmin
+    }
+  }
+`;
+// 修改用户
+export const USER_UPDATE = gql`
+  mutation UpdateUser($updateUserData: UpdateUserInput!) {
+    updateUser(updateUserData: $updateUserData) {
+      user {
+        id
+        username
+        realname
+        gender
+        age
+        isEnable
+        role
+        isAdmin
+      }
+      message
+    }
+  }
+`;
+// 删除用户
+export const USER_DELETE = gql`
+  mutation DeleteUser($id: Int!) {
+    deleteUser(id: $id) {
+      message
+      result
+    }
+  }
+`;
