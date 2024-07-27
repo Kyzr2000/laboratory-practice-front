@@ -68,3 +68,38 @@ export const UpdateDiagnostic = gql`
     }
   }
 `;
+
+export const ADD_USER = gql`
+  mutation CreateUser($createUserInput: CreateUserInput!) {
+    createUser(createUserInput: $createUserInput) {
+      username
+      realname
+      gender
+      age
+      isEnable
+      uuid
+      role
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const UpdateUser = gql`
+  mutation UpdateUser($username: String!, $data: UpdateUserInput!) {
+    updateUser(username: $username, data: $data) {
+      username
+      realname
+      gender
+      age
+      isEnable
+      updatedAt
+    }
+  }
+`;
+export const DelUser = gql`
+  mutation DelUser($username: String!) {
+    delUser(username: $username) {
+      role
+    }
+  }
+`;

@@ -1,0 +1,224 @@
+.Submit-btn {
+    background: linear-gradient(153deg, #20a89c 0%, #16a2a0 34%, #0497a8 100%);
+    transition: box-shadow 0.3s;
+    line-height: 1.75px;
+    height: 36.5px;
+    width: 90px;
+    color: white !important;
+    box-shadow: 2px 2px 8px #5d646c !important;
+    border: none;
+}
+
+.Submit-btn:hover {
+    background: linear-gradient(153deg, #20a89c 0%, #16a2a0 34%, #0497a8 100%) !important;
+    border-color: transparent;
+    transition: 0.5s;
+    box-shadow: 2px 2px 8px #1a1a1a !important;
+}
+
+.Update-Input {
+    box-shadow:none;
+    border-color: none !important;
+    outline: #1a1a1a !important;
+}
+
+.Update-Input:focus {
+    border-color: #1a1a1a;
+    box-shadow:none;
+}
+
+.Update-Input:hover {
+    transition: 0.3s;
+    box-shadow:none;
+    border-color: #1a1a1a;
+    outline: #1a1a1a !important;
+}
+
+
+.User-Information-Ctrl {
+    text-align: center;
+
+    .User-Search-Input {
+        margin-top: 10px;
+        margin-left: 20px;
+
+        .Username-Input {
+            margin-right: 10px;
+            color: #1a1a1a;
+
+            .Search-Username {
+                font-size: 18px;
+                box-shadow: none;
+                border-color: none;
+                outline: #1a1a1a !important;
+            }
+
+            .Search-Username:focus {
+                border-color: #1a1a1a;
+            }
+
+            .Search-Username:hover {
+                transition: 0.3s;
+                border-color: #1a1a1a;
+                outline: #1a1a1a !important;
+            }
+
+        }
+
+        .Search-Realname {
+            box-shadow: none;
+            border-color: none;
+            outline: none;
+        }
+
+        .Search-Realname:focus {
+            border-color: #1a1a1a;
+        }
+
+        .Search-Realname:hover {
+            transition: 0.3s;
+            border-color: #1a1a1a;
+        }
+
+        .User-Input {
+            margin-right: 10px;
+
+            .Search-Realname {
+                font-size: 18px;
+            }
+        }
+
+        .SearchButton {
+            background: linear-gradient(153deg, #20a89c 0%, #16a2a0 34%, #0497a8 100%);
+            line-height: 1.75px;
+            height: 36.5px;
+            width: 90px;
+            transition: box-shadow 0.3s;
+            box-shadow: 2px 2px 8px #5d646c;
+        }
+
+        .SearchButton:hover {
+            background: linear-gradient(153deg, #20a89c 0%, #16a2a0 34%, #0497a8 100%) !important;
+            transition: 0.5s;
+            box-shadow: 2px 2px 8px #1a1a1a;
+        }
+
+        ant-btn css-dev-only-do-not-override-11xg00t ant-btn-primary {
+            background-color: aqua;
+        }
+    }
+
+    .Add-User {
+        position: absolute;
+        right: 40px;
+        top: 100px;
+        color:white;
+
+        .AddNewUserButton {
+            background: linear-gradient(153deg, #20a89c 0%, #16a2a0 34%, #0497a8 100%);
+            transition: box-shadow 0.3s;
+            line-height: 1.75px;
+            height: 36.5px;
+            width: 90px;
+            color: white !important;
+            box-shadow: 2px 2px 8px #5d646c !important;
+            border: none;
+        }
+
+        .AddNewUserButton:hover {
+        background: linear-gradient(153deg, #20a89c 0%, #16a2a0 34%, #0497a8 100%) !important;
+        border-color: transparent;
+        transition: 0.5s;
+        box-shadow: 2px 2px 8px #1a1a1a !important;
+        }
+
+        ant-btn css-dev-only-do-not-override-11xg00t ant-btn-primary {
+        background-color: aqua;
+        }
+    }
+
+    .User-Information-Show {
+        text-align: center;
+
+        .User-Delete-btn:hover {
+            border-color: #1CA49C;
+            color: #1CA49C;
+        }
+
+        .User-Update-btn:hover {
+            border-color: #1CA49C;
+            color: #1CA49C;
+        }
+    }
+
+    .Operator > button {
+        margin-right: 20px;
+    }
+
+}
+
+.ant-table-thead {
+    background: #8d9c9e !important;
+    text-align: center;
+}
+
+.ant-table-cell {
+    display: table-cell;
+    text-align: center;
+}
+
+
+
+:where(.css-dev-only-do-not-override-11xg00t).ant-table-wrapper .ant-table-thead > tr > th {
+background-color: #e2e6e7 !important;
+}
+
+:where(.css-dev-only-do-not-override-11xg00t).ant-pagination .ant-pagination-item-active a {
+    color: #1a1a1a;
+}
+
+:where(.css-dev-only-do-not-override-11xg00t).ant-pagination .ant-pagination-item-active a:hover {
+    color: #1a1a1a;
+}
+
+:where(.css-dev-only-do-not-override-11xg00t).ant-pagination .ant-pagination-item-active {
+    border-color: gray;
+    background-color: #ebebeb;
+    transition: 0.3s;
+}
+
+:where(.css-dev-only-do-not-override-11xg00t).ant-pagination .ant-pagination-item-active:focus {
+    border-color: gray;
+    background-color: #e0e0e0;
+    transition: 0.3s;
+}
+
+:where(.css-dev-only-do-not-override-11xg00t).ant-pagination .ant-pagination-item-active:hover {
+    border-color: gray;
+    background-color: #e0e0e0;
+    transition: 0.3s;
+}
+
+:where(.css-dev-only-do-not-override-11xg00t).ant-pagination .ant-pagination-options-quick-jumper input:hover {
+    border-color: #1CA49C;
+}
+
+:where(.css-dev-only-do-not-override-11xg00t).ant-pagination .ant-pagination-options-quick-jumper input:focus {
+    border-color: #1CA49C;
+}
+
+.ant-select-selector:hover {
+    border-color: #1A1A1A !important;
+    box-shadow:none;
+}
+
+.ant-select-selector:focus {
+    border-color: #1A1A1A !important;
+    box-shadow:none;
+}
+
+.ant-select-focused .ant-select-selector {
+    border-color: #1A1A1A !important;
+    box-shadow: none !important;
+}
+
