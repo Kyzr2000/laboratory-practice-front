@@ -1,0 +1,25 @@
+.ant-table-thead > tr > th {
+  background-color: green;
+}
+
+.select-style {
+  width: 200px;
+}
+
+.Body-table {
+  margin-top: 30px;
+}
+
+.custom-header-class {
+  background-color: #12961d;
+}
+
+th.custom-header {
+  background-color: #8e9491 !important;
+  color: #1c8a9b !important;
+  border: none;
+}
+
+.ant-table-cell::before {
+  display: none;
+}

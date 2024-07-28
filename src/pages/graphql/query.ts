@@ -66,3 +66,20 @@ export const Departments = gql`
     }
   }
 `;
+export const Users = gql`
+  query Me($data: GetUserBaseInformationTableData!) {
+    getUserBaseInformationList(data: $data) {
+      id
+      age
+      gender
+      username
+      realname
+      isEnable
+    }
+  }
+`;
+export const Users_count = gql`
+  query Query($data: GetUserBaseInformationTableData!) {
+    userTotalCount(data: $data)
+  }
+`;

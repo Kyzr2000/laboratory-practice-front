@@ -68,3 +68,28 @@ export const UpdateDiagnostic = gql`
     }
   }
 `;
+export const AddUser = gql`
+  mutation Mutation($data: AddUserInput!) {
+    addUser(data: $data) {
+      id
+      realname
+      username
+    }
+  }
+`;
+export const DelUser = gql`
+  mutation Mutation($delUserId: Int!) {
+    delUser(id: $delUserId) {
+      message
+      result
+    }
+  }
+`;
+export const UpdateUser = gql`
+  mutation UpdateUser($data: UpdateUserInput!, $userId: Int) {
+    updateUser(data: $data, userId: $userId) {
+      message
+      result
+    }
+  }
+`;
