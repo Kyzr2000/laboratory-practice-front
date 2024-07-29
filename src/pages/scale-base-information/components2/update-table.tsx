@@ -71,7 +71,6 @@ export const UpdateTable: React.FC = () => {
 
 
         }
-
         setModalVisible(false);
     };
 

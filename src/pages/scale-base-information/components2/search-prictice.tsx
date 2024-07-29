@@ -19,24 +19,7 @@ const SearchForm: React.FC = () => {
 
   return (
     <Space wrap size="middle" style={{ marginLeft: 36, marginTop: 20 }}>
-      <Input
-        placeholder="请输入账号"
-        style={{ width: 200, height: 40, fontSize: 17, textAlign: 'center' }}
-        onChange={(e) => setAccountInput(e.target.value)}
-      />
-      <Button
-        type="primary"
-        style={{
-          height: 40,
-          width: 100,
-          display: 'flex',
-          alignItems: 'center',
-        }}
-        onClick={handleSearch}
-      >
-        查询
-      </Button>
-      <Select
+       <Select
         showSearch
         placeholder="全部"
         style={{ width: 200, height: 40, fontSize: 17, textAlign: 'center' }}
@@ -50,6 +33,26 @@ const SearchForm: React.FC = () => {
         ]}
         onChange={handleSelect}
       />
+      <Input
+        placeholder="请输入账号"
+        style={{ width: 200, height: 40, fontSize: 17, textAlign: 'center' }}
+        onChange={(e) => setAccountInput(e.target.value)}
+      />
+      <Button
+        type="primary"
+        style={{
+          height: 40,
+          width: 100,
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: 'green',
+          borderColor: 'green'
+        }}
+        onClick={handleSearch}
+      >
+        查询
+      </Button>
+     
     </Space>
   );
 };

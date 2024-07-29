@@ -32,11 +32,6 @@ export const usersAtom = atom<DataType[]>({
     default: []
 });
 
-export const usersAll = atom<DataType[]>({
-    key: 'usersAll',
-    default: []
-});
-
 export const selectState = atom<string>({
     key: 'selectState',
     default: 'All'

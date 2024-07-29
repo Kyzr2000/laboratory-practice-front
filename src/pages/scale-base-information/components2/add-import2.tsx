@@ -3,7 +3,7 @@ import { Button, Col, Form, Input, InputNumber, Modal, Row, Select, Space } from
 import React, { useState } from 'react';
 
 import type { DataType } from './atom/UsersManagement';
-import { GET_USERS_ALL } from './table-select';
+import { GET_MANAGEMENT } from './table-select';
 
 const CREATE_USER = gql`
   mutation CreateUser($creat:CreateManagementDTO!){
@@ -30,7 +30,7 @@ const AddAndImport2: React.FC = () => {
 
       await createUser({
         variables: { creat: { account, name, age: newAge, gender, is_enabled } },
-        refetchQueries: [{ query: GET_USERS_ALL }]
+        refetchQueries: [{ query: GET_MANAGEMENT }]
       });
     }
     setModalVisible(false);
