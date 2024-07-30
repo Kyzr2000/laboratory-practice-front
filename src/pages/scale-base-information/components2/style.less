@@ -1,55 +1,118 @@
 .container-all {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 #header-left-entrt {
-
 }
 
 .select-box {
-    display: flex;
-    flex-grow: 1;
-    width: 170px;
-    height: 40px;
+  display: flex;
+  flex-grow: 1;
+  width: 170px;
+  height: 40px;
+}
+
+/* custom.css */
+.select-box:hover .ant-select-selector {
+  border-color: #20a89d;
+}
+
+.select-box.ant-select-focused .ant-select-selector {
+  border-color: #20a89d;
 }
 
 .input-box {
-    display: flex;
-    flex-grow: 1;
-    width: 170px;
-    height: 40px;
+  display: flex;
+  flex-grow: 1;
+  width: 170px;
+  height: 40px;
 }
 
 .add-modal-box {
-    text-align: right;
+  text-align: right;
 }
 
 .button-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 1;
-    width: 90px;
-    height: 40px;
-    font-size:105%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  width: 90px;
+  height: 40px;
+  font-size: 105%;
+  background-color: #20a89d;
+}
+
+.button-box1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  width: 90px;
+  height: 40px;
+  font-size: 105%;
+  background-color: #fff;
+  color: black;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+
+  &:hover {
+    background: #f6fcfb;
+  }
+
+  .button-box1-icon {
+    margin-right: 4px;
+  }
+}
+
+/* 列名表头 */
+.columns-name {
+  display: flex;
+  place-content: center center;
+  color: #038a97;
+  height: 40px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: -10px;
+  margin-right: -10px;
+}
+
+.centered-column {
+  text-align: center;
+  font-size: 14px;
 }
 
 #table-entry {
-    display: flex;
-    flex-grow: 1;
-    margin-top: 35px;
+  display: flex;
+  flex-grow: 1;
+  margin-top: 35px;
 }
 
 #table-entry .button-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 1;
-    width: 60px;
-    height: 30px;
-    font-size:95%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  width: 60px;
+  height: 30px;
+  font-size: 95%;
 }
 
 #table-entry .buttons-box {
-    margin-right: -30px;
+  margin-right: -30px;
+}
+
+.ant-pagination-item {
+  &:hover {
+    border-color: #20a89d; /* 鼠标悬停时的边框颜色 */
+  }
+}
+
+.ant-pagination-item-active {
+  border-color: #20a89d; /* 激活状态时的边框颜色 */
+}
+
+.ant-pagination-item-active a {
+  color: #20a89d; /* 激活状态时的文本颜色 */
 }

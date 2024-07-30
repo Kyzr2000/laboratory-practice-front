@@ -37,9 +37,11 @@ const TableEdit: React.FC<{record: PeopleType}> = ({ record }) => {
 
             <Modal
                 open={open}
-                title={<h2>编辑用户信息</h2>}
+                title={<h2 style={{ color: '#008000', marginTop:'-0px'}}>
+                    编辑用户信息</h2>}
                 okText="确认"
-                footer={[<Button key="submit" type="primary" onClick={handleOk}>
+                footer={[<Button key="submit" type="primary" onClick={handleOk}
+                    style={{ backgroundColor: '#20a89d' }}>
                     确认
                 </Button>]}
                 cancelText="取消"

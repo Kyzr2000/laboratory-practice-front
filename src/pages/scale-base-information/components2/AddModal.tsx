@@ -1,4 +1,6 @@
-import { EditFilled } from '@ant-design/icons';
+import '../components2/style.less';
+
+import { UserAddOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
 import React from 'react';
 
@@ -28,15 +30,17 @@ const AddModal: React.FC = () => {
 
     return (
         <>
-            <Button className="button-box" onClick={showLoading}
-                type="primary" icon={<EditFilled />} size={'large'}>
-                新增用户
+            <Button className="button-box1" onClick={showLoading}
+                type="primary" icon={<UserAddOutlined className='button-box1-icon' />}
+                size={'large'}>
+                新增
             </Button>
             <Modal
-                title={<h2>添加用户信息</h2>}
+                title={<h2 style={{ color: '#008000', marginTop: '-0px' }}>添加用户信息</h2>}
                 footer={
-                    <Button type="primary" onClick={showLoading}>
-                        Reload
+                    <Button type="primary" onClick={showLoading}
+                        style={{ backgroundColor: '#20a89d' }}>
+                        刷新
                     </Button>
                 }
                 loading={loading}

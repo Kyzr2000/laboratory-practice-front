@@ -52,15 +52,6 @@ const EditModalForm: React.FC<{
             onFill(record);
         }, [onFill, record]);
 
-        const onGenderChange = (value: string) => {
-            switch (value) {
-                case 'male':
-                    break;
-                case 'female':
-                    break;
-                default:
-            }
-        };
 
         const onFinish: FormProps<PeopleUpdateType>['onFinish'] = (values: PeopleUpdateType) => {
             console.log('Success:', values);
@@ -74,13 +65,16 @@ const EditModalForm: React.FC<{
             if (setStatus) setStatus(false);
         };
 
+
         const onFinishFailed: FormProps<PeopleUpdateType>['onFinishFailed'] = (errorInfo) => {
             console.log('Failed', errorInfo);
         };
 
+
         const onReset = () => {
             form.resetFields();
         };
+
 
         const showLoading = () => {
             if (setLoading) {
@@ -92,6 +86,7 @@ const EditModalForm: React.FC<{
                 }, 1000);
             }
         };
+
 
         return (
             <Form
@@ -108,7 +103,7 @@ const EditModalForm: React.FC<{
                     rules={[{ required: true, message: '请输入状态！' }]}>
                     <Select
                         placeholder="Select a status and change input text above"
-                        onChange={onGenderChange}
+                        // onChange={onGenderChange}
                         allowClear
                     >
                         {OptionsStateList1.map((item: OptionItemType, index) => {
@@ -120,7 +115,7 @@ const EditModalForm: React.FC<{
                 {/* 原账户输入字段 */}
                 <Form.Item name="account" label="原账号"
                     rules={[{ required: true, message: '请输入账号！' }]}>
-                    <Input defaultValue={record.account} readOnly/>
+                    <Input defaultValue={record.account} readOnly />
                 </Form.Item>
 
                 {/* 新账户输入字段 */}
@@ -140,7 +135,7 @@ const EditModalForm: React.FC<{
                     rules={[{ required: false, message: '请输入性别！' }]}>
                     <Select
                         placeholder="Select a option and change input text above"
-                        onChange={onGenderChange}
+                        // onChange={onGenderChange}
                         allowClear
                     >
                         <Option value="male">male</Option>
@@ -154,28 +149,19 @@ const EditModalForm: React.FC<{
                     <Input />
                 </Form.Item>
 
-                {/* <Form.Item
-                    noStyle
-                    shouldUpdate={(prevValues, currentValues) =>
-                        prevValues.gender !== currentValues.gender}
-                >
-                    {({ getFieldValue }) =>
-                        getFieldValue('gender') === 'other' ? (
-                            <Form.Item name="customizeGender"
-                                label="Customize Gender" rules={[{ required: true }]}>
-                                <Input />
-                            </Form.Item>
-                        ) : null
-                    }
-                </Form.Item> */}
-
                 <Form.Item {...tailLayout}>
                     <Space size={'large'}>
-                        <Button type="primary" htmlType="submit" >
-                            Submit
+                        <Button type="primary" htmlType="submit"
+                            style={{ backgroundColor: '#20a89d' }}>
+                            提交
                         </Button>
-                        <Button htmlType="button" onClick={onReset}>
-                            Reset
+                        <Button htmlType="button" onClick={onReset}
+                            style={{
+                                backgroundColor: '#20a89d',
+                                color: 'white',
+                                fontWeight: 'initial'
+                            }}>
+                            重置
                         </Button>
                         {/* <Button type="link" htmlType="button" onClick={onFill}>
                             Fill form

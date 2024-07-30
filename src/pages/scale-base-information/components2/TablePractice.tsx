@@ -1,3 +1,5 @@
+import '../components2/style.less';
+
 import { useQuery } from '@apollo/client';
 import type { TableColumnsType } from 'antd';
 import { Col, Space, Table } from 'antd';
@@ -17,10 +19,15 @@ const TablePractice: React.FC = () => {
 
     // 获取gql查询到的数据
     const { data, error, loading } = useQuery(GET_PEOPLE);
+    console.log(data);
+
     const setTableData = useSetRecoilState(TableDataState);
     const tableDataFiltered = useRecoilValue(TableDataFilterState_2);
     const [peopleName, setPeopleName] = useState<NameType[]>([]);
+    
     const optionList = useRecoilValue(OptionsState);
+    
+    // 
     const [currentPage, setCurrentPage] = useState(1); // 用于记录当前页码
     const [pageSize, setPageSize] = useState(10);  // 每页显示条数
 
@@ -33,7 +40,7 @@ const TablePractice: React.FC = () => {
     };
 
     // 序号列的渲染逻辑
-    const renderSerialNumber = (_, __, index: number) => {
+    const renderSerialNumber = (_: undefined, __: PeopleType, index: number) => {
         return (currentPage - 1) * pageSize + index + 1;
     };
 
@@ -43,14 +50,17 @@ const TablePractice: React.FC = () => {
     //     value: item.label,
     // }));
 
+    
     // 使用 useCallback 包装 setTableData
     const memorizedSetTableData = useCallback((peopleData: PeopleType[]) => {
         setTableData(peopleData);
     }, [setTableData]);
 
+
     const memorizedSetPeopleNameData = useCallback((peopleNameData: NameType[]) => {
         setPeopleName(peopleNameData);
     }, [setPeopleName]);
+
 
     /*
         `useEffect`钩子用于在函数组件中执行副作用，例如数据获取、订阅、或手动操作DOM等。
@@ -93,19 +103,22 @@ const TablePractice: React.FC = () => {
     if (error) return <p>Error: {error.message}</p>;
     if (loading) return <p>Loading...</p>;
 
+    // 定义统一的列宽
+    const commonWidth = 120;  
 
     // 定义列
     const columns: TableColumnsType<PeopleType> = [
         {
-            title: '序号',
+            title: <span className='columns-name'>序号</span>,
             dataIndex: 'serial_number',
             key: 'serial_number',
             sorter: (a, b) => a.id - b.id,
             render: renderSerialNumber,
-            width: 80,
+            width: commonWidth,
+            className: 'centered-column', 
         },
         {
-            title: '账号',
+            title: <span className='columns-name'>账号</span>,
             dataIndex: 'account',
             key: 'account',
             sorter: (a, b) => a.account.localeCompare(b.account),
@@ -121,39 +134,47 @@ const TablePractice: React.FC = () => {
                 // 可以添加更多账号筛选项
             ],
             onFilter: (value, record) => record.account === value,
+            width: commonWidth,
+            className: 'centered-column', 
         },
         {
-            title: '姓名',
+            title: <span className='columns-name'>姓名</span>,
             dataIndex: 'name',
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
             filters: peopleName,
             onFilter: (value, record) => record.name === value,
+            width: commonWidth,
+            className: 'centered-column', 
         },
         {
-            title: '性别',
+            title: <span className='columns-name'>性别</span>,
             dataIndex: 'gender',
             key: 'gender',
             filters: [
                 {
                     text: '男',
-                    value: 'male',
+                    value: '男',
                 },
                 {
                     text: '女',
-                    value: 'female',
+                    value: '女',
                 },
             ],
             onFilter: (value, record) => record.gender === value,
+            width: commonWidth,
+            className: 'centered-column', 
         },
         {
-            title: '年龄',
+            title: <span className='columns-name'>年龄</span>,
             dataIndex: 'age',
             key: 'age',
             sorter: (a, b) => a.age - b.age,
+            width: commonWidth,
+            className: 'centered-column', 
         },
         {
-            title: '状态',
+            title: <span className='columns-name'>状态</span>,
             dataIndex: 'is_enabled',
             key: 'is_enabled',
             filters: optionList.map((item: OptionItemType) => ({
@@ -163,9 +184,11 @@ const TablePractice: React.FC = () => {
             onFilter: (value, record) => record.is_enabled === value,
             render: value => value,
             // render: value => (value === true ? '启用' : '未启用'),
+            width: commonWidth,
+            className: 'centered-column', 
         },
         {
-            title: '操作',
+            title: <span className='columns-name'>操作</span>,
             key: 'operation',
             render: (record: PeopleType) => (
                 <div className='buttons-box'>
@@ -175,6 +198,8 @@ const TablePractice: React.FC = () => {
                     </Space>
                 </div>
             ),
+            width: commonWidth,
+            className: 'centered-column', 
         },
     ];
 
@@ -186,11 +211,13 @@ const TablePractice: React.FC = () => {
                 dataSource={tableDataFiltered}
                 rowKey={(record) => record.id}
                 pagination={{
-                    current: currentPage,
-                    pageSize: pageSize,
-                    total: data ? data.getPeople.length : 0,
+                    current: currentPage,  // 当前页数
+                    pageSize: pageSize, // 每页展示条目数
+                    // total: data ? data.getPeople.length : 0,
+                    total: tableDataFiltered ? tableDataFiltered.length : 0,
                     // 假设数据已加载，使用数据长度作为总数
                     onChange: onTableChange, // 绑定分页变化的回调函数
+                    className: 'ant-pagination-item',
                 }} // 设置默认每页显示条数
             />
         </Col>

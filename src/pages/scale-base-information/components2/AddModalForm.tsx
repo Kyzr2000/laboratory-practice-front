@@ -2,13 +2,13 @@ import { useMutation } from '@apollo/client';
 import type { FormProps } from 'antd';
 import { Button, Form, Input, Select, Space } from 'antd';
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 
+// import { useRecoilValue } from 'recoil';
 import { CREATE_PERSON, GET_PEOPLE } from '@/pages/graphql/people.graphql';
 
 import type { PeopleAddType } from './Atom/InterfaceState';
-import type { OptionItemType } from './Atom/InterfaceState';
-import { OptionsState } from './Atom/OptionsState';
+// import type { OptionItemType } from './Atom/InterfaceState';
+// import { OptionsState } from './Atom/OptionsState';
 
 const { Option } = Select;
 
@@ -27,22 +27,22 @@ const AddModalForm: React.FC<{
 }>
     = ({ setStatus, setLoading }) => {
         const [form] = Form.useForm();
-        const OptionsStateList = useRecoilValue(OptionsState);
-        const OptionsStateList1 = OptionsStateList.slice(1);
+        // const OptionsStateList = useRecoilValue(OptionsState);
+        // const OptionsStateList1 = OptionsStateList.slice(1);
 
         const [createPerson] = useMutation(CREATE_PERSON, {
             refetchQueries: [{ query: GET_PEOPLE }]
         });
 
-        const onGenderChange = (value: string) => {
-            switch (value) {
-                case 'male':
-                    break;
-                case 'female':
-                    break;
-                default:
-            }
-        };
+        // const onGenderChange = (value: string) => {
+        //     switch (value) {
+        //         case 'male':
+        //             break;
+        //         case 'female':
+        //             break;
+        //         default:
+        //     }
+        // };
 
         const onFinish: FormProps<PeopleAddType>['onFinish'] = (values: PeopleAddType) => {
             console.log('Success:', values);
@@ -87,20 +87,22 @@ const AddModalForm: React.FC<{
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 style={{ maxWidth: 600 }}
+                
             >
 
                 {/* 状态输入字段 */}
                 <Form.Item name="is_enabled" label="状态"
                     rules={[{ required: true, message: '请输入状态！' }]}>
-                    <Select
-                        placeholder="Select a status and change input text above"
+                    {/* <Select
+                        placeholder="请选择您的状态！"
                         onChange={onGenderChange}
                         allowClear
                     >
                         {OptionsStateList1.map((item: OptionItemType, index) => {
                             return <option key={index} value={item.value}>{item.value}</option>;
                         })}
-                    </Select>
+                    </Select> */}
+                    <Input placeholder='请输入您的状态！' allowClear   />
                 </Form.Item>
 
                 {/* 账户输入字段 */}
@@ -119,12 +121,12 @@ const AddModalForm: React.FC<{
                 <Form.Item name="gender" label="性别"
                     rules={[{ required: false, message: '请输入性别！' }]}>
                     <Select
-                        placeholder="Select a option and change input text above"
-                        onChange={onGenderChange}
+                        placeholder="请选择您的性别！"
+                        // onChange={onGenderChange}
                         allowClear
                     >
-                        <Option value="male">male</Option>
-                        <Option value="female">female</Option>
+                        <Option value="男">男</Option>
+                        <Option value="女">女</Option>
                     </Select>
                 </Form.Item>
 
@@ -150,11 +152,13 @@ const AddModalForm: React.FC<{
 
                 <Form.Item {...tailLayout}>
                     <Space size={'large'}>
-                        <Button type="primary" htmlType="submit">
-                            Submit
+                        <Button type="primary" htmlType="submit"
+                            style={{ backgroundColor: '#20a89d' }}>
+                            提交
                         </Button>
-                        <Button htmlType="button" onClick={onReset}>
-                            Reset
+                        <Button htmlType="button" onClick={onReset}
+                            style={{ backgroundColor: '#20a89d', color:'white' }}>
+                            重置
                         </Button>
                         {/* <Button type="link" htmlType="button" onClick={onFill}>
                             Fill form

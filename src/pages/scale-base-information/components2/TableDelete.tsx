@@ -15,13 +15,28 @@ const TableDelete: React.FC<{ record: PeopleType }> = ({ record }) => {
     const confirm = () => {
 
         modal.confirm({
-            title: <h2><ExclamationCircleOutlined style={{ color: 'red' }} /> 删除用户信息</h2>,
+            title: <h2 style={{ color: '#008000', marginTop: '-0px' }}>
+                <ExclamationCircleOutlined style={{ color: 'red' }} /> 删除用户信息</h2>,
             icon: <ExclamationCircleOutlined style={{ display: 'none' }} />,
             content: <h3>您确定要删除用户({record.account})的信息吗?</h3>,
             okText: '确认',
             cancelText: '取消',
             onOk() {
                 handleDeletePerson(record);
+            },
+            okButtonProps: {
+                style:{
+                    backgroundColor: '#20a89d',
+                    color: 'white',
+                    fontWeight: 'initial',
+                }
+            },
+            cancelButtonProps: {
+                style: {
+                    backgroundColor: '#20a89d',
+                    color: 'white',
+                    fontWeight: 'initial',
+                }
             }
         });
     };
