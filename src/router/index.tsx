@@ -28,6 +28,7 @@ const routeConfig: routerConfigType[] = [
       },
     ],
   },
+
   {
     path: 'index',
     auth: ['USER', 'ADMIN', 'DIRECTIOR', 'DOCTOR'],

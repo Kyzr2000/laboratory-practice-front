@@ -1,0 +1,15 @@
+.Css .ant-table-thead .ant-table-cell {
+  background-color: rgb(141 156 158 / 25%); /* 更改表头背景颜色 */
+  color: #038a97; /* 更改表头文字颜色 */
+  font-weight: bold; /* 更改表头字体加粗 */
+}
+
+.Primary {
+  background-color: rgb(141 156 158 / 25%);
+  color: #038a97;
+}
+
+.Delete {
+  background-color: rgb(253 6 6 / 25%);
+  color: #038a97;
+}
