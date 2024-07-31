@@ -161,8 +161,8 @@ const UserInformation = ({ usertotal }: { usertotal: number }) => {
   });
 
   function onTableChange(newpagenation: TablePaginationConfig) {
-    console.log(newpagenation);
     setpagenation(newpagenation);
+    console.log(newpagenation);
   }
   function onDeleteSuccess() {
     setpagenation(pagenation);
@@ -177,12 +177,12 @@ const UserInformation = ({ usertotal }: { usertotal: number }) => {
   }
   function onAddSuccess() {
     setaddopen(false);
-    refetch();
     refetchTwo();
     setpagenation({
       ...pagenation,
       total: dataTwo.userTotalCount,
     });
+    refetch();
     console.log(dataTwo.userTotalCount);
   }
   function onAddCancel() {

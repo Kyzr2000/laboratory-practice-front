@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client';
 import { Assessment, ExpandLess, ExpandMore, Settings } from '@mui/icons-material';
 import {
   AppBar,
@@ -19,6 +20,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
+import { Users_count } from '../graphql/query';
 import BaseInformation from '../scale-base-information';
 import UserInformation from '../user-information';
 
@@ -44,11 +46,25 @@ const menuItems: MenuItem[] = [
   {
     text: '基础设置（练习）',
     icon: <Settings />,
-    submenus: [{ text: '用户管理', component: <UserInformation usertotal={30} /> }],
+    submenus: [{ text: '用户管理' }],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
 ];
 export const Sidebar: React.FC = () => {
+  const { data } = useQuery(Users_count, {
+    variables: {
+      data: {
+        username: '',
+        realname: '',
+        currentPage: 1,
+        pageNumber: 10,
+      },
+    },
+  });
+  let userTotal = 0;
+  if (data && data.userTotalCount) {
+    userTotal = data.userTotalCount;
+  }
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [activeSubMenuIndex, setActiveSubMenuIndex] = useState<number | null>(null);
   const [userMenu, setUserMenu] = useState<boolean>(false);
@@ -58,7 +74,6 @@ export const Sidebar: React.FC = () => {
     setActiveSubMenuIndex(null);
     setActiveIndex(activeIndex === index ? null : index);
   };
-
   const handleSubMenuClick = (index: number) => {
     setActiveSubMenuIndex(index);
   };
@@ -116,6 +131,9 @@ export const Sidebar: React.FC = () => {
     }
     const activeMenuItem = menuItems[activeIndex!];
     const activeSubMenu = activeMenuItem.submenus![activeSubMenuIndex];
+    if (activeSubMenu.text === '用户管理') {
+      return <UserInformation usertotal={userTotal} />;
+    }
     return activeSubMenu.component;
   };
 

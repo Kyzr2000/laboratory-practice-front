@@ -10,7 +10,7 @@ interface DataType {
   realname: string;
   gender: number;
   age: number;
-  isEnable: boolean | undefined;
+  isEnable: boolean;
 }
 export default function Update_user({
   open,
