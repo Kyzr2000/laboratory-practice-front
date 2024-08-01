@@ -20,6 +20,7 @@ interface DataType {
   isEnable: boolean;
 }
 const UserInformation = ({ usertotal }: { usertotal: number }) => {
+  const [current, setCurrent] = useState(1);
   const columns: ColumnsType<DataType> = [
     {
       title: '序号',
@@ -27,7 +28,10 @@ const UserInformation = ({ usertotal }: { usertotal: number }) => {
       key: 'rowIndex',
       className: 'custom-header',
       align: 'center',
-      render: (_text, _record, index) => index + 1,
+      render: (_text, _record, index) => {
+        const startNo = (current - 1) * 10 + 1;
+        return startNo + index;
+      },
     },
     {
       title: '编号',
@@ -109,14 +113,14 @@ const UserInformation = ({ usertotal }: { usertotal: number }) => {
   const { data: dataTwo, refetch: refetchTwo } = useQuery(Users_count, {
     variables: {
       data: {
-        username,
-        realname,
+        realname: realname,
+        username: username,
         currentPage: 1,
         pageNumber: 10,
       },
     },
   });
-
+  const [usercount, setusercount] = useState(usertotal);
   const [userData, setuerData] = useState<DataType[]>([]);
   const [updateopen, setupdateopen] = useState(false);
   const [updateForm, setupdateForm] = useState({
@@ -147,7 +151,7 @@ const UserInformation = ({ usertotal }: { usertotal: number }) => {
   const [pagenation, setpagenation] = useState<TablePaginationConfig>({
     current: 1,
     pageSize: 10,
-    total: usertotal,
+    total: usercount,
   });
   const { data, refetch } = useQuery(Users, {
     variables: {
@@ -163,9 +167,15 @@ const UserInformation = ({ usertotal }: { usertotal: number }) => {
   function onTableChange(newpagenation: TablePaginationConfig) {
     setpagenation(newpagenation);
     console.log(newpagenation);
+    if (newpagenation.current) setCurrent(newpagenation.current);
   }
   function onDeleteSuccess() {
     setpagenation(pagenation);
+    refetchTwo();
+    setpagenation({
+      ...pagenation,
+      total: dataTwo.userTotalCount,
+    });
     refetch();
   }
   function onUpdateSuccess() {
@@ -183,15 +193,21 @@ const UserInformation = ({ usertotal }: { usertotal: number }) => {
       total: dataTwo.userTotalCount,
     });
     refetch();
-    console.log(dataTwo.userTotalCount);
   }
   function onAddCancel() {
     setaddopen(false);
   }
   function onSearch() {
+    setusercount(dataTwo.userTotalCount);
+    console.log(usercount);
+    setpagenation({
+      ...pagenation,
+      current: pagenation.current,
+      total: dataTwo.userTotalCount,
+    });
     setusername(username1);
     setrealname(realname1);
-    refetch();
+    console.log(pagenation.total);
   }
   useEffect(() => {
     async function getdata() {
