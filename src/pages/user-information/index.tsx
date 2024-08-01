@@ -4,7 +4,7 @@ import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useQuery } from '@apollo/client';
 import { Button, Col, Input, Row, Table } from 'antd';
 import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Users, Users_count } from '../graphql/query';
 import Add_user from './components/add_user';
@@ -209,17 +209,24 @@ const UserInformation = ({ usertotal }: { usertotal: number }) => {
     setrealname(realname1);
     console.log(pagenation.total);
   }
+  const pagenationRef = useRef(pagenation);
   useEffect(() => {
+    const currentPagenation = pagenationRef.current;
     async function getdata() {
       const userList = data.getUserBaseInformationList;
       if (Array.isArray(userList)) {
         setloading1(false);
         setuerData(userList);
       }
-      console.log(pagenation.current);
+      setpagenation({
+        ...currentPagenation,
+        total: dataTwo.userTotalCount,
+      });
+      console.log(currentPagenation.current);
     }
     getdata();
-  }, [pagenation, data, dataTwo]);
+  }, [data, dataTwo]);
+  pagenationRef.current = pagenation;
   return (
     <div style={{ position: 'relative', top: '20px' }}>
       <Update_user
