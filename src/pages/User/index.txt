@@ -1,0 +1,247 @@
+import "./index.css";
+
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { useMutation, useQuery } from "@apollo/client";
+import { EditOutlined, SearchOutlined } from "@mui/icons-material";
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Pagination,
+  Radio,
+  Select,
+  Space,
+  Table,
+} from "antd";
+import { useState } from "react";
+
+import { ADD_CONSUMER } from "../graphql/mutations";
+import { FIND_ALL } from "../graphql/query";
+
+const UserList = () => {
+  const [isShow, setIsShow] = useState<boolean>(false); // 控制modal显示和隐藏
+  const [username, setUsername] = useState<string>(""); // 控制用户名
+  const [nickname, setNickname] = useState<string>("");
+  const [gender, setGender] = useState<string>(""); // 控制性别
+  const [age, setAge] = useState<number | null>(); // 控制年龄
+  const [activate, setActivate] = useState<boolean>(false); // 控制是否启用
+
+  const [myForm] = Form.useForm(); // 可以获取表单元素的实例
+
+  const { data, loading, error } = useQuery(FIND_ALL); // 查询全部
+
+  const [addConsumer] = useMutation(ADD_CONSUMER);
+
+  const handleAge = (value: number | null) => {
+    setAge(value);
+    console.log(value);
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error:{error.message}</p>;
+
+  return (
+    <>
+      <Card
+        title="用户管理"
+        extra={
+          <>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setIsShow(true);
+              }}
+            />
+          </>
+        }
+      >
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Form
+            layout="inline"
+            onFinish={() => {
+              message.success("查询成功");
+            }}
+          >
+            <Form.Item label="账号">
+              <Input placeholder="请输入关键词" />
+            </Form.Item>
+            <Form.Item label="名字">
+              <Input placeholder="请输入关键词" />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                htmlType="submit"
+                type="primary"
+                icon={<SearchOutlined />}
+              />
+            </Form.Item>
+          </Form>
+          <Table
+            dataSource={data.findAll}
+            rowKey="id"
+            columns={[
+              {
+                title: "序号",
+                width: 80,
+                align: "center",
+                // render 方法中的 v、r、i 分别表示当前单元格的值、整行数据和当前行的索引。
+                render(v, r, i) {
+                  return <span>{i + 1}</span>;
+                },
+              },
+              {
+                title: "账号",
+                dataIndex: "username",
+                width: 80,
+                align: "center",
+              },
+              {
+                title: "姓名",
+                dataIndex: "nickname",
+                width: 80,
+                align: "center",
+              },
+              {
+                title: "性别",
+                dataIndex: "gender",
+                width: 80,
+                align: "center",
+              },
+              {
+                title: "年龄",
+                dataIndex: "age",
+                width: 80,
+                align: "center",
+              },
+              {
+                title: "是否启用",
+                dataIndex: "isEnable",
+                width: 80,
+                align: "center",
+                render() {
+                  return <Select defaultValue="1" style={{ width: "100%" }} />;
+                },
+              },
+              {
+                title: "操作",
+                width: 80,
+                align: "center",
+                render() {
+                  return (
+                    <Space>
+                      <Button type="primary" icon={<EditOutlined />} />
+                      <Button type="primary" icon={<DeleteOutlined />} danger />
+                    </Space>
+                  );
+                },
+              },
+            ]}
+          />
+        </Space>
+        <Pagination defaultCurrent={1} total={50} className="page-foot" />
+      </Card>
+      <Modal
+        title="编辑"
+        open={isShow}
+        // 点击遮罩层是不关闭
+        maskClosable={false}
+        onCancel={() => {
+          setIsShow(false);
+        }}
+        // 关闭modal的时候清除数据
+        destroyOnClose
+        onOk={() => {
+          // myForm.submit(); // 手动触发表单的提交事件
+          addConsumer({
+            variables: {
+              username: username,
+              nickname: nickname,
+              gender: gender,
+              age: age,
+              isEnable: activate,
+            },
+          });
+        }}
+      >
+        <Form
+          // 表单配合modal一起使用的时候，需要设置这个属性，要不然关了窗口之后不会清空数据
+          preserve={false}
+          // 提交表单
+          onFinish={(value) => {
+            message.success("保存成功");
+            console.log(value);
+          }}
+          // 使输入框对齐
+          labelCol={{ span: 3 }}
+          form={myForm}
+        >
+          <Form.Item
+            label="账号"
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: "请输入账号",
+              },
+            ]}
+          >
+            <Input
+              placeholder="请输入账号"
+              onChange={(event) => {
+                setUsername(event.target.value);
+              }}
+            />
+          </Form.Item>
+          <Form.Item label="姓名" name="name">
+            <Input
+              placeholder="请输入姓名"
+              onChange={(event) => {
+                setNickname(event.target.value);
+              }}
+            />
+          </Form.Item>
+          <Form.Item label="性别" name="gender">
+            <Radio.Group
+              onChange={(event) => {
+                setGender(event.target.value);
+                console.log(event.target.value);
+              }}
+              value={gender}
+            >
+              <Radio value="男">男</Radio>
+              <Radio value="女">女</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item label="年龄" name="age">
+            <InputNumber
+              min={1}
+              max={100}
+              placeholder="请输入年龄"
+              value={age}
+              onChange={handleAge}
+            />
+          </Form.Item>
+          <Form.Item label="是否启用" name="activate">
+            <Radio.Group
+              onChange={(event) => {
+                setActivate(event.target.value);
+                console.log(event.target.value);
+              }}
+              value={activate}
+            >
+              <Radio value={true}>是</Radio>
+              <Radio value={false}>否</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  );
+};
+
+export default UserList;

@@ -68,3 +68,44 @@ export const UpdateDiagnostic = gql`
     }
   }
 `;
+
+// 用户管理模块
+
+// 添加一个用户
+export const ADD_CONSUMER = gql`
+  mutation AddConsumer($createConsumerInput: CreateConsumerInput!) {
+    addConsumer(createConsumerInput: $createConsumerInput) {
+      username
+      nickname
+      gender
+      age
+      isEnable
+    }
+  }
+`;
+
+//  删除一个用户
+export const REMOVE_CONSUMER = gql`
+  mutation RemoveConsumer($id: Int!) {
+    removeConsumer(id: $id) {
+      username
+      nickname
+      gender
+      age
+      isEnable
+    }
+  }
+`;
+
+// 修改一个用户
+export const MODIFY_CONSUMER = gql`
+  mutation ModifyConsumer($id: Int!, $updateConsumerInput: UpdateConsumerInput!) {
+    modifyConsumer(id: $id, updateConsumerInput: $updateConsumerInput) {
+      username
+      nickname
+      gender
+      age
+      isEnable
+    }
+  }
+`;

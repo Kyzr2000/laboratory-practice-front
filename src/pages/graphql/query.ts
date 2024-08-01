@@ -66,3 +66,47 @@ export const Departments = gql`
     }
   }
 `;
+
+// 用户管理模块
+
+// 查找所有consumer数据
+export const FIND_ALL = gql`
+  query FindAll {
+    findAll {
+      id
+      username
+      nickname
+      gender
+      age
+      isEnable
+    }
+  }
+`;
+
+// 按id查询
+export const FIND_ONE = gql`
+  query FindOne($id: Int!) {
+    findOne(id: $id) {
+      id
+      username
+      nickname
+      gender
+      age
+      isEnable
+    }
+  }
+`;
+
+// 根据用户名和姓名进行模糊查询
+export const FIND_MANY = gql`
+  query FindManyByUsernameOrNickname($username: String, $nickname: String) {
+    findManyByUsernameOrNickname(username: $username, nickname: $nickname) {
+      id
+      username
+      nickname
+      gender
+      age
+      isEnable
+    }
+  }
+`;

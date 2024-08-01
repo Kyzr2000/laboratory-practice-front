@@ -16,13 +16,15 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
+    "@ant-design/pro-components": "^2.7.10",
     "@apollo/client": "^3.6.5",
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.8",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.3",
     "ahooks": "^3.3.8",
-    "antd": "^5.15.2",
+    "antd": "^5.19.1",
     "echarts": "^5.3.2",
     "framer-motion": "^10.12.8",
     "graphql": "^16.5.0",
@@ -32,7 +34,8 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
-    "recoil": "^0.7.3-alpha.2"
+    "recoil": "^0.7.3-alpha.2",
+    "umi-request": "^1.4.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
