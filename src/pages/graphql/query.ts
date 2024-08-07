@@ -71,8 +71,8 @@ export const Departments = gql`
 
 // 查找所有consumer数据
 export const FIND_ALL = gql`
-  query FindAll {
-    findAll {
+  query FindAll($pagination: PaginationArgs!) {
+    findAll(pagination: $pagination) {
       id
       username
       nickname
@@ -108,5 +108,10 @@ export const FIND_MANY = gql`
       age
       isEnable
     }
+  }
+`;
+export const FIND_COUNT = gql`
+  query {
+    findCount
   }
 `;

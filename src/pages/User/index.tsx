@@ -28,34 +28,40 @@ import {
 } from '@/store';
 
 import { ADD_CONSUMER, MODIFY_CONSUMER } from '../graphql/mutations';
-import { FIND_ALL, FIND_MANY } from '../graphql/query';
+import { FIND_ALL, FIND_COUNT, FIND_MANY } from '../graphql/query';
 // import AddConsumer from "./components/addConsumer";
 import RemoveConsumer from './components/removeConsumer';
 // import UpdateConsumer from './components/updateConsumer';
 
-export interface Customer {
-  id: string;
-  // username: string;
-  // nickname: string;
-  // gender: string;
-  // age: number;
-  // isEnable: boolean;
-}
+// export interface Customer {
+//   id: string;
+//   // username: string;
+//   // nickname: string;
+//   // gender: string;
+//   // age: number;
+//   // isEnable: boolean;
+// }
 
 export interface IProps {
+  id: string;
   value?: {};
   r?: {};
   i?: number;
+  refetch?: () => void;
+  refetchMany?: () => void;
+  refetchCount?: () => void;
 }
 
 const UserList = () => {
   const [isShow, setIsShow] = useRecoilState(isShowState);
   const [username, setUsername] = useRecoilState(usernameState);
   const [nickname, setNickname] = useRecoilState(nicknameState);
-  // const [total, setTotal] = useState(0);
 
   const [searchUsername, setSearchUsername] = useState('');
   const [searchNickname, setSearchNickname] = useState('');
+
+  const [middleUsername, setMiddleUsername] = useState('');
+  const [middleNickname, setMiddleNickname] = useState('');
 
   const [gender, setGender] = useRecoilState(genderState);
   const [age, setAge] = useRecoilState(ageState);
@@ -63,9 +69,10 @@ const UserList = () => {
 
   const [currentId, setCurrentId] = useState(''); // 当前id，如果为空，表示新增
 
-  const [currentSearch, setCurrentSearch] = useState(false); // 当前展示的数据，若为空，则表示展示全部，否则展示按条件查询到的数据
-
   const [myForm] = Form.useForm(); // 可以获取表单元素的实例
+
+  const [currentPage, setCurrentPage] = useState(1); // 表示当前页码
+  const [pageSize] = useState(10); //  一页显示多少条数据
 
   // 添加用户
   const [addConsumer] = useMutation(ADD_CONSUMER);
@@ -84,7 +91,12 @@ const UserList = () => {
   // 模糊查询，根据username和nickname进行查询
   const [
     executeFindMany,
-    { data: searchData, loading: searchLoading, error: searchError },
+    {
+      data: searchData,
+      loading: searchLoading,
+      error: searchError,
+      refetch: refetchMany,
+    },
   ] = useLazyQuery(FIND_MANY, {
     variables: {
       username: searchUsername,
@@ -102,12 +114,37 @@ const UserList = () => {
     data: consumerData,
     loading: consumerLoading,
     error: consumerError,
-  } = useQuery(FIND_ALL);
+    refetch,
+  } = useQuery(FIND_ALL, {
+    variables: {
+      pagination: {
+        page: currentPage,
+        limit: pageSize,
+      },
+    },
+  });
 
-  if (searchLoading || modifyLoading || consumerLoading) return <p>Loading...</p>;
+  // 查询consumer的数量
+  const {
+    data: countData,
+    loading: countLoading,
+    error: countError,
+    refetch: refetchCount,
+  } = useQuery(FIND_COUNT);
+
+  // const [, setTotal] = useState(0);
+
+  useEffect(() => {
+    refetch();
+    refetchCount(); // 初始化时或 currentPage 和 pageSize 变化时执行一次查询
+  }, [currentPage, pageSize, refetch, refetchCount]);
+
+  if (searchLoading || modifyLoading || consumerLoading || countLoading)
+    return <p>Loading...</p>;
   if (searchError) return <p>Error:{searchError?.message}</p>;
   if (modifyError) return <p>Error:{modifyError?.message}</p>;
   if (consumerError) return <p>Error:{consumerError?.message}</p>;
+  if (countError) return <p>Error:{countError?.message}</p>;
   return (
     <>
       <Card
@@ -115,6 +152,7 @@ const UserList = () => {
         extra={
           <>
             <Button
+              className="plus-button"
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => {
@@ -130,7 +168,6 @@ const UserList = () => {
             layout="inline"
             onFinish={() => {
               message.success('查询成功');
-              console.log(searchData.findManyByUsernameOrNickname);
             }}
           >
             <Form.Item label="账号">
@@ -159,26 +196,37 @@ const UserList = () => {
                 type="primary"
                 icon={<SearchOutlined />}
                 onClick={() => {
-                  setCurrentSearch(true);
+                  setMiddleUsername(searchUsername);
+                  setMiddleNickname(searchNickname);
                   executeFindMany({
                     variables: {
                       username: searchUsername,
                       nickname: searchNickname,
                     },
                   });
-                  // setUsername(searchUsername);
-                  // setNickname(searchNickname);
+                  setCurrentPage(1);
                 }}
               />
             </Form.Item>
           </Form>
           <Table
-            // dataSource={consumerData.findAll}
-            // dataSource={searchData.findManyByUsernameOrNickname}
+            pagination={{
+              total:
+                middleUsername || middleNickname
+                  ? searchData?.findManyByUsernameOrNickname.length
+                  : countData?.findCount,
+              current: currentPage,
+              pageSize: pageSize,
+              onChange: (page, pageSize) => {
+                console.log(`Current page: ${page}, size per page: ${pageSize}`);
+                setCurrentPage(page);
+              },
+            }}
             dataSource={
-              currentSearch
-                ? searchData.findManyByUsernameOrNickname
-                : consumerData.findAll
+              middleUsername || middleNickname
+                ? searchData?.findManyByUsernameOrNickname || []
+                : consumerData?.findAll || []
+              // consumerData?.findAll
             }
             rowKey="id"
             columns={[
@@ -188,7 +236,7 @@ const UserList = () => {
                 align: 'center',
                 // render 方法中的 v、r、i 分别表示当前单元格的值、整行数据和当前行的索引。
                 render(_, __, i) {
-                  return <span>{i + 1}</span>;
+                  return <span>{i + 1 + pageSize * (currentPage - 1)}</span>;
                 },
               },
               {
@@ -229,10 +277,11 @@ const UserList = () => {
                 title: '操作',
                 width: 80,
                 align: 'center',
-                render(v: Customer, r) {
+                render(v, r) {
                   return (
                     <Space>
                       {/* <UpdateConsumer r={r} /> */}
+                      {/* 修改用户数据 */}
                       <Button
                         type="primary"
                         icon={<EditOutlined />}
@@ -248,19 +297,17 @@ const UserList = () => {
                           setCurrentId(r.id);
                         }}
                       />
-                      <RemoveConsumer id={v.id} />
+                      <RemoveConsumer
+                        id={v.id}
+                        refetch={refetch}
+                        refetchMany={refetchMany}
+                        refetchCount={refetchCount}
+                      />
                     </Space>
                   );
                 },
               },
             ]}
-            pagination={{
-              total: consumerData.findAll.length,
-              pageSize: 10,
-              onChange: (page, pageSize) => {
-                console.log(`Current page: ${page}, size per page: ${pageSize}`);
-              },
-            }}
           />
         </Space>
         {/* <Pagination defaultCurrent={1} total={50} className="page-foot" /> */}
@@ -277,10 +324,11 @@ const UserList = () => {
           setIsShow(false);
           // 关闭modal时重新设置字段
           myForm.resetFields();
-          setNickname('');
         }}
         onOk={() => {
           myForm.submit(); // 手动触发表单的提交事件
+          refetch();
+          refetchCount();
         }}
       >
         <Form
@@ -301,7 +349,10 @@ const UserList = () => {
                     isEnable: activate,
                   },
                 },
-                refetchQueries: [{ query: FIND_ALL }],
+                // refetchQueries: [{ query: FIND_ALL }],
+              }).then(() => {
+                refetch();
+                refetchMany();
               });
             } else {
               addConsumer({
@@ -314,10 +365,14 @@ const UserList = () => {
                     isEnable: activate,
                   },
                 },
-                refetchQueries: [{ query: FIND_ALL }],
+              }).then(() => {
+                refetch();
+                refetchMany();
+                refetchCount();
               });
             }
             setIsShow(false);
+
             console.log(value);
           }}
           // 使输入框对齐
