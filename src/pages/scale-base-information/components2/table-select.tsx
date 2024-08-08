@@ -1,11 +1,13 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { Button, Space, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { ModalVisible } from './atom/ModalVisible';
 import type { DataType } from './atom/UsersManagement';
-import { accountAtom, selectState, userAtom, usersAtom } from './atom/UsersManagement';
+import {
+  accountAtom, currentAtom, pageSizeAtom, selectState, userAtom, usersAtom
+} from './atom/UsersManagement';
 
 const DEL_MANAGEMENT = gql`
   mutation DelUser($id:Int!){
@@ -38,8 +40,10 @@ export const GET_MANAGEMENT = gql`
 
 const TableSelect: React.FC = () => {
   const setIsModalVisible = useSetRecoilState(ModalVisible);
-  const [current, setCurrent] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [current, setCurrent] = useRecoilState(currentAtom);
+  const [pageSize, setPageSize] = useRecoilState(pageSizeAtom);
+  // const [current, setCurrent] = useState(1);
+  // const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
   const setUser = useSetRecoilState(userAtom);
@@ -61,6 +65,8 @@ const TableSelect: React.FC = () => {
 
   useEffect(() => {
     if (data) {
+      console.log('11');
+
       setUsers(data.getUsers);
       setTotal(data.getUsers.total);
     }
@@ -74,13 +80,20 @@ const TableSelect: React.FC = () => {
     setUser(record);
   };
 
+
   const delUser = async ({ id }: DataType) => {
     if (id) {
       await deleteUser({
         variables: {
           id: id
         },
-        refetchQueries: [{ query: GET_MANAGEMENT }]
+        refetchQueries: [{
+          query: GET_MANAGEMENT,
+          variables: {
+            page: current, pageSize, account, isEnabled: isEnabled
+              === 'start' ? true : isEnabled === 'end' ? false : undefined
+          }
+        }],
       });
     }
   };
@@ -166,6 +179,8 @@ const TableSelect: React.FC = () => {
       isEnabled: isEnabled === 'start' ? true : isEnabled === 'end' ? false : undefined
     });
   };
+
+  console.log('total: ' + total);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>

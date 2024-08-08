@@ -1,11 +1,15 @@
 import { gql, useMutation } from '@apollo/client';
 import { Button, Col, Form, Input, InputNumber, Modal, Row, Select, Space } from 'antd';
 import React, { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
-import type { DataType } from './atom/UsersManagement';
+import { currentAtom, type DataType, pageSizeAtom, selectState } from './atom/UsersManagement';
 import { GET_MANAGEMENT } from './table-select';
 
+
+
 const CREATE_USER = gql`
+
   mutation CreateUser($creat:CreateManagementDTO!){
     createUser(createUser:$creat){
     id
@@ -21,8 +25,12 @@ const CREATE_USER = gql`
 const AddAndImport2: React.FC = () => {
   const [form] = Form.useForm();
   const [modalVisible, setModalVisible] = useState(false);
+  const current = useRecoilValue(currentAtom);
+  const pageSize = useRecoilValue(pageSizeAtom);
 
   const [createUser] = useMutation(CREATE_USER);
+
+  const isEnabled = useRecoilValue(selectState);
 
   const handleSubmit = async ({ account, age, gender, is_enabled, name }: DataType) => {
     const newAge = Number(age);
@@ -30,12 +38,16 @@ const AddAndImport2: React.FC = () => {
 
       await createUser({
         variables: { creat: { account, name, age: newAge, gender, is_enabled } },
-        refetchQueries: [{ query: GET_MANAGEMENT }]
+        refetchQueries: [{
+          query: GET_MANAGEMENT,
+          variables: {
+            page: current, pageSize, account: '', isEnabled: isEnabled ===
+              'start' ? true : isEnabled === 'end' ? false : undefined,
+          }
+        }],
       });
     }
     setModalVisible(false);
-
-
   };
 
   return (

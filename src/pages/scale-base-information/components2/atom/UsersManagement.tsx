@@ -36,3 +36,12 @@ export const selectState = atom<string>({
     key: 'selectState',
     default: 'All'
 });
+
+export const currentAtom = atom<number>({
+    key: 'currentAtom',
+    default: 1
+});
+export const pageSizeAtom = atom<number>({
+    key: 'pageSizeAtom',
+    default: 10
+});
