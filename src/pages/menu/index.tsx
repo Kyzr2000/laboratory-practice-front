@@ -1,9 +1,4 @@
-import {
-  Assessment,
-  ExpandLess,
-  ExpandMore,
-  Settings,
-} from '@mui/icons-material';
+import { Assessment, ExpandLess, ExpandMore, Settings } from '@mui/icons-material';
 import {
   AppBar,
   Avatar,
@@ -24,6 +19,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
+import Information from '../person-base-information/index1';
 import BaseInformation from '../scale-base-information';
 
 type MenuItem = {
@@ -42,17 +38,13 @@ const menuItems: MenuItem[] = [
   {
     text: '量表管理（参考）',
     icon: <Assessment />,
-    submenus: [
-      { text: '量表基本信息', component: <BaseInformation /> },
-    ],
+    submenus: [{ text: '量表基本信息', component: <BaseInformation /> }],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
   {
     text: '基础设置（练习）',
     icon: <Settings />,
-    submenus: [
-      { text: '用户管理', component: <div>用户管理</div> },
-    ],
+    submenus: [{ text: '用户管理', component: <Information /> }],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
 ];
@@ -146,7 +138,7 @@ export const Sidebar: React.FC = () => {
                     alignItems: 'center',
                     cursor: 'pointer',
                   }}
-                // onClick={handleOpenUserMenu}
+                  // onClick={handleOpenUserMenu}
                 >
                   <Avatar alt="Remy Sharp" src="/src/assets/top_touxiang@2x.png" />
                   <Typography
@@ -218,7 +210,9 @@ export const Sidebar: React.FC = () => {
             },
           }}
         >
-          <Toolbar sx={{ backgroundColor: 'green', color: 'white', justifyContent: 'center' }}>
+          <Toolbar
+            sx={{ backgroundColor: 'green', color: 'white', justifyContent: 'center' }}
+          >
             培训练习框架
           </Toolbar>
           <List>
