@@ -1,10 +1,12 @@
-import { gql, useMutation } from '@apollo/client';
-import { Button, Col, Form, Input, Modal, Row, Select } from 'antd';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { Button, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { GET_UNIT } from './add-import2';
 import { ModalVisible } from './atom/ModalVisible';
-import { userAtom } from './atom/UsersManagement';
+import type { DataType } from './atom/UsersManagement';
+import { currentAtom, pageSizeAtom, selectState, userAtom } from './atom/UsersManagement';
 import { GET_MANAGEMENT } from './table-select';
 const { Option } = Select;
 
@@ -23,13 +25,7 @@ const UPDATE_MANAGEMENT = gql`
   }
 `;
 
-interface DataType {
-    account: string
-    name: string;
-    gender: string;
-    age: number;
-    is_enabled: boolean
-}
+
 
 export const UpdateTable: React.FC = () => {
 
@@ -39,6 +35,16 @@ export const UpdateTable: React.FC = () => {
 
     const userByid = useRecoilValue(userAtom);
     const [form] = Form.useForm();
+
+    // 使用Recoil获取selectState的值，用于判断功能是否启用
+    const isEnabled = useRecoilValue(selectState);
+    // 使用Recoil获取currentAtom的值，用于获取当前状态
+    const current = useRecoilValue(currentAtom);
+    // 使用Recoil获取pageSizeAtom的值，用于获取页面大小
+    const pageSize = useRecoilValue(pageSizeAtom);
+
+    const { data, loading, error, refetch } = useQuery(GET_UNIT);
+
 
     useEffect(() => {
         if (modalVisible) {
@@ -51,27 +57,37 @@ export const UpdateTable: React.FC = () => {
             });
         }
     }, [modalVisible, userByid, form]);
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error</p>;
+
 
     const handleCancel = () => {
         setModalVisible(false);
     };
 
-    const handleSubmit = async ({ account, name, gender, age, is_enabled }: DataType) => {
+    const handleSubmit = async ({ account, name, gender, age, is_enabled, unitId }: DataType) => {
         if (userByid.id) {
             const userAge = Number(age);
             await updateUser({
                 variables: {
                     id: userByid.id, update: {
                         account, name, gender, age: userAge,
-                        is_enabled
+                        is_enabled, unit_id: unitId
                     }
                 },
-                refetchQueries: [{ query: GET_MANAGEMENT }]
+                refetchQueries: [{
+                    query: GET_MANAGEMENT,
+                    variables: {
+                        page: current, pageSize, account, isEnabled: isEnabled
+                            === 'start' ? true : isEnabled === 'end' ? false : undefined
+                    }
+                }],
             });
 
 
         }
         setModalVisible(false);
+        refetch();
     };
 
     return (
@@ -100,19 +116,24 @@ export const UpdateTable: React.FC = () => {
                         name: userByid.name,
                         gender: userByid.gender,
                         is_enabled: userByid.is_enabled,
-                        age: userByid.age
+                        age: userByid.age,
+                        unitId: userByid.unit_name
 
                     }}
                     onFinish={handleSubmit}
                 >
                     <Row gutter={24}>
                         <Col span={12}>
-                            <Form.Item label="账号" name="account">
+                            <Form.Item
+                                label="账号" name="account"
+                                rules={[{ required: true, message: '请输入账号' }]}>
                                 <Input />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item label="姓名" name="name">
+                            <Form.Item label="姓名"
+                                name="name"
+                                rules={[{ required: true, message: '请输入姓名' }]}>
                                 <Input />
                             </Form.Item>
                         </Col>
@@ -127,8 +148,12 @@ export const UpdateTable: React.FC = () => {
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item label="年龄" name="age">
-                                <Input />
+                            <Form.Item label="年龄"
+                                name="age"
+                                rules={[{ required: true, message: '请输入年龄' },
+                                { type: 'number', message: '年龄必须是数字' }]}
+                            >
+                                <InputNumber style={{ width: '100%' }} />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -138,6 +163,20 @@ export const UpdateTable: React.FC = () => {
                                 <Select>
                                     <Option value={true}>是</Option>
                                     <Option value={false}>否</Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="公司"
+                                name="unitId"
+                                rules={[{ required: true, message: '请选择公司' }]}
+                            >
+                                <Select>
+                                    {data?.getUnit.map((item: DataType) => (
+                                        // 遍历单位数据，为每个单位生成一个选项
+                                        <Select.Option key={item.id}
+                                            value={item.id}>{item.unit_name}</Select.Option>
+                                    ))}
                                 </Select>
                             </Form.Item>
                         </Col>

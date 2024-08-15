@@ -32,6 +32,7 @@ export const GET_MANAGEMENT = gql`
       gender
       age
       is_enabled
+      unitName
     }
     total
     }
@@ -65,9 +66,7 @@ const TableSelect: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      console.log('11');
-
-      setUsers(data.getUsers);
+      setUsers(data.getUsers.users);
       setTotal(data.getUsers.total);
     }
   }, [data, setUsers]);
@@ -136,6 +135,12 @@ const TableSelect: React.FC = () => {
       align: 'center' as 'center',
     },
     {
+      title: <span style={{ color: '#038A97' }}>公司</span>,
+      dataIndex: 'unit_name',
+      key: 'unit_name',
+      align: 'center' as 'center',
+    },
+    {
       title: <span style={{ color: '#038A97' }}>是否启用</span>,
       dataIndex: 'is_enabled',
       key: 'is_enabled',
@@ -166,7 +171,8 @@ const TableSelect: React.FC = () => {
       name: item.name,
       gender: item.gender,
       age: item.age,
-      is_enabled: item.is_enabled
+      is_enabled: item.is_enabled,
+      unit_name: item.unitName,
     })) || [];
 
   const handleTableChange = (pagination) => {
@@ -180,7 +186,6 @@ const TableSelect: React.FC = () => {
     });
   };
 
-  console.log('total: ' + total);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>

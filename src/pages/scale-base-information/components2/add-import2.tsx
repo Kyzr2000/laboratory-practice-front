@@ -1,4 +1,4 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { Button, Col, Form, Input, InputNumber, Modal, Row, Select, Space } from 'antd';
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -22,6 +22,17 @@ const CREATE_USER = gql`
   }
 `;
 
+export const GET_UNIT = gql`
+  query GetUnit {
+    getUnit {
+      id
+      unit_code
+      unit_name
+      created_at
+    }
+  }
+`;
+
 const AddAndImport2: React.FC = () => {
   const [form] = Form.useForm();
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,12 +43,15 @@ const AddAndImport2: React.FC = () => {
 
   const isEnabled = useRecoilValue(selectState);
 
-  const handleSubmit = async ({ account, age, gender, is_enabled, name }: DataType) => {
+  const { data, loading, error, refetch } = useQuery(GET_UNIT);
+
+
+  const handleSubmit = async ({ account, age, gender, is_enabled, name, unitId }: DataType) => {
     const newAge = Number(age);
     if (account) {
 
       await createUser({
-        variables: { creat: { account, name, age: newAge, gender, is_enabled } },
+        variables: { creat: { account, name, age: newAge, gender, is_enabled, unit_id: unitId } },
         refetchQueries: [{
           query: GET_MANAGEMENT,
           variables: {
@@ -46,15 +60,28 @@ const AddAndImport2: React.FC = () => {
           }
         }],
       });
-    }
-    setModalVisible(false);
+    } setModalVisible(false);
+    refetch();
   };
+
+  // 打开模态框时重置表单
+  const handleOpenModal = () => {
+    form.resetFields();  // 重置表单字段值
+    setModalVisible(true);
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  // 根据数据获取第一个单位的ID，如果数据为空则为undefined
+  const initialCompanyId = data.getUnit.length > 0 ? data.getUnit[0].id : undefined;
+
 
   return (
     <>
       <Space wrap size="middle" style={{ margin: '20px' }}>
         <Button type="default" style={{ width: 100, height: 40 }}
-          onClick={() => setModalVisible(true)}>
+          onClick={handleOpenModal}>
           新增
         </Button>
       </Space>
@@ -119,6 +146,21 @@ const AddAndImport2: React.FC = () => {
                 </Select>
               </Form.Item>
             </Col>
+            <Col span={12}>
+              <Form.Item label="公司"
+                name="unitId"
+                rules={[{ required: true, message: '请选择公司' }]}
+                initialValue={initialCompanyId}
+              >
+                <Select>
+                  {data?.getUnit.map((item: DataType) => (
+                    // 遍历单位数据，为每个单位生成一个选项
+                    <Select.Option key={item.id} value={item.id}>{item.unit_name}</Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+
           </Row>
         </Form>
       </Modal >

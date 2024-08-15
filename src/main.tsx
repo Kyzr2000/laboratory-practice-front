@@ -13,7 +13,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 
 import App from './App';
 const client = new ApolloClient({
-  link: new HttpLink({ uri: 'http://127.0.0.1:7001/graphql' }), // 确保这个URL是正确的
+  link: new HttpLink({ uri: 'http://127.0.0.1:7002/graphql' }), // 确保这个URL是正确的
   cache: new InMemoryCache(),
 });
 

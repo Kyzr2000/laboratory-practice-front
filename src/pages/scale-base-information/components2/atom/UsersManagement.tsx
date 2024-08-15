@@ -8,6 +8,8 @@ export interface DataType {
     gender: string;
     age: number;
     is_enabled: boolean
+    unitId: number
+    unit_name: string
 }
 
 export const userAtom = atom<DataType>({
@@ -18,7 +20,9 @@ export const userAtom = atom<DataType>({
         name: '',
         gender: '',
         age: -1,
-        is_enabled: true
+        is_enabled: true,
+        unitId: -1,
+        unit_name: ''
     }
 });
 
