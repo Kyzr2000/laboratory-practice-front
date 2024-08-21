@@ -3,10 +3,12 @@ import { Button, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd'
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { currentAtom, pageSizeAtom } from '@/atom/atom';
+
 import { GET_UNIT } from './add-import2';
 import { ModalVisible } from './atom/ModalVisible';
 import type { DataType } from './atom/UsersManagement';
-import { currentAtom, pageSizeAtom, selectState, userAtom } from './atom/UsersManagement';
+import { selectState, userAtom } from './atom/UsersManagement';
 import { GET_MANAGEMENT } from './table-select';
 const { Option } = Select;
 

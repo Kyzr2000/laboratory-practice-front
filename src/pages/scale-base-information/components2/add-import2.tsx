@@ -3,7 +3,9 @@ import { Button, Col, Form, Input, InputNumber, Modal, Row, Select, Space } from
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { currentAtom, type DataType, pageSizeAtom, selectState } from './atom/UsersManagement';
+import { currentAtom, pageSizeAtom } from '@/atom/atom';
+
+import { type DataType, selectState } from './atom/UsersManagement';
 import { GET_MANAGEMENT } from './table-select';
 
 

@@ -9,7 +9,7 @@ export interface DataType {
     age: number;
     is_enabled: boolean
     unitId: number
-    unit_name: string
+    unitName: string
 }
 
 export const userAtom = atom<DataType>({
@@ -22,7 +22,7 @@ export const userAtom = atom<DataType>({
         age: -1,
         is_enabled: true,
         unitId: -1,
-        unit_name: ''
+        unitName: ''
     }
 });
 
@@ -39,13 +39,4 @@ export const usersAtom = atom<DataType[]>({
 export const selectState = atom<string>({
     key: 'selectState',
     default: 'All'
-});
-
-export const currentAtom = atom<number>({
-    key: 'currentAtom',
-    default: 1
-});
-export const pageSizeAtom = atom<number>({
-    key: 'pageSizeAtom',
-    default: 10
 });

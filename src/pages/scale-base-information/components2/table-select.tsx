@@ -1,12 +1,15 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
+import type { TableProps } from 'antd';
 import { Button, Space, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { currentAtom, pageSizeAtom } from '@/atom/atom';
+
 import { ModalVisible } from './atom/ModalVisible';
 import type { DataType } from './atom/UsersManagement';
 import {
-  accountAtom, currentAtom, pageSizeAtom, selectState, userAtom, usersAtom
+  accountAtom, selectState, userAtom, usersAtom
 } from './atom/UsersManagement';
 
 const DEL_MANAGEMENT = gql`
@@ -56,13 +59,14 @@ const TableSelect: React.FC = () => {
       variables: {
         page: current, pageSize: pageSize, account,
         isEnabled: isEnabled === 'start' ? true : isEnabled === 'end' ? false : undefined
-      }
+      },
     });
 
 
   const [deleteUser] = useMutation(DEL_MANAGEMENT);
 
   const setUsers = useSetRecoilState(usersAtom);
+
 
   useEffect(() => {
     if (data) {
@@ -79,19 +83,20 @@ const TableSelect: React.FC = () => {
     setUser(record);
   };
 
-
   const delUser = async ({ id }: DataType) => {
     if (id) {
       await deleteUser({
         variables: {
-          id: id
+          id: id,
         },
         refetchQueries: [{
           query: GET_MANAGEMENT,
           variables: {
-            page: current, pageSize, account, isEnabled: isEnabled
-              === 'start' ? true : isEnabled === 'end' ? false : undefined
-          }
+            page: current,
+            pageSize,
+            account,
+            isEnabled: isEnabled === 'start' ? true : isEnabled === 'end' ? false : undefined,
+          },
         }],
       });
     }
@@ -157,7 +162,7 @@ const TableSelect: React.FC = () => {
           <Button type="primary" onClick={
             () => showModal(record)}
             style={{ backgroundColor: 'green', borderColor: 'green' }}>编辑</Button>
-          <Button type="danger" onClick={() => delUser(record)}>删除</Button>
+          <Button type="primary" onClick={() => delUser(record)}>删除</Button>
         </Space>
       ),
     },
