@@ -1,0 +1,114 @@
+import { useMutation } from '@apollo/client';
+import { Button, Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
+import React from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+
+import { ADD_SIMPLIFIED_USER_MUTATION } from '@/pages/graphql/simp-user';
+
+import { currentPageAtom, pageSizeAtom, simpUsersAtom } from './atom/pageAtom';
+import { triggerRefreshAtom } from './atom/triggerRefresh';
+
+interface AddUserButtonProps {
+  onAdded?: () => void; // 可选的回调函数，用于通知父组件用户已添加
+}
+
+interface CreateSimplifiedUserInput {
+  account: string;
+  name: string;
+  gender: string;
+  age: number;
+  is_enabled: boolean;
+}
+
+const AddUserButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
+  const [addSimplifiedUser] = useMutation(ADD_SIMPLIFIED_USER_MUTATION);
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [form] = Form.useForm();
+  const setTriggerRefresh = useSetRecoilState(triggerRefreshAtom); // 使用 useSetRecoilState 获取更新状态的方法
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const setSimpUsers = useSetRecoilState(simpUsersAtom); // 使用 useSetRecoilState 获取更新状态的方法
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const currentPage = useRecoilValue(currentPageAtom);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const pageSize = useRecoilValue(pageSizeAtom);
+
+  
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      const createInput: CreateSimplifiedUserInput = {
+        account: values.account,
+        name: values.name,
+        gender: values.gender,
+        age: values.age,
+        is_enabled: values.is_enabled,
+      };
+
+      // 强制刷新
+      await addSimplifiedUser({ 
+        variables: { createSimplifiedUserInput: createInput },
+        refetchQueries: ['Find_ALL_SIMPLIFIED_USERS_QUERY'],
+      });
+
+      // 在这里重置表单
+      form.resetFields();
+
+      // 触发刷新
+      setTriggerRefresh(prev => !prev); // 更新 triggerRefreshAtom 的值
+
+
+
+      setIsModalVisible(false);
+      if (onAdded) {
+        onAdded(); // 调用父组件提供的回调函数
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  return (
+    <>
+      <Button type="primary" onClick={showModal}>
+        新增用户
+      </Button>
+      <Modal
+        title="新增用户"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Form form={form} initialValues={{ is_enabled: false }} onFinish={handleOk}>
+          <Form.Item name="account" label="账户" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="name" label="姓名" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="gender" label="性别" rules={[{ required: true }]}>
+            <Select placeholder="请选择性别">
+              <Select.Option value="M">男</Select.Option>
+              <Select.Option value="F">女</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="age" label="年龄" rules={[{ required: true }]}>
+            <InputNumber />
+          </Form.Item>
+          <Form.Item name="is_enabled"  valuePropName="checked" label="启用">
+            <Switch />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  );
+};
+
+export default AddUserButton;
