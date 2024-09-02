@@ -5,19 +5,20 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { useRecoilState } from 'recoil';
 
-import { SEARCH_SIMPLIFIED_USERS_BY_ACCOUNT_AND_NAME } from '@/pages/graphql/simp-user';
+import { SelectUnitsByNameAndCode } from '@/pages/graphql/unit';
 
-import { currentPageAtom, pageSizeAtom, simpUsersAtom, totalRecordsAtom } from './atom/pageAtom';
-import { accountAtom, nameAtom } from './atom/searchAtom';
+import { currentPageAtom, pageSizeAtom, totalRecordsAtom, unitsAtom } from './atom/pageAtom';
+import { unitNameAtom } from './atom/searchAtom';
+import { unitCodeAtom } from './atom/searchAtom';
 
-interface SearchSimplifiedUsersByAccountAndNameInput {
-  account: string;
-  name: string;
+interface searchUnitByCodeAndName {
+  unitCode: string;
+  unitName: string;
   page: number;
   pageSize: number;
 }
 
-const SearchUsers: React.FC = () => {
+const SearchUnits: React.FC = () => {
 
   // 获取当前在第几页
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,23 +26,26 @@ const SearchUsers: React.FC = () => {
   // 获取每页的数据量
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pageSize, setPageSize] = useRecoilState(pageSizeAtom);
-  // 获取当前页面的数据
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [simpUsers, setSimpUsers] = useRecoilState(simpUsersAtom);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [totalRecords, setTotalRecords] = useRecoilState(totalRecordsAtom);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [recoilAccount, setRecoilAccount] = useRecoilState(accountAtom);
+  const [recoilUnits, setRecoilUnits] = useRecoilState(unitsAtom);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [recoilName, setRecoilName] = useRecoilState(nameAtom);
+  const [recoilCode, setRecoilCode] = useRecoilState(unitCodeAtom);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [recoilName, setRecoilName] = useRecoilState(unitNameAtom);
   
   
   // 使用局部状态来存储输入框的初始值为空
-  const [localAccount, setLocalAccount] = useState('');
+  const [localCode, setLocalCode] = useState('');
   const [localName, setLocalName] = useState('');
-  const [searchSimplifiedUsersByAccountAndName, { data }] = useLazyQuery(SEARCH_SIMPLIFIED_USERS_BY_ACCOUNT_AND_NAME);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [searchUnitByCodeAndName, { data }] = useLazyQuery(SelectUnitsByNameAndCode);
 
+  console.log(data);
 
   // 在输入框中输入时更新Recoil状态   
   // 关键代码   当输入框的值变为空的时候 才设置atom中账户和姓名为空，
@@ -50,8 +54,8 @@ const SearchUsers: React.FC = () => {
 
     const value = e.target.value.trim();
     setState(value);
-    if (state === 'account' && value === '') {
-      setRecoilAccount('');
+    if (state === 'code' && value === '') {
+      setRecoilCode('');
     } else if (state === 'name' && value === '') {
       setRecoilName('');
     }
@@ -60,7 +64,7 @@ const SearchUsers: React.FC = () => {
   };
 
   const handleSearch = () => {
-    if (!localAccount.trim() && !localName.trim()) {
+    if (!localCode.trim() && !localName.trim()) {
       alert('请至少输入账户或姓名中的一个');
       return;
     }
@@ -68,43 +72,43 @@ const SearchUsers: React.FC = () => {
     // 因此点击搜索 就要更新atom 这样列表组件接口重新加载 就是带有 账户和姓名两个条件的（从atom中获取）
     // 在点击搜索的时候 才去更新atom中的account和name为输入框的值， 这样点击搜索了才会重新加载数据
     // 
-    setRecoilAccount(localAccount.trim());
+    setRecoilCode(localCode.trim());
     setRecoilName(localName.trim());
 
     // 确定返回第一页
     setCurrentPage(1);
 
-    const searchInput: SearchSimplifiedUsersByAccountAndNameInput = {
-      account: localAccount.trim(),
-      name: localName.trim(),
+    const searchInput: searchUnitByCodeAndName = {
+      unitCode: localCode.trim(),
+      unitName: localName.trim(),
       page: currentPage,
       pageSize: pageSize,
     };
-    searchSimplifiedUsersByAccountAndName({ variables: { searchSimplifiedUsersByAccountAndNameInput: searchInput } });
+    searchUnitByCodeAndName({ variables: { input: searchInput } });
   };
 
 
   useEffect(() => {
-    if (data?.searchSimplifiedUsersByAccountAndNameInput) {
+    if (data?.selectUnits) {
       // 解析数据
-      setSimpUsers(data.searchSimplifiedUsersByAccountAndNameInput.users); // 更新数据
-      setTotalRecords(data.searchSimplifiedUsersByAccountAndNameInput.total);
+      setRecoilUnits(data.selectUnits.units); // 更新数据
+      setTotalRecords(data.selectUnits.total);
       // refetch(); 
     }
-  }, [data, setSimpUsers, setTotalRecords]);
+  }, [data, setRecoilUnits, setTotalRecords]);
   
   // 在组件挂载时检查输入框的值
   useEffect(() => {
-    if (localAccount.trim() === '' && localName.trim() === '') {
-      setRecoilAccount('');
+    if (localCode.trim() === '' && localName.trim() === '') {
+      setRecoilCode('');
       setRecoilName('');
     }
-  }, [localAccount, localName, setRecoilAccount, setRecoilName]); // 添加依赖数组
+  }, [localCode, localName, setRecoilCode, setRecoilName]); // 添加依赖数组
 
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
       <Space>
-      <Input placeholder="账户" value={localAccount} onChange={(e) => handleInputChange(e, setLocalAccount, 'account')} />
+      <Input placeholder="账户" value={localCode} onChange={(e) => handleInputChange(e, setLocalCode, 'code')} />
         <Input placeholder="姓名" value={localName} onChange={(e) => handleInputChange(e, setLocalName, 'name')} />
         <Button type="primary" style={{background:'green'}} onClick={handleSearch}>
           搜索
@@ -114,4 +118,4 @@ const SearchUsers: React.FC = () => {
   );
 };
 
-export default SearchUsers;
+export default SearchUnits;

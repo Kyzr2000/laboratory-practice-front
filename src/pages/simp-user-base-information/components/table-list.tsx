@@ -1,4 +1,6 @@
 
+import '../user-base-information.scss';
+
 import { useQuery } from '@apollo/client';
 import type { TableColumnsType } from 'antd';
 import { Space, Table } from 'antd';
@@ -192,7 +194,7 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
       // _ 表示当前行的索引，但在这种情况下没有使用。
       // record 表示当前行的数据对象，包含了用户的信息
       render: (_, record) => (
-        <Space size="middle">
+        <Space  size="middle" >
            <EditUserButton userId={record.id} onEdited={handleEditSuccess} initialValues={record} />
           {/* userId 属性传递了当前行用户的数据中的 id。
           onDeleted 属性传递了 handleDeleteSuccess 函数，当删除操作成功时，这个函数会被调用。 */}

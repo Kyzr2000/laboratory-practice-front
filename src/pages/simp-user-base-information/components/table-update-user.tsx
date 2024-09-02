@@ -55,7 +55,8 @@ const EditUserButton: React.FC<EditUserButtonProps> = ({ userId, onEdited, initi
 
   return (
     <>
-      <Button type="primary" ghost onClick={showModal}>
+      <Button style={{ color: 'green' ,
+        borderColor: 'green'}} type="primary" ghost onClick={showModal}>
         编辑
       </Button>
       <Modal

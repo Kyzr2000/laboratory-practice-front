@@ -1,0 +1,23 @@
+/* user-base-information.scss */
+.ant-pagination .ant-pagination-item,
+.ant-pagination .ant-pagination-prev,
+.ant-pagination .ant-pagination-next,
+.ant-pagination .ant-pagination-jump-prev,
+.ant-pagination .ant-pagination-jump-next {
+  border-color: green; /* 更改为绿色 */
+  color: green; /* 更改文本颜色为绿色 */
+}
+
+/* 选中的页码文本颜色 */
+.ant-pagination .ant-pagination-item-active a,
+.ant-pagination .ant-pagination-item-active span {
+  color: green; /* 选中的页码文本颜色为绿色 */
+}
+
+/* 当鼠标悬停在当前选中页码上时的颜色 */
+.ant-pagination .ant-pagination-item-active:hover a,
+.ant-pagination .ant-pagination-item-active:hover span {
+  color: darkgreen; /* 悬停时的文本颜色为深绿色 */
+}
+
+

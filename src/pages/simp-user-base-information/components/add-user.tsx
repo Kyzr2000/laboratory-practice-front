@@ -77,7 +77,7 @@ const AddUserButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
+      <Button style={{background:'green'}} type="primary" onClick={showModal}>
         新增用户
       </Button>
       <Modal

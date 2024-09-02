@@ -26,6 +26,7 @@ import React, { useState } from 'react';
 
 import BaseInformation from '../scale-base-information';
 import SimpUserBaseInformation from '../simp-user-base-information';
+import UnitBaseInformation from '../unit-base-information';
 
 
 type MenuItem = {
@@ -54,7 +55,9 @@ const menuItems: MenuItem[] = [
     icon: <Settings />,
     submenus: [
       { text: '用户管理', component: <SimpUserBaseInformation/> },
+      { text: '单位管理', component: <UnitBaseInformation /> }, // 添加单位管理
     ],
+    
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
 ];
