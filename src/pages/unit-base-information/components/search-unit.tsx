@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { useRecoilState } from 'recoil';
 
-import { SelectUnitsByNameAndCode } from '@/pages/graphql/unit';
+import { SELECT_UNITS_BY_NAME_AND_CODE } from '@/pages/graphql/unit';
 
 import { currentPageAtom, pageSizeAtom, totalRecordsAtom, unitsAtom } from './atom/pageAtom';
 import { unitNameAtom } from './atom/searchAtom';
@@ -43,7 +43,7 @@ const SearchUnits: React.FC = () => {
   const [localCode, setLocalCode] = useState('');
   const [localName, setLocalName] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [searchUnitByCodeAndName, { data }] = useLazyQuery(SelectUnitsByNameAndCode);
+  const [searchUnitByCodeAndName, { data }] = useLazyQuery(SELECT_UNITS_BY_NAME_AND_CODE);
 
   console.log(data);
 
@@ -108,8 +108,8 @@ const SearchUnits: React.FC = () => {
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
       <Space>
-      <Input placeholder="账户" value={localCode} onChange={(e) => handleInputChange(e, setLocalCode, 'code')} />
-        <Input placeholder="姓名" value={localName} onChange={(e) => handleInputChange(e, setLocalName, 'name')} />
+      <Input placeholder="单位编码" value={localCode} onChange={(e) => handleInputChange(e, setLocalCode, 'code')} />
+        <Input placeholder="单位名称" value={localName} onChange={(e) => handleInputChange(e, setLocalName, 'name')} />
         <Button type="primary" style={{background:'green'}} onClick={handleSearch}>
           搜索
         </Button>
