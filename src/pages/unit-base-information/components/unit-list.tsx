@@ -81,16 +81,32 @@ const UnitTableList = () => {
   const handleEditSuccess = () => {
     refetch();
   };
+
+  // 序列号生成渲染 因为Table 组件的 render 函数默认接受三个参数，
+  // 而第一个参数通常表示单元格的值，__: 这个参数被定义为 SimpUserType 类型这两个都不需要
+  // index: 这个参数表示当前行在当前页面中的索引位置，从 0 开始计数。
+  const SerialNumber = (_: undefined, __: UnitType, index: number) => {
+    return (currentPage - 1) * pageSize + index + 1;
+  };
   
 
 
 
   const columns: TableColumnsType<UnitType> = [
+    
+    {
+      title: '序号',
+      // 唯一的索引列
+      dataIndex: 'id',
+      key: '0',
+      width: 100,
+      render: SerialNumber,
+    },
     {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: 200,
+      width: 150,
     },
     {
       title: '单位编号',
