@@ -1,8 +1,10 @@
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Button, Form, Input,Modal, Select, Switch } from 'antd';
 import React from 'react';
 
 import { UPDATE_SIMPLIFIED_USER_MUTATION } from '@/pages/graphql/simp-user';
+import { GET_ALL_UNITS } from '@/pages/graphql/unit';
+import type { UnitType } from '@/pages/unit-base-information/models/unitType';
 
 import type { SimpUserType } from '../models/simpUserType';
 
@@ -19,6 +21,8 @@ interface UpdateSimplifiedUserInput {
   gender?: string;
   age?: number;
   is_enabled?: boolean;
+  // 添加单位id
+  unit_id: number;
 }
 
 const EditUserButton: React.FC<EditUserButtonProps> = ({ userId, onEdited, initialValues }) => {
@@ -26,6 +30,10 @@ const EditUserButton: React.FC<EditUserButtonProps> = ({ userId, onEdited, initi
   const [updateSimplifiedUser] = useMutation(UPDATE_SIMPLIFIED_USER_MUTATION);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [form] = Form.useForm();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data, loading, error } = useQuery(GET_ALL_UNITS);
+
+  const units = data?.units || [];
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -37,15 +45,25 @@ const EditUserButton: React.FC<EditUserButtonProps> = ({ userId, onEdited, initi
       const updateInput: UpdateSimplifiedUserInput = {
         id: userId,
         ...values,
+        // 确保 unit_id 是整数类型
+        unit_id: parseInt(values.unit_id, 10),
       };
 
-      await updateSimplifiedUser({ variables: { updateSimplifiedUserInput: updateInput } });
-      setIsModalVisible(false);
-      if (onEdited) {
-        onEdited(); // 调用父组件提供的回调函数
-      }
+      await updateSimplifiedUser({
+        variables: { updateSimplifiedUserInput: updateInput },
+        onCompleted: (data) => {
+          console.log('User updated successfully:', data);
+          setIsModalVisible(false);
+          if (onEdited) {
+            onEdited(); // 调用父组件提供的回调函数
+          }
+        },
+        onError: (error) => {
+          console.error('Error updating user:', error);
+        }
+      });
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error('Error validating form fields:', error);
     }
   };
 
@@ -81,6 +99,21 @@ const EditUserButton: React.FC<EditUserButtonProps> = ({ userId, onEdited, initi
           <Form.Item name="age" label="年龄">
             <Input type="number" />
           </Form.Item>
+
+          <Form.Item
+            label="所在单位"
+            name="unit_id"
+            rules={[{ required: true, message: '请选择单位' }]}
+          >
+            <Select placeholder="请选择单位">
+              {units.map((unit: UnitType) => (
+                <Select.Option key={unit.id} value={unit.id}>
+                  {unit.unitName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
           <Form.Item name="is_enabled" valuePropName="checked" label="启用">
             <Switch />
           </Form.Item>

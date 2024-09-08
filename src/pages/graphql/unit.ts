@@ -45,3 +45,17 @@ export const Delete_UNIT = gql`
     deleteUnit(input: $input)
   }
 `;
+
+// 查询出所有单位
+export const GET_ALL_UNITS = gql`
+  query getUnits {
+    units {
+      id
+      unitCode
+      unitName
+      createdAt
+    }
+  }
+`;
+
+

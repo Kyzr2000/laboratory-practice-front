@@ -187,6 +187,15 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
       render:(is_enabled: boolean)=>(is_enabled?'是':'否')
     },
     {
+      title: '所在单位',
+      key: '5', // 使用 key 而不是 dataIndex
+      width: 50,
+      render: (record) => {
+        // 从 record 中获取 unitName
+        return record.unit?.unitName || '未分配';
+      }
+    },
+    {
       title: '操作',
       key: 'operation',
       fixed: 'right',

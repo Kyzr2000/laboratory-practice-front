@@ -1,9 +1,11 @@
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Button, Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
 import React from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { ADD_SIMPLIFIED_USER_MUTATION } from '@/pages/graphql/simp-user';
+import { GET_ALL_UNITS } from '@/pages/graphql/unit';
+import type { UnitType } from '@/pages/unit-base-information/models/unitType';
 
 import { currentPageAtom, pageSizeAtom, simpUsersAtom } from './atom/pageAtom';
 import { triggerRefreshAtom } from './atom/triggerRefresh';
@@ -18,6 +20,8 @@ interface CreateSimplifiedUserInput {
   gender: string;
   age: number;
   is_enabled: boolean;
+   // 添加单位id
+   unit_id: number;
 }
 
 const AddUserButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
@@ -31,6 +35,12 @@ const AddUserButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
   const currentPage = useRecoilValue(currentPageAtom);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const pageSize = useRecoilValue(pageSizeAtom);
+
+  // 添加用户选择单位
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data, loading, error } = useQuery(GET_ALL_UNITS);
+
+  const units = data?.units || [];
 
   
   const showModal = () => {
@@ -46,6 +56,9 @@ const AddUserButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
         gender: values.gender,
         age: values.age,
         is_enabled: values.is_enabled,
+
+        // 确保 unit_id 是整数类型
+        unit_id: parseInt(values.unit_id, 10),
       };
 
       // 强制刷新
@@ -102,6 +115,22 @@ const AddUserButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
           <Form.Item name="age" label="年龄" rules={[{ required: true }]}>
             <InputNumber />
           </Form.Item>
+
+
+          <Form.Item
+            label="所在单位"
+            name="unit_id"
+            rules={[{ required: true, message: '请选择单位' }]}
+          >
+            <Select placeholder="请选择单位">
+              {units.map((unit: UnitType) => (
+                <Select.Option key={unit.id} value={unit.id}>
+                  {unit.unitName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
           <Form.Item name="is_enabled"  valuePropName="checked" label="启用">
             <Switch />
           </Form.Item>
