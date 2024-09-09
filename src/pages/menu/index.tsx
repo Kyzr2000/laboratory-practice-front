@@ -24,7 +24,8 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
-import BaseInformation from '../scale-base-information';
+import ScaleBaseInformation from '../scale-base-information';
+import UserBaseInformation from '../user-base-information';
 
 type MenuItem = {
   text: string;
@@ -43,7 +44,7 @@ const menuItems: MenuItem[] = [
     text: '量表管理（参考）',
     icon: <Assessment />,
     submenus: [
-      { text: '量表基本信息', component: <BaseInformation /> },
+      { text: '量表基本信息', component: <ScaleBaseInformation /> },
     ],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
@@ -51,7 +52,7 @@ const menuItems: MenuItem[] = [
     text: '基础设置（练习）',
     icon: <Settings />,
     submenus: [
-      { text: '用户管理', component: <div>用户管理</div> },
+      { text: '用户管理', component: <UserBaseInformation /> },
     ],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
