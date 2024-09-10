@@ -133,7 +133,7 @@ const AddModal = ({
     submit({
       variables: {
         data: {
-          ...scale,
+          ...user,
           id: Number(modifyId.current),
         },
       },
@@ -170,11 +170,11 @@ const AddModal = ({
                 <TextField
                   sx={{ marginLeft: '35px', marginTop: '10px' }}
                   className="modal-left"
-                  name="userNumber"
+                  name="uuid"
                   placeholder="请输入账号"
                   size="small"
                   onChange={useHanldTextChange}
-                  value={user?.userNumber}
+                  value={user?.uuid}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -182,11 +182,11 @@ const AddModal = ({
                 <TextField
                   sx={{ marginLeft: '0px', marginTop: '10px' }}
                   className="modal-right"
-                  name="userName"
+                  name="username"
                   placeholder="请输入姓名"
                   size="small"
                   onChange={useHanldTextChange}
-                  value={user?.userName}
+                  value={user?.username}
                 />
               </Grid>
               <Grid item xs={6}>
