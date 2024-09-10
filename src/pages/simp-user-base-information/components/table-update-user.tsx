@@ -1,7 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Button, Form, Input,Modal, Select, Switch } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
 
+import { triggerRefreshGlobalAtom } from '@/pages/atom/triggerRefreshAtom';
 import { UPDATE_SIMPLIFIED_USER_MUTATION } from '@/pages/graphql/simp-user';
 import { GET_ALL_UNITS } from '@/pages/graphql/unit';
 import type { UnitType } from '@/pages/unit-base-information/models/unitType';
@@ -30,8 +32,10 @@ const EditUserButton: React.FC<EditUserButtonProps> = ({ userId, onEdited, initi
   const [updateSimplifiedUser] = useMutation(UPDATE_SIMPLIFIED_USER_MUTATION);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [form] = Form.useForm();
+  // 全局刷新有效
+  const [triggerRefreshGlobal] = useRecoilState(triggerRefreshGlobalAtom);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data, loading, error } = useQuery(GET_ALL_UNITS);
+  const { data, loading, refetch } = useQuery(GET_ALL_UNITS);
 
   const units = data?.units || [];
 
@@ -40,6 +44,7 @@ const EditUserButton: React.FC<EditUserButtonProps> = ({ userId, onEdited, initi
   };
 
   const handleOk = async () => {
+
     try {
       const values = await form.validateFields();
       const updateInput: UpdateSimplifiedUserInput = {
@@ -66,6 +71,12 @@ const EditUserButton: React.FC<EditUserButtonProps> = ({ userId, onEdited, initi
       console.error('Error validating form fields:', error);
     }
   };
+
+  // 添加单位时刷新状态 重新查询所有单位
+  useEffect(() => {
+    // console.log('Triggered refetch.');
+    refetch(); // 当 triggerRefresh 改变时，重新执行查询
+  }, [triggerRefreshGlobal,refetch]);
 
   const handleCancel = () => {
     setIsModalVisible(false);

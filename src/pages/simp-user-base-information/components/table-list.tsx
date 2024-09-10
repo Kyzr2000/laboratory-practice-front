@@ -8,6 +8,7 @@ import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { apolloClient } from '@/apis/client';
+import { triggerRefreshGlobalAtom } from '@/pages/atom/triggerRefreshAtom';
 import { Find_ALL_SIMPLIFIED_USERS_QUERY } from '@/pages/graphql/simp-user';
 
 import type { SimpUserType } from '../models/simpUserType';
@@ -37,6 +38,9 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [triggerRefresh, setTriggerRefresh] = useRecoilState(triggerRefreshAtom);
+  // 全局刷新有效
+  const [triggerRefreshGlobal] = useRecoilState(triggerRefreshGlobalAtom);
+
 
 
 
@@ -68,13 +72,13 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
   }, [data, triggerRefresh, setSimpUsers, setTotalRecords, refetch]);
 
   useEffect(() => {
-    
-      console.log('Triggered refetch.');
+      // console.log('Triggered refetch.');
       refetch(); // 当 triggerRefresh 改变时，重新执行查询
-    
-  }, [triggerRefresh, refetch]);
+  }, [triggerRefresh,triggerRefreshGlobal,refetch]);
+  // console.log(triggerRefresh);
+  
 
-  console.log(triggerRefresh);
+
  
   useEffect(() => {
     if (onSearch) {
@@ -204,7 +208,7 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
       // record 表示当前行的数据对象，包含了用户的信息
       render: (_, record) => (
         <Space  size="middle" >
-           <EditUserButton userId={record.id} onEdited={handleEditSuccess} initialValues={record} />
+          <EditUserButton userId={record.id} onEdited={handleEditSuccess} initialValues={record} />
           {/* userId 属性传递了当前行用户的数据中的 id。
           onDeleted 属性传递了 handleDeleteSuccess 函数，当删除操作成功时，这个函数会被调用。 */}
           <DeleteUserButton userId={record.id} onDeleted={handleDeleteSuccess} />

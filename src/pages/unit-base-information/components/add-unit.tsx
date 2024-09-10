@@ -3,6 +3,7 @@ import { Button, Form, Input, Modal } from 'antd';
 import React from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { triggerRefreshGlobalAtom } from '@/pages/atom/triggerRefreshAtom';
 import { CREATE_UNIT } from '@/pages/graphql/unit';
 
 import { currentPageAtom, pageSizeAtom, unitsAtom } from './atom/pageAtom';
@@ -25,6 +26,8 @@ const AddUnitButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [form] = Form.useForm();
   const setTriggerRefresh = useSetRecoilState(triggerRefreshAtom); // 使用 useSetRecoilState 获取更新状态的方法
+  // eslint-disable-next-line max-len
+  const setTriggerRefreshGlobal = useSetRecoilState(triggerRefreshGlobalAtom); // 使用 useSetRecoilState 获取更新状态的方法
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setUnits = useSetRecoilState(unitsAtom); // 使用 useSetRecoilState 获取更新状态的方法
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,11 +54,15 @@ const AddUnitButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
         refetchQueries: ['SELECT_UNITS_BY_NAME_AND_CODE'],
       });
 
+
       // 在这里重置表单
       form.resetFields();
 
       // 触发刷新
       setTriggerRefresh(prev => !prev); // 更新 triggerRefreshAtom 的值
+      // 触发刷新用户列表的单位
+      setTriggerRefreshGlobal(prev => !prev);
+      // console.log(riggerRefreshGlobal);
 
 
 
@@ -75,19 +82,19 @@ const AddUnitButton: React.FC<AddUserButtonProps> = ({ onAdded }) => {
   return (
     <>
       <Button style={{background:'green'}} type="primary" onClick={showModal}>
-        新增用户
+        新增单位
       </Button>
       <Modal
-        title="新增用户"
+        title="新增单位"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
         <Form form={form} initialValues={{ is_enabled: false }} onFinish={handleOk}>
-          <Form.Item name="unitCode" label="账户" rules={[{ required: true }]}>
+          <Form.Item name="unitCode" label="单位编号" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="unitName" label="姓名" rules={[{ required: true }]}>
+          <Form.Item name="unitName" label="单位名称" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
         </Form>
