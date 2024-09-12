@@ -1,296 +1,135 @@
-import '../scale-base-information.scss';
+import { useMutation } from '@apollo/client';
+import { Button, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
+import React, { useState } from 'react';
 
-import type { ApolloQueryResult } from '@apollo/client';
-import { useMutation, useQuery } from '@apollo/client';
-import CloseIcon from '@mui/icons-material/Close';
-import type { SelectChangeEvent } from '@mui/material';
-import {
-  FormControl,
-  Grid,
-  IconButton,
-  MenuItem,
-  Modal,
-  Select,
-  TextField,
-} from '@mui/material';
-import { useEffect } from 'react';
-import { useState } from 'react';
+// import { useState } from 'react';
+import { CREATE_USER } from '@/apis';
+import type { User } from '@/pages/user-base-information/type';
 
-import { GET_SCALE_DETAIL, SUBMIT_BASE_INFORMATION } from '@/apis';
+const AddModal: React.FC = () => {
+  // const [user, setUser] = useState<User>();
+  const [submit] = useMutation(CREATE_USER);
+  const [form] = Form.useForm();
+  const [modalVisible, setModalVisible] = useState(false);
 
-import type { QueryData, Scale, TableData, User } from '../type';
-import { StyledaAffirmButton, StyledBox, StyledCancelButton } from './style';
-
-type PropsConfig = {
-  open: boolean;
-  onClose: () => void;
-  modifyId: React.MutableRefObject<number>;
-  getBaseInformationTableData: (
-    variables?: Partial<QueryData> | undefined,
-  ) => Promise<ApolloQueryResult<TableData>>;
-  pageNumber: React.MutableRefObject<number>;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-};
-
-const whether = ['否', '是'];
-const numberNames = [
-  'sd',
-  'baselineScore',
-  'scaleTimeLimit',
-  'startAge',
-  'endAge',
-  'warnGender',
-  'average',
-];
-
-const selectItem = (name: string, index: number) => {
-  return (
-    <MenuItem value={index} key={`${name}-${index}`}>
-      {name}
-    </MenuItem>
-  );
-};
-
-const AddModal = ({
-  open,
-  onClose,
-  modifyId,
-  getBaseInformationTableData,
-  pageNumber,
-  setPage,
-}: PropsConfig) => {
-  const [scale, setScale] = useState<Scale>();
-  const [user, setUser] = useState<User>();
-  const [submit] = useMutation(SUBMIT_BASE_INFORMATION);
-
-  const { data, refetch } = useQuery(GET_SCALE_DETAIL, {
-    variables: {
-      data: Number(modifyId.current),
-    },
-    onCompleted: (data) => {
-      const { getScaleDetail } = data;
-      setScale({ ...getScaleDetail });
-    },
-  });
-
-  useEffect(() => {
-    if (open) {
-      refetch({
-        data: Number(modifyId.current),
-      });
-      if (data) {
-        const { getScaleDetail } = data;
-        setScale({ ...getScaleDetail });
-      }
-    }
-  }, [data, open, refetch, modifyId]);
-
-  const useSet = (name: string, value: unknown) => {
-    // @ts-ignore
-    setUser((pre) => {
-      return {
-        ...pre,
-        [name]: value,
-      };
-    });
-
-    setScale((pre) => {
-      return {
-        ...pre,
-        [name]: value,
-      };
-    });
+  // 打开模态框时重置表单
+  const handleOpenModal = () => {
+    form.resetFields(); // 重置表单字段值
+    setModalVisible(true);
   };
-
-  const handleClose = () => {
-    setScale(undefined);
-    onClose();
-    modifyId.current = 0;
-  };
-
-  // select onChange 处理函数
-  const useHandleSelectChange = (event: SelectChangeEvent<unknown>) => {
-    const { name, value } = event.target;
-    let newValue;
-    if (name === 'scaleTypeId' || name === 'warnGender') {
-      newValue = String(value).length === 0 ? null : Number(value);
-    } else {
-      newValue = String(value).length === 0 ? null : Boolean(value);
-    }
-    useSet(name, newValue);
-  };
-
-  // TextField onChange 处理函数
-  const useHanldTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    useSet(name, numberNames.includes(name) ? Number(value) : value);
-  };
-
 
   // 表单提交
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(e);
-    submit({
+  const handleSubmit = async ({
+    userNumber,
+    username,
+    gender,
+    age,
+    isEnable,
+    departmentId,
+  }: User) => {
+    await submit({
       variables: {
         data: {
-          ...user,
-          id: Number(modifyId.current),
+          userNumber,
+          username,
+          gender,
+          age,
+          isEnable,
+          departmentId,
+          id: 99,
         },
       },
-      onCompleted: () => {
-        handleClose();
-        setPage(1);
-        getBaseInformationTableData({
-          data: {
-            currentPage: 1,
-            pageNumber: pageNumber.current,
-          },
-        });
-      },
     });
-
-    e.preventDefault();
+    console.log('提交完成');
   };
 
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
-        <StyledBox sx={{ bgcolor: 'background.paper' }}>
-          <div className="modal-title-layer">
-            <div className="modal-title">添加用户</div>
-            <IconButton className="modal-close-button" onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
-          </div>
-          <form onSubmit={(e) => handleSubmit(e)}>
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 
-              <Grid item xs={6}>
-                <span className="modal-left-text">账号：</span>
-                <TextField
-                  sx={{ marginLeft: '35px', marginTop: '10px' }}
-                  className="modal-left"
-                  name="uuid"
-                  placeholder="请输入账号"
-                  size="small"
-                  onChange={useHanldTextChange}
-                  value={user?.uuid}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <span className="modal-right-text">姓名：</span>
-                <TextField
-                  sx={{ marginLeft: '0px', marginTop: '10px' }}
-                  className="modal-right"
-                  name="username"
-                  placeholder="请输入姓名"
-                  size="small"
-                  onChange={useHanldTextChange}
-                  value={user?.username}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <FormControl>
-                  <span className="modal-left-text">性别：</span>
-                  <Select
-                    displayEmpty
-                    name="gender"
-                    size="small"
-                    required
-                    value={
-                      user?.gender !== null && user?.gender !== undefined
-                        ? String(user?.gender)
-                        : ''
-                    }
-                    defaultValue=""
-                    className="modal-left"
-                    inputProps={{ 'aria-label': 'Without label' }}
-                    onChange={useHandleSelectChange}
-                    renderValue={(selected) => {
-                      if (user?.gender !== null && user?.gender !== undefined) {
-                        return Number(user?.gender) === 1
-                          ? '男'
-                          : Number(user?.gender) === 2
-                            ? '性别不限'
-                            : '女';
-                      }
-                      if (!selected || selected.length === 0) {
-                        return (
-                          <div style={{ color: 'rgba(0,0,0,0.35)' }}>请选择性别</div>
-                        );
-                      }
-                      return Number(selected) === 1
-                        ? '男'
-                        : Number(user?.gender) === 2
-                          ? '性别不限'
-                          : '女';
-                    }}
-                  >
-                    <MenuItem value={''}>请选择性别</MenuItem>
-                    <MenuItem value={0}>女</MenuItem>
-                    <MenuItem value={1}>男</MenuItem>
-                    <MenuItem value={2}>性别不限</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={6}>
-                <span className="modal-right-text">年龄：</span>
-                <TextField
-                  sx={{ marginLeft: '0px', marginTop: '10px' }}
-                  className="modal-right"
-                  name="age"
-                  placeholder="请输年龄"
-                  size="small"
-                  onChange={useHanldTextChange}
-                  value={scale?.tranformula}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <FormControl>
-                  <span className="modal-left-text">是否启用：</span>
-                  <Select
-                    displayEmpty
-                    name="isEnable"
-                    size="small"
-                    required
-                    defaultValue=""
-                    value={
-                      user?.isEnable !== null && user?.isEnable !== undefined
-                        ? String(user?.isEnable ? 1 : 0)
-                        : ''
-                    }
-                    className="modal-left"
-                    inputProps={{ 'aria-label': 'Without label' }}
-                    onChange={useHandleSelectChange}
-                    renderValue={(selected) => {
-                      if (user?.isEnable !== null && user?.isEnable !== undefined) {
-                        return whether[Number(user?.isEnable)];
-                      }
-                      if (!selected || selected.length === 0) {
-                        return (
-                          <div style={{ color: 'rgba(0,0,0,0.35)' }}>请选择是否启用</div>
-                        );
-                      }
-                      return whether[Number(selected)];
-                    }}
-                  >
-                    <MenuItem value={''}>请选择是否启用</MenuItem>
-                    {whether.map(selectItem)}
-                  </Select>
-                </FormControl>
-              </Grid>
+        <Button
+          type="default"
+          style={{ width: 71, height: 32 }}
+          onClick={handleOpenModal}
+        >
+          新增
+        </Button>
 
 
-
-            </Grid>
-            <div style={{ float: 'right', marginTop: 10 }}>
-              <StyledaAffirmButton variant="contained" type="submit">
-                确认
-              </StyledaAffirmButton>
-              <StyledCancelButton onClick={handleClose}>取消</StyledCancelButton>
-            </div>
-          </form>
-        </StyledBox>
+      <Modal
+        title="增加用户信息"
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={() => form.submit()}>
+            OK
+          </Button>,
+        ]}
+        width={600}
+      >
+        <Form
+          form={form}
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 18 }}
+          layout="horizontal"
+          onFinish={handleSubmit}
+          initialValues={{ gender: '男', is_enabled: true }}
+        >
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item
+                label="账号"
+                name="account"
+                rules={[{ required: true, message: '请输入账号' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="姓名"
+                name="name"
+                rules={[{ required: true, message: '请输入姓名' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label="性别" name="gender">
+                <Select>
+                  <Select.Option value="男">男</Select.Option>
+                  <Select.Option value="女">女</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="年龄"
+                name="age"
+                rules={[
+                  { required: true, message: '请输入年龄' },
+                  { type: 'number', message: '年龄必须是数字' },
+                ]}
+              >
+                <InputNumber style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label="是否启用" name="is_enabled">
+                <Select>
+                  <Select.Option value={true}>是</Select.Option>
+                  <Select.Option value={false}>否</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
       </Modal>
     </>
   );

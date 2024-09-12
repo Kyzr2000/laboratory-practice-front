@@ -1,62 +1,55 @@
-import { ZoomIn } from '@mui/icons-material';
-import { memo, useRef } from 'react';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input } from 'antd';
+import React, { useEffect, useState } from 'react';
 
-import type { ScaleType } from '../type';
-import {
-  StyledButton,
-  StyledTextField,
-} from './style';
+const Search: React.FC = () => {
+  const [form] = Form.useForm();
+  const [, forceUpdate] = useState({});
 
-// import '../my-style.scss';
+  // To disable submit button at the beginning.
+  useEffect(() => {
+    forceUpdate({});
+  }, []);
 
-type PropsConfig = {
-  setSearchData: React.Dispatch<
-    React.SetStateAction<{
-      scaleType?: number;
-      scaleName?: string;
-    }>
-  >;
-  scaleTypes: ScaleType[];
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-};
-
-const Search = ({ setSearchData, setPage }: PropsConfig) => {
-  const scaleType = useRef(0);
-  const scaleName = useRef('');
-
-
-
-  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    scaleName.current = event.target.value as string;
-  };
-
-  const handleClick = () => {
-    setPage(1);
-    setSearchData({
-      scaleType: scaleType.current,
-      scaleName: scaleName.current,
-    });
-  };
+  const onFinish = () => {};
 
   return (
-    <div style={{marginLeft: 22}}>
-      <StyledTextField
-        label="请输入账号"
-        variant="outlined"
-        size="small"
-        onChange={handleTextChange}
-      />
-      <StyledTextField
-        label="请输入姓名"
-        variant="outlined"
-        size="small"
-        onChange={handleTextChange}
-      />
-      <StyledButton variant="contained" startIcon={<ZoomIn />} onClick={handleClick}>
-        查询
-      </StyledButton>
-    </div>
+    <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
+      <Form.Item
+        name="username"
+        rules={[{ required: true, message: 'Please input your username!' }]}
+      >
+        <Input
+          prefix={<UserOutlined className="site-form-item-icon" />}
+          placeholder="Username"
+        />
+      </Form.Item>
+      <Form.Item
+        name="password"
+        rules={[{ required: true, message: 'Please input your password!' }]}
+      >
+        <Input
+          prefix={<LockOutlined className="site-form-item-icon" />}
+          type="password"
+          placeholder="Password"
+        />
+      </Form.Item>
+      <Form.Item shouldUpdate>
+        {() => (
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={
+              !form.isFieldsTouched(true) ||
+              !!form.getFieldsError().filter(({ errors }) => errors.length).length
+            }
+          >
+            查询
+          </Button>
+        )}
+      </Form.Item>
+    </Form>
   );
 };
 
-export default memo(Search);
+export default Search;

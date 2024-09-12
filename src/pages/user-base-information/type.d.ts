@@ -58,10 +58,11 @@ export type QueryData = {
 };
 
 export type User = {
-  id: number;
-  uuid?: number;
+  id?: number;
+  userNumber?: string;
   username?: string;
   gender?: number;
   age?: number;
   isEnable?: boolean;
-}
+  departmentId?: number;
+};
