@@ -3,13 +3,16 @@ import '../user-base-information.scss';
 
 import { useQuery } from '@apollo/client';
 import type { TableColumnsType } from 'antd';
-import { Space, Table } from 'antd';
-import React, { useEffect } from 'react';
+import { Button, Space, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { apolloClient } from '@/apis/client';
 import { triggerRefreshGlobalAtom } from '@/pages/atom/triggerRefreshAtom';
 import { Find_ALL_SIMPLIFIED_USERS_QUERY } from '@/pages/graphql/simp-user';
+import { GET_USER_SKILLS } from '@/pages/graphql/skill';
+import SkillModal from '@/pages/skill-base-information/components/user-skill-window';
+import type { SkillType } from '@/pages/skill-base-information/models/skillType';
 
 import type { SimpUserType } from '../models/simpUserType';
 import {currentPageAtom, pageSizeAtom, simpUsersAtom, totalRecordsAtom } from './atom/pageAtom';
@@ -42,9 +45,13 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
   const [triggerRefreshGlobal] = useRecoilState(triggerRefreshGlobalAtom);
 
 
+  // 用户和技能关系的操作
+  const [isSkillModalVisible, setIsSkillModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<SimpUserType | null>(null);
+  const [skills, setSkills] = useState<SkillType[]>([]);
 
 
-  // 获取gql查询的数据
+  // 获取所有简化用户的gql查询的数据
   const { data, loading, error , refetch } = useQuery(Find_ALL_SIMPLIFIED_USERS_QUERY, {
     variables: {
       searchAllSimplifiedUsersInput: {
@@ -60,6 +67,11 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
     onError: (error) => console.error('GraphQL Error:', error),
   });
   // console.log(data);
+
+  /**
+   * 获取每个用户对应的所有技能
+   */
+
 
 
    // 使用了 useEffect 钩子来处理从后端获取的数据，并在每次状态改变时重新获取数据  
@@ -105,6 +117,29 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
 
   
   // console.log(simpUsers);
+  // 查看技能的窗口
+  const handleShowSkillModal = async (user: SimpUserType) => {
+    try {
+      const { data } = await apolloClient.query({
+        query: GET_USER_SKILLS,
+        variables: { userId: user.id },
+      });
+
+      
+
+      console.log(data); // 数据正常
+      setSkills(data.getUserSkills);
+      setSelectedUser(user);
+      setIsSkillModalVisible(true);
+    } catch (error) {
+      console.error('Error fetching skills:', error);
+    }
+    
+  };
+
+  const handleSkillModalCancel = () => {
+    setIsSkillModalVisible(false);
+  };
 
   // 序列号生成渲染 因为Table 组件的 render 函数默认接受三个参数，
   // 而第一个参数通常表示单元格的值，__: 这个参数被定义为 SimpUserType 类型这两个都不需要
@@ -129,6 +164,10 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
   const handleDeleteSuccess = () => {
     // 当删除成功时重新获取数据
     refetch();
+  };
+  // 删除用户和技能关联表的一条数据后 刷新数据
+  const onSkillDeleted = async () => {
+    alert('删除成功');
   };
 
 
@@ -199,6 +238,17 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
         return record.unit?.unitName || '未分配';
       }
     },
+    // 新增技能列
+    {
+      title: '技能',
+      key: 'skills',
+      width: 70,
+      render: (_, record) => (
+        <Button type="link" onClick={() => handleShowSkillModal(record)}>
+          查看技能
+        </Button>
+      ),
+    },
     {
       title: '操作',
       key: 'operation',
@@ -216,10 +266,21 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
       ),
     },
   ];
-  
-  
 
 
+  const renderSkillModal = () => {
+    if (!selectedUser) return null;
+    return (
+      <SkillModal
+        visible={isSkillModalVisible}
+        onCancel={handleSkillModalCancel}
+        user={selectedUser}
+        skills={skills}
+        onSkillDeleted={onSkillDeleted} // 传递回调函数
+      />
+    );
+  };
+  
 
   return (
     <div>
@@ -238,6 +299,7 @@ const SimpUserTableList: React.FC<Props> = ({ onSearch }) => {
       }}
       
       />
+      {renderSkillModal()}
     </div>
   );
     

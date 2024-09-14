@@ -23,6 +23,7 @@
     "@mui/material": "^5.12.3",
     "ahooks": "^3.3.8",
     "antd": "^5.15.2",
+    "date-fns": "^3.6.0",
     "echarts": "^5.3.2",
     "framer-motion": "^10.12.8",
     "graphql": "^16.5.0",
