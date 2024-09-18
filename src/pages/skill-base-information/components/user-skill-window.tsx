@@ -1,7 +1,7 @@
 
 import { useQuery } from '@apollo/client';
 import type { TableProps } from 'antd';
-import { Modal, Space, Table } from 'antd';
+import { Col, Modal, Row, Space, Table } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { apolloClient } from '@/apis/client';
@@ -9,6 +9,7 @@ import { GET_USER_SKILLS } from '@/pages/graphql/skill';
 import type { SimpUserType } from '@/pages/simp-user-base-information/models/simpUserType';
 
 import type { SkillType } from '../models/skillType';
+import AddUserSkillButton from './add-userskill';
 import DeleteUserSkillButton from './user-skill-delete';
 
 interface SkillModalProps {
@@ -17,19 +18,20 @@ interface SkillModalProps {
   user: SimpUserType;
   skills: SkillType[];
   onSkillDeleted?: () => void; // 可选的回调函数，用于通知父组件技能已被删除
+  onSkillAdded?: () => void;
 }
 
 
 // eslint-disable-next-line max-len
-const SkillModal: React.FC<SkillModalProps> = ({ visible, onCancel, user , onSkillDeleted}) => {
+const SkillModal: React.FC<SkillModalProps> = ({ visible, onCancel, user , onSkillDeleted ,onSkillAdded}) => {
   
-    // eslint-disable-next-line no-redeclare
-    const [skills, setSkills] = useState<SkillType[]>([]);
+  // eslint-disable-next-line no-redeclare
+  const [skills, setSkills] = useState<SkillType[]>([]);
 
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const refetchRef = useRef<any>();
-    // 使用 useQuery 获取技能数据，并获取 refetch 函数
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const refetchRef = useRef<any>();
+  // 使用 useQuery 获取技能数据，并获取 refetch 函数
   const { data, refetch } = useQuery(GET_USER_SKILLS, {
     variables: { userId: user.id },
     client: apolloClient,
@@ -64,6 +66,15 @@ const SkillModal: React.FC<SkillModalProps> = ({ visible, onCancel, user , onSki
       onSkillDeleted(); // 通知父组件技能已被删除
     }
   };
+  const handleSkillAdded = async () => {
+    if (refetchRef.current) {
+      await refetchRef.current(); // 在技能删除成功后重新获取数据
+    }
+    if (onSkillAdded) {
+      onSkillAdded(); // 通知父组件技能已被删除
+    }
+  };
+
 
 
 
@@ -96,12 +107,17 @@ const SkillModal: React.FC<SkillModalProps> = ({ visible, onCancel, user , onSki
             skillId={record.id} // 技能 ID
             onDeleted={handleSkillDeleted} // 将 onSkillDeleted 回调函数传递给 DeleteUserSkillButton 组件
             
+            
           />
           </Space>
         ),
       },
   ];
   
+  // function handleAddSuccess(): void {
+  //   throw new Error('Function not implemented.');
+  // }
+
   return (
     <Modal
       title={`${user.name} 的技能`}
@@ -110,6 +126,16 @@ const SkillModal: React.FC<SkillModalProps> = ({ visible, onCancel, user , onSki
       footer={null}
       width={800} // 设置 Modal 的宽度
     >
+    <Row style={{height:50}}>
+      <Col span={1}></Col>
+      <Col span={6}>
+          
+      </Col>
+      <Col span={12}></Col>
+      <Col span={4}>
+          <AddUserSkillButton userId={user.id} onAdded= {handleSkillAdded} />{/* 添加 add 组件 */}   
+      </Col>
+    </Row>
     <Table columns={columns} dataSource={skills} />
 
       
