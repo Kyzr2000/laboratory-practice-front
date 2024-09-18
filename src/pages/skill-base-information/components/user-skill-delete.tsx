@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client';
-import { Button } from 'antd';
+import { Button, message, Modal } from 'antd';
+import React from 'react';
 
 import { GET_USER_SKILLS } from '@/pages/graphql/skill';
 import { DELETE_USER_SKILL_RELATION_MUTATION } from '@/pages/graphql/user-skill';
@@ -35,21 +36,47 @@ const DeleteUserSkillButton: React.FC<DeleteUserSkillButtonProps> = ({ userId, s
           },
         ],
       });
+      // message.success('删除成功！'); // 告诉用户删除成功
       if (onDeleted) {
         onDeleted(); // 调用父组件提供的回调函数
       }
 
     } catch (error) {
       console.error('Error deleting user skill relation:', error);
+      message.error('删除技能失败，请稍后再试！');
     }
-
+    setIsModalVisible(false); // 关闭模态框
     
   };
 
+  // 新增的状态和方法
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+  
+  const handleConfirm = () => {
+    handleDeleteUserSkill();
+  };
+  
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
-    <Button type="primary" danger ghost onClick={handleDeleteUserSkill}>
+    <><Button type="primary" danger ghost onClick={showModal}>
       删除
     </Button>
+    <Modal
+      title="确认删除"
+      visible={isModalVisible}
+      onOk={handleConfirm}
+      onCancel={handleCancel}
+      okText="确定"
+      cancelText="取消"
+    >
+        <p>您确定要删除此技能关系吗？</p>
+      </Modal></>
   );
 };
 
