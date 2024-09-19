@@ -1,8 +1,53 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_USER = gql`
-  mutation createUsers($create: AddUserDto!) {
-    createUser(createUser: $create) {
+  mutation CreateUser($createUser: AddUserDto!) {
+    createUser(createUser: $createUser) {
+      id
+      userNumber
+      username
+      gender
+      age
+      isEnable
+      departmentId
+    }
+  }
+`;
+
+export const GET_USERS = gql`
+  query GetUsers($page: Int!, $userNumber: String, $username: String) {
+    getUsers(page: $page, userNumber: $userNumber, username: $username) {
+      users {
+        id
+        userNumber
+        username
+        gender
+        age
+        isEnable
+        departmentId
+      }
+      total
+    }
+  }
+`;
+
+export const DELETE_USER = gql`
+  mutation DelUser($id: Int!) {
+    deleteUser(id: $id) {
+      id
+      userNumber
+      username
+      gender
+      age
+      isEnable
+      departmentId
+    }
+  }
+`;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($id: Int!, $updateUser: UpdateUserDto!) {
+    updUser(id: $id, updateUser: $updateUser) {
       id
       userNumber
       username

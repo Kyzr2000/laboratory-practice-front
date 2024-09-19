@@ -1,4 +1,4 @@
-import { Col, Row } from 'antd';
+import { Row } from 'antd';
 import React from 'react';
 
 import AddModal from '@/pages/user-base-information/components/add-modal';
@@ -9,15 +9,17 @@ const BaseInformation: React.FC = () => {
   return (
     <>
       <Row>
-        <div style={{ marginTop: 10, marginBottom: 10 }}>
-          <Col span={30}>
-            <Search />
-            <AddModal />
-
-          </Col>
-          <Col span={10}>
-
-          </Col>
+        <div
+          style={{
+            marginTop: 10,
+            marginBottom: 10,
+            display: 'grid',
+            gridTemplateColumns: 'auto auto',
+            alignItems: 'center',
+          }}
+        >
+          <Search />
+          <AddModal />
         </div>
       </Row>
       <BaseInformationTable />
