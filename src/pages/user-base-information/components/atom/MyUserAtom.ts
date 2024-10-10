@@ -26,11 +26,21 @@ export const currentAtom = atom<number>({
 });
 
 export const userNumberAtom = atom<string>({
-  key: 'currentAtom',
+  key: 'userNumberAtom',
   default: '',
 });
 
 export const usernameAtom = atom<string>({
-  key: 'currentAtom',
+  key: 'usernameAtom',
   default: '',
+});
+
+export const isEnableAtom = atom<boolean>({
+  key: 'isEnableAtom',
+  default: undefined,
+});
+
+export const pageSizeAtom = atom<number>({
+  key: 'pageSizeAtom',
+  default: 10,
 });

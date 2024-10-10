@@ -5,49 +5,69 @@ import {
   Form,
   Input,
   InputNumber,
+  List,
   Modal,
   Row,
   Select,
   Space,
   Table,
+  TreeSelect,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { DELETE_USER, GET_USERS, UPDATE_USER } from '@/apis';
+import { DELETE_USER, GET_DEPS, GET_USER_SKILLS, GET_USERS, UPDATE_USER } from '@/apis';
 
-import type { User } from '../type';
-import { userAtom, usernameAtom, userNumberAtom, usersAtom } from './atom/MyUserAtom';
+import type { Dep, Skill, User } from '../type';
+import {
+  isEnableAtom,
+  pageSizeAtom,
+  userAtom,
+  usernameAtom,
+  usersAtom,
+} from './atom/MyUserAtom';
 
 const BaseInformationTable: React.FC = () => {
+  console.log('table重新渲染了！！！');
+
   const [form] = Form.useForm();
   const [users, setUsers] = useRecoilState(usersAtom);
   const [total, setTotal] = useState(1);
   const setUser = useSetRecoilState(userAtom);
   const [modalVisible, setModalVisible] = useState(false);
+  const [skillModalVisible, setSkillModalVisible] = useState(false);
   const [userId, setUserId] = useState(1);
 
   // 页码控制
   const [currentPage, setCurrentPage] = useState(1);
 
+  // 每页显示条数
+  const [pageSize, setPageSize] = useRecoilState(pageSizeAtom);
+
   // 搜索条件
-  const userNumberCondition = useRecoilValue(userNumberAtom);
+  const isEnableCondition = useRecoilValue(isEnableAtom);
   const usernameCondition = useRecoilValue(usernameAtom);
 
   const { loading, error, data } = useQuery(GET_USERS, {
     variables: {
-      page: currentPage,
-      userNumber: userNumberCondition,
+      pageNum: currentPage,
+      pageSize: pageSize,
+      isEnable: isEnableCondition,
       username: usernameCondition,
     },
+  });
+  const { data: depData } = useQuery(GET_DEPS);
+  const { data: skillData, loading: skillLoading, error: skillError } = useQuery(GET_USER_SKILLS, {
+    variables: {
+      id: userId,
+    }
   });
   const [deleteUser] = useMutation(DELETE_USER);
   const [updUser] = useMutation(UPDATE_USER);
 
   const delUser = async ({ id }: User) => {
     console.log('删除执行了');
-    console.log(userNumberCondition, usernameCondition);
     if (id) {
       let newId = Number(id);
       await deleteUser({
@@ -58,8 +78,9 @@ const BaseInformationTable: React.FC = () => {
           {
             query: GET_USERS,
             variables: {
-              page: currentPage,
-              userNumber: userNumberCondition,
+              pageNum: currentPage,
+              pageSize: pageSize,
+              isEnable: isEnableCondition,
               username: usernameCondition,
             },
           },
@@ -69,13 +90,20 @@ const BaseInformationTable: React.FC = () => {
   };
 
   const handleOpenModal = (record: User) => {
-    console.log(record.id);
     setUserId(Number(record.id));
     form.resetFields(); // 重置表单字段值
     setModalVisible(true);
     form.setFieldsValue(record);
 
     setUser(record);
+  };
+
+  const handleOpenSkillModal = (record: User) => {
+    console.log(record);
+    setUserId(Number(record.id));
+    console.log('id设置完了！！！！');
+    setSkillModalVisible(true);
+    console.log('方法执行完毕！！！！');
   };
 
   // 表单提交
@@ -105,8 +133,9 @@ const BaseInformationTable: React.FC = () => {
           {
             query: GET_USERS,
             variables: {
-              page: currentPage,
-              userNumber: userNumberCondition,
+              pageNum: currentPage,
+              pageSize: pageSize,
+              isEnable: isEnableCondition,
               username: usernameCondition,
             },
           },
@@ -151,8 +180,8 @@ const BaseInformationTable: React.FC = () => {
     },
     {
       title: '部门',
-      dataIndex: 'departmentId',
-      key: 'departmentId',
+      dataIndex: 'departmentName',
+      key: 'departmentName',
       render: (text) => <a>{text}</a>,
     },
     {
@@ -168,12 +197,23 @@ const BaseInformationTable: React.FC = () => {
         <Space size="middle">
           <Button
             type="primary"
+            onClick={() => handleOpenSkillModal(record)}
+            style={{ backgroundColor: 'skyblue', borderColor: 'skyblue' }}
+          >
+            技能
+          </Button>
+          <Button
+            type="primary"
             onClick={() => handleOpenModal(record)}
             style={{ backgroundColor: 'green', borderColor: 'green' }}
           >
             编辑
           </Button>
-          <Button type="primary" onClick={() => delUser(record)}>
+          <Button
+            type="primary"
+            onClick={() => delUser(record)}
+            style={{ backgroundColor: 'red', borderColor: 'red' }}
+          >
             删除
           </Button>
         </Space>
@@ -181,9 +221,29 @@ const BaseInformationTable: React.FC = () => {
     },
   ];
 
-  const handlePaginationChange = (page: number) => {
+  const handlePaginationChange = (page: number, pageSize: number) => {
     setCurrentPage(page);
+    setPageSize(pageSize); // 更新每页显示条数
   };
+
+  // 递归函数来构建树形结构
+  const transformToTreeData = (deps: Dep[]) => {
+    return deps.map((dep) => {
+      const node = {
+        title: dep.name,
+        value: dep.id,
+        key: dep.id.toString(),
+        children: Array(),
+      };
+
+      if (dep.children && dep.children.length > 0) {
+        node.children = transformToTreeData(dep.children);
+      }
+
+      return node;
+    });
+  };
+  const treeData = depData ? transformToTreeData(depData.getDeps) : [];
 
   useEffect(() => {
     if (data) {
@@ -191,8 +251,16 @@ const BaseInformationTable: React.FC = () => {
       setTotal(data.getUsers.total);
     }
   }, [data, setUsers]);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+
+  // 处理技能数据的变化
+  useEffect(() => {
+    if (!skillData) {
+      console.log('aaa');
+    }
+  }, [skillData]);
+  if (loading || skillLoading) return <p>Loading...</p>;
+  if (error || skillError) return <p>Error</p>;
+
   return (
     <>
       <Modal
@@ -268,28 +336,47 @@ const BaseInformationTable: React.FC = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="部门"
-                name="departmentId"
-                rules={[
-                  { required: true, message: '请输入部门ID' },
-                  { type: 'number', message: '部门必须是数字' },
-                ]}
-              >
-                <InputNumber style={{ width: '100%' }} />
+              <Form.Item label="部门" name="departmentId">
+                <TreeSelect
+                  treeData={treeData}
+                  placeholder="请选择部门"
+                  treeDefaultExpandAll
+                />
               </Form.Item>
             </Col>
           </Row>
         </Form>
       </Modal>
 
+      <Modal
+        title="用户技能"
+        open={skillModalVisible}
+        onCancel={() => setSkillModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setSkillModalVisible(false)}>
+            Cancel
+          </Button>,
+
+        ]}
+        width={300}
+      >
+        <List
+          bordered
+          dataSource={skillData ? skillData.getUserSkills : null}
+          renderItem={(item: Skill) => <List.Item>{item ? item.name : null}</List.Item>}
+        />
+      </Modal>
+
       <Table
         columns={columns}
         dataSource={users}
+        rowKey={(record) => record.id}
         pagination={{
           current: currentPage,
-          pageSize: 3,
+          pageSize: pageSize,
           total: total,
+          showSizeChanger: true, // 显示每页条数选择器
+          onShowSizeChange: handlePaginationChange, // 处理每页条数变化
           onChange: handlePaginationChange,
         }}
       />

@@ -66,3 +66,14 @@ export type User = {
   isEnable?: boolean;
   departmentId?: number;
 };
+
+export type Dep = {
+  id: number;
+  name: string;
+  children: Dep[];
+};
+
+export type Skill = {
+  id: number;
+  name: string;
+};

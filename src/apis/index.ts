@@ -15,8 +15,13 @@ export const CREATE_USER = gql`
 `;
 
 export const GET_USERS = gql`
-  query GetUsers($page: Int!, $userNumber: String, $username: String) {
-    getUsers(page: $page, userNumber: $userNumber, username: $username) {
+  query GetUsers($pageNum: Int!, $pageSize: Int!, $isEnable: Boolean, $username: String) {
+    getUsers(
+      pageNum: $pageNum
+      pageSize: $pageSize
+      isEnable: $isEnable
+      username: $username
+    ) {
       users {
         id
         userNumber
@@ -25,6 +30,7 @@ export const GET_USERS = gql`
         age
         isEnable
         departmentId
+        departmentName
       }
       total
     }
@@ -55,6 +61,27 @@ export const UPDATE_USER = gql`
       age
       isEnable
       departmentId
+    }
+  }
+`;
+
+export const GET_DEPS = gql`
+  query GetDeps {
+    getDeps {
+      id
+      name
+      children {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const GET_USER_SKILLS = gql`
+  query GetUserSkills($id: Int!) {
+    getUserSkills(id: $id) {
+      name
     }
   }
 `;

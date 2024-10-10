@@ -1,23 +1,57 @@
-import { useMutation } from '@apollo/client';
-import { Button, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
+import { useMutation, useQuery } from '@apollo/client';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  TreeSelect,
+} from 'antd';
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 // import { useState } from 'react';
-import { CREATE_USER, GET_USERS } from '@/apis';
-import type { User } from '@/pages/user-base-information/type';
+import { CREATE_USER, GET_DEPS, GET_USERS } from '@/apis';
+import type { Dep, User } from '@/pages/user-base-information/type';
 
-import { usernameAtom, userNumberAtom } from './atom/MyUserAtom';
+import { isEnableAtom, pageSizeAtom, usernameAtom } from './atom/MyUserAtom';
 
 const AddModal: React.FC = () => {
   // const [user, setUser] = useState<User>();
   const [createUser] = useMutation(CREATE_USER);
+  const { data } = useQuery(GET_DEPS);
   const [form] = Form.useForm();
   const [modalVisible, setModalVisible] = useState(false);
 
   // 搜索条件
-  const userNumberCondition = useRecoilValue(userNumberAtom);
+  const isEnableCondition = useRecoilValue(isEnableAtom);
   const usernameCondition = useRecoilValue(usernameAtom);
+
+  // 每页显示条数
+  const pageSize = useRecoilValue(pageSizeAtom);
+
+  // 递归函数来构建树形结构
+  const transformToTreeData = (deps: Dep[]) => {
+    console.log(deps);
+    return deps.map((dep) => {
+      const node = {
+        title: dep.name,
+        value: dep.id,
+        key: dep.id.toString(),
+        children: Array(),
+      };
+
+      if (dep.children && dep.children.length > 0) {
+        node.children = transformToTreeData(dep.children);
+      }
+
+      return node;
+    });
+  };
+  const treeData = data ? transformToTreeData(data.getDeps) : [];
 
   // 打开模态框时重置表单
   const handleOpenModal = () => {
@@ -51,8 +85,9 @@ const AddModal: React.FC = () => {
           {
             query: GET_USERS,
             variables: {
-              page: 1,
-              userNumber: userNumberCondition,
+              pageNum: 1,
+              pageSize: pageSize,
+              isEnable: isEnableCondition,
               username: usernameCondition,
             },
           },
@@ -144,17 +179,17 @@ const AddModal: React.FC = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="部门"
-                name="departmentId"
-                rules={[
-                  { required: true, message: '请输入部门ID' },
-                  { type: 'number', message: '部门必须是数字' },
-                ]}
-              >
-                <InputNumber style={{ width: '100%' }} />
+              <Form.Item label="部门" name="departmentId">
+                <TreeSelect
+                  treeData={treeData}
+                  placeholder="请选择部门"
+                  treeDefaultExpandAll
+                />
               </Form.Item>
             </Col>
+          </Row>
+          <Row gutter={24}>
+            <Col span={12}></Col>
           </Row>
         </Form>
       </Modal>
