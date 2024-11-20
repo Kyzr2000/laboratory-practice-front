@@ -12,7 +12,7 @@ export default defineConfig({
     port: 3000
   },
 
-  plugins: [react(), eslintPlugin(), stylelintPlugin()],
+  plugins: [react(), eslintPlugin({fix: true, }), stylelintPlugin()],
   css: {
     // css modules
     modules: {

@@ -1,0 +1,42 @@
+.head-search{
+  width: 1200px;
+}
+
+.search-input {
+  width: 200px;
+  height: 50px;
+  margin: 25px;
+  margin-top: 0;
+  text-align: center;
+  border-color: black;
+  font-weight: 400;
+}
+
+.search-input::placeholder {
+  color: black;
+}
+
+
+.search-button{
+  color: black;
+  background-color:#19ba8f;
+  border-color: #1d7200;
+  border-radius: 0;
+  width: 90px;
+  height: 50px;
+  margin: 25px;
+  margin-top: 0;
+}
+
+.search-button:hover{
+  background-color: #30f8c3 !important;
+  color: black !important;
+}
+
+.right-fix{
+  float: right;
+}
+
+.ant-table-cell button{
+  color: black ;
+}

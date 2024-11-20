@@ -22,7 +22,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.3",
     "ahooks": "^3.3.8",
-    "antd": "^5.15.2",
+    "antd": "^5.22.0",
     "echarts": "^5.3.2",
     "framer-motion": "^10.12.8",
     "graphql": "^16.5.0",
@@ -31,8 +31,8 @@
     "postcss-scss": "^4.0.6",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^6.3.0",
-    "recoil": "^0.7.3-alpha.2"
+    "react-router-dom": "^6.28.0",
+    "recoil": "^0.7.7"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
@@ -61,7 +61,8 @@
     "stylelint-order": "^6.0.3",
     "typescript": "^4.6.3",
     "vite": "^4.1.4",
-    "vite-plugin-eslint": "^1.4.0"
+    "vite-plugin-eslint": "^1.4.0",
+    "vite-plugin-sass": "^0.1.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
