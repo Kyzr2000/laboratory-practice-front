@@ -68,3 +68,31 @@ export const UpdateDiagnostic = gql`
     }
   }
 `;
+
+// 用户管理模块
+// 创建用户
+export const AddUser = gql`
+  mutation AddUser($data: AddUser!) {
+    addUser(data: $data) {
+      createdAt
+      updatedAt
+    }
+  }
+`;
+// 删除
+export const DeleteUser = gql`
+  mutation DeleteUser($data: String!) {
+    deleteUser(data: $data) {
+      username
+    }
+  }
+`;
+// 修改用户
+export const UpdateUser1 = gql`
+  mutation UpdateUser1($data: updateuser1!) {
+    updateUser1(data: $data) {
+      createdAt
+      updatedAt
+    }
+  }
+`;

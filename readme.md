@@ -36,3 +36,5 @@ git commit -m "[type]: 提交说明"
         'revert', // 用于撤销以前的commit
         'chore', // 对构建或者辅助工具的更改
       ],
+
+pnpm lint:jsFix

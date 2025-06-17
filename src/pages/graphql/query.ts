@@ -66,3 +66,45 @@ export const Departments = gql`
     }
   }
 `;
+// 用户管理模块
+// 查找用户
+export const GetUserByUsernameOrName = gql`
+  query GetUserByUsernameOrName($data: SearchUser!) {
+    getUserByUsernameOrName(data: $data) {
+      id
+      username
+      realname
+      gender
+      age
+      telephone
+      email
+      address
+      introduction
+    }
+  }
+`;
+export const GetUserByUsernameOrNameNumber = gql`
+  query GetUserByUsernameOrNameNumber($data: SearchUser!) {
+    getUserByUsernameOrNameNumber(data: $data)
+  }
+`;
+export const GetPageAllUsers = gql`
+  query GetPageAllUsers($data: Page!) {
+    getPageAllUsers(data: $data) {
+      id
+      username
+      realname
+      gender
+      age
+      telephone
+      email
+      address
+      introduction
+    }
+  }
+`;
+export const GetAllUser = gql`
+  query GetAllUsers {
+    getAllUsers
+  }
+`;
