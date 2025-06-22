@@ -80,6 +80,12 @@ export const GetUserByUsernameOrName = gql`
       email
       address
       introduction
+      unit {
+        id
+        name
+        uuid
+        createdAt
+      }
     }
   }
 `;
@@ -100,11 +106,34 @@ export const GetPageAllUsers = gql`
       email
       address
       introduction
+      unit {
+        id
+        name
+        uuid
+        createdAt
+      }
     }
   }
 `;
 export const GetAllUser = gql`
   query GetAllUsers {
     getAllUsers
+  }
+`;
+// 单位管理模块
+// 查找单位
+export const GetUnitByUnitnameOrName = gql`
+  query GetUnitByUnitnameOrName($data: SearchUnit!) {
+    getUnitByUnitnameOrName(data: $data) {
+      id
+      name
+      uuid
+      createdAt
+    }
+  }
+`;
+export const GetUnitByUnitnameOrNameNumber = gql`
+  query GetUnitByUnitnameOrNameNumber($data: SearchUnit!) {
+    getUnitByUnitnameOrNameNumber(data: $data)
   }
 `;

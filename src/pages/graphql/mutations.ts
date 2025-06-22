@@ -96,3 +96,37 @@ export const UpdateUser1 = gql`
     }
   }
 `;
+// 单位管理模块
+// 创建单位
+export const AddUnit = gql`
+  mutation AddUnit($data: AddUnit!) {
+    addUnit(data: $data) {
+      id
+      name
+      uuid
+      createdAt
+    }
+  }
+`;
+// 删除
+export const DeleteUnit = gql`
+  mutation DeleteUnit($data: String!) {
+    deleteUnit(data: $data) {
+      id
+      name
+      uuid
+      createdAt
+    }
+  }
+`;
+// 修改用户
+export const UpdateUnit1 = gql`
+  mutation UpdateUnit1($data: updateunit1!) {
+    updateUnit1(data: $data) {
+      id
+      name
+      uuid
+      createdAt
+    }
+  }
+`;

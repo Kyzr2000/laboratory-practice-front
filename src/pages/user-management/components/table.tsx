@@ -1,5 +1,8 @@
 // import { useQuery } from '@apollo/client';
+import './table.less';
+
 import { useMutation, useQuery } from '@apollo/client';
+import { DeleteOutlined, SyncOutlined } from '@mui/icons-material';
 import type { CascaderProps, TableProps } from 'antd';
 import {
   Button,
@@ -34,6 +37,13 @@ interface DataType {
   email?: string | null;
   address?: string | null;
   introduction?: string | null;
+  unit?: Unit | null;
+}
+interface Unit {
+  name?: string;
+  id?: number;
+  uuid?: string;
+  createdAt?: string;
 }
 interface Currentpage {
   page: number;
@@ -60,6 +70,7 @@ interface Values {
   username?: string;
   password?: string;
   realname?: string;
+  unitName?: string;
   gender?: number | null;
   age?: number | null;
   telephone?: string | null;
@@ -131,8 +142,8 @@ const TableDate: React.FC<MyComponentProps> = ({
   // 表单的xuanze
   const residences: CascaderProps<DataNodeType>['options'] = [
     {
-      value: 'zhejiang',
-      label: 'Zhejiang',
+      value: '浙江',
+      label: '浙江',
       children: [
         {
           value: 'hangzhou',
@@ -147,16 +158,16 @@ const TableDate: React.FC<MyComponentProps> = ({
       ],
     },
     {
-      value: 'jiangsu',
-      label: 'Jiangsu',
+      value: '江苏',
+      label: '江苏',
       children: [
         {
-          value: 'nanjing',
-          label: 'Nanjing',
+          value: '南京',
+          label: '南京',
           children: [
             {
-              value: 'zhonghuamen',
-              label: 'Zhong Hua Men',
+              value: '中华门',
+              label: '中华门',
             },
           ],
         },
@@ -189,6 +200,7 @@ const TableDate: React.FC<MyComponentProps> = ({
           telephone: values.telephone,
           email: values.email,
           introduction: values.introduction,
+          unitName: values.unitName,
         },
       },
     }).then(() => {
@@ -207,66 +219,75 @@ const TableDate: React.FC<MyComponentProps> = ({
 
   const columns: TableProps<DataType>['columns'] = [
     {
-      title: 'username',
+      title: '用户名',
       dataIndex: 'username',
       key: 'username',
       render: (text) => <a>{text}</a>,
     },
 
     {
-      title: 'realname',
+      title: '姓名',
       dataIndex: 'realname',
       key: 'realname',
     },
     {
-      title: 'age',
+      title: '年龄',
       dataIndex: 'age',
       key: 'age',
     },
     {
-      title: 'telephone',
+      title: '电话号',
       dataIndex: 'telephone',
       key: 'telephone',
     },
     {
-      title: 'email',
+      title: '邮箱',
       dataIndex: 'email',
       key: 'email',
     },
     {
-      title: 'introduction',
+      title: '简介',
       dataIndex: 'introduction',
       key: 'introduction',
     },
-
     {
-      title: 'Action',
+      title: '单位',
+      render: (_, record) => record.unit?.name || '未关联单位',
+      key: 'unit',
+    },
+    {
+      title: '操作',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
           <Popconfirm
-            title="Sure to Update?"
+            title="确认更改?"
+            okText="确认"
+            cancelText="取消"
             onConfirm={() => {
               setOpen(true);
               setformusername(record.username);
             }}
           >
-            <Button>Update </Button>
+            <Button icon={<SyncOutlined />}>修改</Button>
           </Popconfirm>
 
           <Popconfirm
-            title="Sure to delete?"
+            title="确认删除?"
+            okText="确认"
+            cancelText="取消"
             onConfirm={() => deleteuser(record.username)}
           >
-            <Button danger>Delete</Button>
+            <Button danger icon={<DeleteOutlined />}>
+              删除
+            </Button>
           </Popconfirm>
         </Space>
       ),
     },
   ];
 
-  const newReversedArray = [...tableDate];
-  const data: DataType[] = [...newReversedArray];
+  const data: DataType[] = [...tableDate];
 
   return (
     <>
@@ -285,9 +306,9 @@ const TableDate: React.FC<MyComponentProps> = ({
       />
       <Modal
         open={open}
-        title="Update a new collection"
-        okText="Update"
-        cancelText="Cancel"
+        title="更改信息"
+        okText="确认"
+        cancelText="取消"
         okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
         onCancel={() => setOpen(false)}
         destroyOnHidden
@@ -306,29 +327,41 @@ const TableDate: React.FC<MyComponentProps> = ({
       >
         <Form.Item
           name="email"
-          label="E-mail"
+          label="邮箱"
           rules={[
             {
               type: 'email',
-              message: 'The input is not valid E-mail!',
+              message: '您输入的不是有效邮箱!',
             },
             {
               required: true,
-              message: 'Please input your E-mail!',
+              message: '请输入您的邮箱!',
             },
           ]}
         >
           <Input />
         </Form.Item>
-
+        <Form.Item
+          name="unitName"
+          label="单位名称"
+          tooltip="您的单位名称"
+          rules={[
+            {
+              required: true,
+              message: '请输入您的单位名称',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
         <Form.Item
           name="address"
-          label="Address"
+          label="住址"
           rules={[
             {
               type: 'array',
               required: true,
-              message: 'Please select your habitual residence!',
+              message: '请检查你的住址',
             },
           ]}
         >
@@ -337,19 +370,19 @@ const TableDate: React.FC<MyComponentProps> = ({
 
         <Form.Item
           name="telephone"
-          label="Phone Number"
-          rules={[{ required: true, message: 'Please input your phone number!' }]}
+          label="电话号"
+          rules={[{ required: true, message: '请输入您的电话号!' }]}
         >
           <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item
           name="age"
-          label="Age"
+          label="年龄"
           rules={[
             {
               required: true,
-              message: 'Please input your age',
+              message: '请输入您的年龄!',
             },
           ]}
         >
@@ -358,22 +391,22 @@ const TableDate: React.FC<MyComponentProps> = ({
 
         <Form.Item
           name="gender"
-          label="Gender"
-          rules={[{ required: true, message: 'Please select gender!' }]}
+          label="性别"
+          rules={[{ required: true, message: '请选择您的性别!' }]}
         >
-          <Select placeholder="select your gender">
-            <Option value={0}>Male</Option>
-            <Option value={1}>Female</Option>
-            <Option value={2}>Other</Option>
+          <Select placeholder="请选择您的性别!">
+            <Option value={0}>男</Option>
+            <Option value={1}>女</Option>
+            <Option value={2}>其他</Option>
           </Select>
         </Form.Item>
         <Form.Item
           name="introduction"
-          label="Introduction"
+          label="简介"
           tooltip="introduction yourself"
           rules={[
             {
-              message: 'introduction yourself',
+              message: '简单介绍下你自己',
             },
           ]}
         >

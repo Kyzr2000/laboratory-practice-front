@@ -1,3 +1,5 @@
+import './add.less';
+
 import { useMutation, useQuery } from '@apollo/client';
 import type { CascaderProps } from 'antd';
 import {
@@ -14,6 +16,8 @@ import React, { useState } from 'react';
 
 import { AddUser } from '@/pages/graphql/mutations';
 import { GetAllUser, GetPageAllUsers } from '@/pages/graphql/query';
+
+// import ChinaRegionCascader from './ChinaRegionCascader';s
 // import { GetAllUser } from '@/pages/graphql/query';
 
 const { Option } = Select;
@@ -53,6 +57,7 @@ interface Values {
   title?: string;
   description?: string;
   modifier?: string;
+  unitName?: string;
 }
 
 interface MyComponentProps {
@@ -69,8 +74,8 @@ const Add: React.FC<MyComponentProps> = ({
 }: MyComponentProps) => {
   const residences: CascaderProps<DataNodeType>['options'] = [
     {
-      value: 'zhejiang',
-      label: 'Zhejiang',
+      value: '浙江',
+      label: '浙江',
       children: [
         {
           value: 'hangzhou',
@@ -85,16 +90,16 @@ const Add: React.FC<MyComponentProps> = ({
       ],
     },
     {
-      value: 'jiangsu',
-      label: 'Jiangsu',
+      value: '江苏',
+      label: '江苏',
       children: [
         {
-          value: 'nanjing',
-          label: 'Nanjing',
+          value: '南京',
+          label: '南京',
           children: [
             {
-              value: 'zhonghuamen',
-              label: 'Zhong Hua Men',
+              value: '中华门',
+              label: '中华门',
             },
           ],
         },
@@ -154,6 +159,7 @@ const Add: React.FC<MyComponentProps> = ({
           telephone: values.telephone,
           email: values.email,
           introduction: values.introduction,
+          unitName: values.unitName,
         },
       },
     }).then(() => {
@@ -176,10 +182,11 @@ const Add: React.FC<MyComponentProps> = ({
       </Button>
       {/* <pre>{JSON.stringify(formValues, null, 2)}</pre> */}
       <Modal
+        className="ant-modal"
         open={open}
-        title="Create a new collection"
-        okText="Create"
-        cancelText="Cancel"
+        title="创建用户"
+        okText="确认"
+        cancelText="取消"
         okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
         onCancel={() => setOpen(false)}
         destroyOnHidden
@@ -198,11 +205,11 @@ const Add: React.FC<MyComponentProps> = ({
       >
         <Form.Item
           name="username"
-          label="Username"
+          label="用户名"
           rules={[
             {
               required: true,
-              message: 'Please input your Username',
+              message: '请输入您的用户名',
             },
           ]}
         >
@@ -211,11 +218,11 @@ const Add: React.FC<MyComponentProps> = ({
 
         <Form.Item
           name="password"
-          label="Password"
+          label="密码"
           rules={[
             {
               required: true,
-              message: 'Please input your password!',
+              message: '请输入您的密码',
             },
           ]}
           hasFeedback
@@ -225,22 +232,20 @@ const Add: React.FC<MyComponentProps> = ({
 
         <Form.Item
           name="confirm"
-          label="Confirm Password"
+          label="确认密码"
           dependencies={['password']}
           hasFeedback
           rules={[
             {
               required: true,
-              message: 'Please confirm your password!',
+              message: '请确认您的密码',
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || getFieldValue('password') === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error('The new password that you entered do not match!'),
-                );
+                return Promise.reject(new Error('两次密码不匹配!'));
               },
             }),
           ]}
@@ -250,15 +255,15 @@ const Add: React.FC<MyComponentProps> = ({
 
         <Form.Item
           name="email"
-          label="E-mail"
+          label="邮箱"
           rules={[
             {
               type: 'email',
-              message: 'The input is not valid E-mail!',
+              message: '您输入的不是有效邮箱!',
             },
             {
               required: true,
-              message: 'Please input your E-mail!',
+              message: '请输入您的邮箱!',
             },
           ]}
         >
@@ -266,12 +271,12 @@ const Add: React.FC<MyComponentProps> = ({
         </Form.Item>
         <Form.Item
           name="realname"
-          label="Realname"
-          tooltip="What do you want others to call you?"
+          label="姓名"
+          tooltip="您的真实姓名"
           rules={[
             {
               required: true,
-              message: 'Please input your realname!',
+              message: '请输入您的真实姓名',
               whitespace: true,
             },
           ]}
@@ -280,34 +285,47 @@ const Add: React.FC<MyComponentProps> = ({
         </Form.Item>
 
         <Form.Item
+          name="unitName"
+          label="单位名称"
+          tooltip="您的单位名称"
+          rules={[
+            {
+              required: true,
+              message: '请输入您的单位名称',
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
           name="address"
-          label="Address"
+          label="住址"
           rules={[
             {
               type: 'array',
               required: true,
-              message: 'Please select your habitual residence!',
+              message: '请检查你的住址',
             },
           ]}
         >
           <Cascader options={residences} />
         </Form.Item>
-
         <Form.Item
           name="telephone"
-          label="Phone Number"
-          rules={[{ required: true, message: 'Please input your phone number!' }]}
+          label="电话号"
+          rules={[{ required: true, message: '请输入您的电话号!' }]}
         >
           <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item
           name="age"
-          label="Age"
+          label="年龄"
           rules={[
             {
               required: true,
-              message: 'Please input your age',
+              message: '请输入您的年龄!',
             },
           ]}
         >
@@ -316,22 +334,22 @@ const Add: React.FC<MyComponentProps> = ({
 
         <Form.Item
           name="gender"
-          label="Gender"
-          rules={[{ required: true, message: 'Please select gender!' }]}
+          label="性别"
+          rules={[{ required: true, message: '请选择您的性别!' }]}
         >
-          <Select placeholder="select your gender">
-            <Option value={0}>Male</Option>
-            <Option value={1}>Female</Option>
-            <Option value={2}>Other</Option>
+          <Select placeholder="请选择您的性别!">
+            <Option value={0}>男</Option>
+            <Option value={1}>女</Option>
+            <Option value={2}>其他</Option>
           </Select>
         </Form.Item>
         <Form.Item
           name="introduction"
-          label="Introduction"
+          label="简介"
           tooltip="introduction yourself"
           rules={[
             {
-              message: 'introduction yourself',
+              message: '简单介绍下你自己',
             },
           ]}
         >
@@ -343,15 +361,13 @@ const Add: React.FC<MyComponentProps> = ({
           rules={[
             {
               validator: (_, value) =>
-                value
-                  ? Promise.resolve()
-                  : Promise.reject(new Error('Should accept agreement')),
+                value ? Promise.resolve() : Promise.reject(new Error('请勾选同意')),
             },
           ]}
           {...tailFormItemLayout}
         >
           <Checkbox>
-            I have read the <a href="">agreement</a>
+            我已经阅读了并<a href="">同意</a>
           </Checkbox>
         </Form.Item>
       </Modal>

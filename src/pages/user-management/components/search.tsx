@@ -24,21 +24,11 @@ const Search: React.FC<MyComponentProps> = ({
 
   return (
     <Form layout={'inline'} form={form} onFinish={onFinish}>
-      <Form.Item label="用户名" name="username">
-        <Input
-          placeholder="请输入用户名"
-          // onChange={(e) => {
-          //   setusername(e.target.value);
-          // }}
-        />
+      <Form.Item name="username">
+        <Input placeholder="请输入用户名" />
       </Form.Item>
-      <Form.Item label="姓名" name="realname">
-        <Input
-          placeholder="请输入姓名"
-          // onChange={(e) => {
-          //   setrealname(e.target.value);
-          // }}
-        />
+      <Form.Item name="realname">
+        <Input placeholder="请输入姓名" />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">

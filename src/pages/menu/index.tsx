@@ -20,6 +20,7 @@ import {
 import React, { useState } from 'react';
 
 import BaseInformation from '../scale-base-information';
+import UnitManagement from '../unit-management';
 import UserManagement from '../user-management';
 
 type MenuItem = {
@@ -44,7 +45,10 @@ const menuItems: MenuItem[] = [
   {
     text: '基础设置（练习）',
     icon: <Settings />,
-    submenus: [{ text: '用户管理', component: <UserManagement /> }],
+    submenus: [
+      { text: '用户管理', component: <UserManagement /> },
+      { text: '单位管理', component: <UnitManagement /> },
+    ],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
 ];
