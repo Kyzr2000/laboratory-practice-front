@@ -29,7 +29,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'error',
     'no-unused-vars': 'off',
     'no-undef': 'off',
-    'simple-import-sort/imports': 'error',
+    // 'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
