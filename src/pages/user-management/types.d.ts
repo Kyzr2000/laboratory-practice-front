@@ -11,7 +11,7 @@ export type User = {
   isEnable: boolean;
 };
 
-export type AddInput = {
+export type AddUserInput = {
   username: string;
   password: string;
   realname: string;
@@ -20,9 +20,9 @@ export type AddInput = {
   isEnable: boolean;
 };
 
-export type ChangeInput = {
+export type UpdateUserInput = {
+  oldUsername: string;
   username: string;
-  password: string;
   realname: string;
   gender: number | null;
   age: number | null;

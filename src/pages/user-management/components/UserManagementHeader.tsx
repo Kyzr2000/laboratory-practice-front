@@ -1,85 +1,71 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Button, Form, Input, Row, Col } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
 
-import type { SearchUserInput } from '../type';
-import AddUser from './AddUser';
+import type { SearchUserInput } from '../types';
+import AddUserModal from './AddUserModal';
 
 interface UserManagementHeaderProps {
-  setSearchInput: React.Dispatch<React.SetStateAction<SearchUserInput>>;
-  setAddTrigger: React.Dispatch<React.SetStateAction<boolean>>;
-  setSearchTrigger: React.Dispatch<React.SetStateAction<boolean>>;
+  onSearch: (values: SearchUserInput) => void;
+  refreshData: () => void;
+  initialValues: SearchUserInput;
 }
 
 const UserManagementHeader = ({
-  setSearchInput,
-  setAddTrigger,
-  setSearchTrigger,
+  onSearch,
+  refreshData,
+  initialValues,
 }: UserManagementHeaderProps) => {
-  const [localSearch, setLocalSearch] = useState({
-    username: '',
-    realname: '',
-  });
+  const [form] = Form.useForm();
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLocalSearch((prev) => ({ ...prev, [name]: value }));
+  // 防抖搜索
+  const handleSearch = (values: SearchUserInput) => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+
+    setDebounceTimer(
+      setTimeout(() => {
+        onSearch(values);
+      }, 300),
+    );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (localSearch.realname === '' && localSearch.username === '') return;
-    // 更新父组件的搜索输入
-    setSearchInput({
-      username: localSearch.username.trim(),
-      realname: localSearch.realname.trim(),
-    });
-  };
-
-  const handleClear = () => {
-    if (!(localSearch.realname === '' && localSearch.username === '')) {
-      setLocalSearch({
-        username: '',
-        realname: '',
-      });
-      // 清空搜索时重置搜索条件
-      setSearchInput({
-        username: '',
-        realname: '',
-      });
-      setSearchTrigger(true);
-    }
+  const handleReset = () => {
+    form.setFieldsValue({ username: '', realname: '' });
+    onSearch({ username: '', realname: '' });
   };
 
   return (
-    <div className="users-header">
-      <form className="header-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="请输入账号"
-          name="username"
-          onChange={handleChange}
-          value={localSearch.username}
-          className="search-input"
-          autoComplete="off"
-        />
-        <input
-          type="text"
-          placeholder="请输入姓名"
-          name="realname"
-          onChange={handleChange}
-          value={localSearch.realname}
-          className="search-input"
-          autoComplete="off"
-        />
-        <button type="submit" className="search-button">
-          搜索
-        </button>
-        <button type="button" className="clear-button" onClick={handleClear}>
-          ❌
-        </button>
-      </form>
+    <Row gutter={16} align="middle">
+      <Col flex="auto">
+        <Form
+          form={form}
+          layout="inline"
+          initialValues={initialValues}
+          onValuesChange={(_, values) => handleSearch(values)}
+        >
+          <Form.Item name="username">
+            <Input autoComplete="off" placeholder="请输入账号" allowClear />
+          </Form.Item>
 
-      <AddUser setAddTrigger={setAddTrigger} />
-    </div>
+          <Form.Item name="realname">
+            <Input autoComplete="off" placeholder="请输入姓名" allowClear />
+          </Form.Item>
+        </Form>
+      </Col>
+
+      <Col>
+        <Button icon={<SyncOutlined />} onClick={refreshData} style={{ marginRight: 8 }}>
+          刷新
+        </Button>
+
+        <Button type="default" onClick={handleReset} style={{ marginRight: 8 }}>
+          重置
+        </Button>
+
+        <AddUserModal refreshData={refreshData} />
+      </Col>
+    </Row>
   );
 };
 

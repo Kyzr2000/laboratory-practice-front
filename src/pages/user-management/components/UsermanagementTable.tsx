@@ -1,113 +1,138 @@
+import { Table, Button, Tag, Space, Typography } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import type { ColumnsType } from 'antd/es/table';
+
 import { useMutation } from '@apollo/client';
 import type { ApolloError } from '@apollo/client';
 
-import { DELETE_USER } from '../graphql/mutations';
-import type { User } from '../type';
-import ChangeUser from './ChangeUser';
+import type { User } from '../types';
+import { DELETE_USER } from '../api/userMutations';
+import EditUserModal from './EditUserModal';
+
+const { Text } = Typography;
 
 interface UserManagementTableProps {
   users: User[];
   loading: boolean;
   error: ApolloError | undefined;
-  setDeleteTrigger: React.Dispatch<React.SetStateAction<boolean>>;
-  setChangeTrigger: React.Dispatch<React.SetStateAction<boolean>>;
-  currentPage: number; // 当前页码
-  pageSize: number; // 每页大小
+  refreshData: () => void;
+  pagination: {
+    current: number;
+    pageSize: number;
+    total: number;
+  };
+  onPaginationChange: (page: number, pageSize: number) => void;
 }
 
 const UserManagementTable = ({
   users,
   loading,
   error,
-  setDeleteTrigger,
-  setChangeTrigger,
-  currentPage,
-  pageSize,
+  refreshData,
+  pagination,
+  onPaginationChange,
 }: UserManagementTableProps) => {
-  const [deleteUser] = useMutation(DELETE_USER, {
-    onCompleted: () => {
-      setDeleteTrigger(true);
-    },
-    onError: (error) => {
-      console.error('删除用户失败:', error.message);
-    },
-  });
+  const [deleteUser] = useMutation(DELETE_USER);
 
   const handleDelete = (username: string) => {
-    if (window.confirm(`确定要删除用户 ${username} 吗？`)) {
-      deleteUser({
-        variables: { username },
-      });
-    }
+    deleteUser({
+      variables: { username },
+      onCompleted: () => {
+        refreshData();
+      },
+      onError: (error) => {
+        console.error('删除用户失败:', error.message);
+      },
+    });
   };
 
-  if (loading) return <p>加载中...</p>;
-  if (error) return <p>发生错误: {error.message}</p>;
+  const columns: ColumnsType<User> = [
+    {
+      title: '序号',
+      key: 'index',
+      render: (_, __, index) => index + 1,
+      width: 80,
+      align: 'center',
+    },
+    {
+      title: '用户名',
+      dataIndex: 'username',
+      key: 'username',
+    },
+    {
+      title: '姓名',
+      dataIndex: 'realname',
+      key: 'realname',
+    },
+    {
+      title: '性别',
+      dataIndex: 'gender',
+      key: 'gender',
+      render: (gender) => (gender === 0 ? '男' : '女'),
+      width: 80,
+      align: 'center',
+    },
+    {
+      title: '年龄',
+      dataIndex: 'age',
+      key: 'age',
+      width: 100,
+      align: 'center',
+    },
+    {
+      title: '状态',
+      dataIndex: 'isEnable',
+      key: 'isEnable',
+      render: (isEnable) => (
+        <Tag color={isEnable ? 'success' : 'error'}>{isEnable ? '启用' : '禁用'}</Tag>
+      ),
+      width: 100,
+      align: 'center',
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      render: (_, record) => (
+        <Space size="middle">
+          <EditUserModal user={record} refreshData={refreshData} />
+
+          <Button
+            type="link"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              if (window.confirm(`确定要删除用户 ${record.username} 吗？`)) {
+                handleDelete(record.username);
+              }
+            }}
+          >
+            删除
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  if (error) {
+    return <Text type="danger">加载用户数据失败: {error.message}</Text>;
+  }
 
   return (
-    <div style={{ overflowX: 'auto', position: 'relative', height: '100%' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f5f5f5' }}>
-            <th style={thStyle}>序号</th> {/* 新增序号列 */}
-            <th style={thStyle}>用户名</th>
-            <th style={thStyle}>姓名</th>
-            <th style={thStyle}>性别</th>
-            <th style={thStyle}>年龄</th>
-            <th style={thStyle}>是否启用</th>
-            <th style={thStyle}>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user, index) => (
-            <tr style={trStyle} key={user.username}>
-              {/* 计算序号：当前页第一条的序号为 (currentPage-1)*pageSize+1，然后按行递增 */}
-              <td style={tdStyle}>{(currentPage - 1) * pageSize + index + 1}</td>
-              <td style={tdStyle}>{user.username}</td>
-              <td style={tdStyle}>{user.realname}</td>
-              <td style={tdStyle}>{user.gender === 0 ? '男' : '女'}</td>
-              <td style={tdStyle}>{user.age}</td>
-              <td style={tdStyle}>
-                <span
-                  style={{
-                    padding: '2px 8px',
-                  }}
-                >
-                  {user.isEnable ? '启用' : '禁用'}
-                </span>
-              </td>
-              <td className="change-button-box">
-                <ChangeUser user={user} setChangeTrigger={setChangeTrigger} />
-                <button
-                  className="change-button"
-                  onClick={() => handleDelete(user.username)}
-                >
-                  删除
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table
+      columns={columns}
+      dataSource={users}
+      rowKey="username"
+      loading={loading}
+      pagination={{
+        ...pagination,
+        showSizeChanger: true,
+        showTotal: (total) => `共 ${total} 条`,
+        onChange: onPaginationChange,
+        onShowSizeChange: onPaginationChange,
+      }}
+      scroll={{ x: 'max-content' }}
+    />
   );
 };
 
-const thStyle: React.CSSProperties = {
-  width: '150px',
-  height: '35px',
-  textAlign: 'left',
-  padding: '8px',
-  borderBottom: '2px solid rgba(62 136 62/ 20%)',
-  border: '2px solid rgba(62 136 62/ 20%)',
-};
-
-const tdStyle: React.CSSProperties = {
-  textAlign: 'left',
-};
-
-const trStyle: React.CSSProperties = {
-  height: '51px',
-  borderBottom: '1px solid rgba(62 136 62/ 20%)',
-};
 export default UserManagementTable;

@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 
-// GraphQL Mutation 定义
 export const ADD_USER = gql`
   mutation AddUser($addUserInput: AddUserInput!) {
     addUser(addUserInput: $addUserInput) {
@@ -21,9 +20,9 @@ export const DELETE_USER = gql`
   }
 `;
 
-export const CHANGE_USER = gql`
-  mutation ChangeUser($changeUserInput: ChangeUserInput!) {
-    changeUser(changeUserInput: $changeUserInput) {
+export const UPDATE_USER = gql`
+  mutation UpdateUser($updateUserInput: UpdateUserInput!) {
+    updateUser(updateUserInput: $updateUserInput) {
       username
       realname
       gender
