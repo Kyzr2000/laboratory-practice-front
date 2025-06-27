@@ -1,0 +1,38 @@
+/* 按钮组样式 */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.row-button {
+  transform: all 1s;
+}
+
+.row-button:hover {
+  transform: scale(1.1);
+}
+
+.ant-table {
+  height: 543px;
+  overflow: auto;
+}
+
+.user-management-table .ant-table-tbody > tr > td {
+  height: 48px; /* 强制设置行高 */
+  padding: 4px 12px !important; /* 减少内边距 */
+}
+
+.user-management-table .user-table-row:hover td {
+  background-color: #fafafa !important;
+}
+
+.ant-spin-container {
+  height: 609px;
+  position: relative;
+}
+
+.ant-pagination {
+  position: absolute;
+  right: 5%;
+  bottom: -2%;
+}

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Button, Form, Input, Row, Col } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
 
-import type { SearchUserInput } from '../types';
 import AddUserModal from './AddUserModal';
+import type { SearchUserInput } from '../types';
 
 interface UserManagementHeaderProps {
   onSearch: (values: SearchUserInput) => void;
@@ -54,12 +54,12 @@ const UserManagementHeader = ({
         </Form>
       </Col>
 
-      <Col>
-        <Button icon={<SyncOutlined />} onClick={refreshData} style={{ marginRight: 8 }}>
+      <Col className="action-buttons">
+        <Button icon={<SyncOutlined />} onClick={refreshData} className="refresh-button">
           刷新
         </Button>
 
-        <Button type="default" onClick={handleReset} style={{ marginRight: 8 }}>
+        <Button type="default" onClick={handleReset} className="reset-button">
           重置
         </Button>
 

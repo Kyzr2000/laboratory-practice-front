@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Modal, Form, Input, Select, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
-import { UPDATE_USER } from '../api/userMutations';
+
+import { CHANGE_USER } from '../api/userMutations';
 import type { User } from '../types';
 
 const { Option } = Select;
@@ -13,11 +14,10 @@ interface EditUserModalProps {
 
 const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
   const [form] = Form.useForm();
-
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-  const [updateUser] = useMutation(UPDATE_USER);
+  const [changeUserMutation] = useMutation(CHANGE_USER);
 
   const showModal = async () => {
     form.setFieldsValue({
@@ -25,22 +25,19 @@ const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
       oldUsername: user.username,
       gender: user.gender?.toString(),
     });
-
     setVisible(true);
   };
 
-  const handleCancel = () => {
-    setVisible(false);
-  };
+  const handleCancel = () => setVisible(false);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       setConfirmLoading(true);
 
-      await updateUser({
+      await changeUserMutation({
         variables: {
-          updateUserInput: {
+          changeUserInput: {
             ...values,
             oldUsername: user.username,
             gender: values.gender ? Number(values.gender) : null,
@@ -61,7 +58,12 @@ const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
 
   return (
     <>
-      <Button type="link" onClick={showModal}>
+      <Button
+        type="link"
+        className="row-button"
+        onClick={showModal}
+        style={{ color: '#1890ff' }}
+      >
         编辑
       </Button>
 
@@ -72,8 +74,22 @@ const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
         onCancel={handleCancel}
         confirmLoading={confirmLoading}
         destroyOnClose
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            取消
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={confirmLoading}
+            onClick={handleSubmit}
+            style={{ background: '#1890ff', borderColor: '#1890ff' }}
+          >
+            确定
+          </Button>,
+        ]}
       >
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" style={{ marginTop: 20 }}>
           <Form.Item name="oldUsername" hidden>
             <Input />
           </Form.Item>

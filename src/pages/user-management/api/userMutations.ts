@@ -20,9 +20,9 @@ export const DELETE_USER = gql`
   }
 `;
 
-export const UPDATE_USER = gql`
-  mutation UpdateUser($updateUserInput: UpdateUserInput!) {
-    updateUser(updateUserInput: $updateUserInput) {
+export const CHANGE_USER = gql`
+  mutation ChangeUser($changeUserInput: ChangeUserInput!) {
+    changeUser(changeUserInput: $changeUserInput) {
       username
       realname
       gender

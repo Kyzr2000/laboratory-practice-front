@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLazyQuery } from '@apollo/client';
+
 import { SEARCH_USER } from '../api/userQueries';
 import type { SearchUserInput, User } from '../types';
 

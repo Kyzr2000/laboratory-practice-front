@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Modal, Form, Input, Select, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
+
 import { ADD_USER } from '../api/userMutations';
 
 const { Option } = Select;
@@ -52,7 +53,11 @@ const AddUserModal = ({ refreshData }: AddUserModalProps) => {
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
+      <Button
+        type="primary"
+        onClick={showModal}
+        style={{ background: '#1890ff', borderColor: '#1890ff' }}
+      >
         新增用户
       </Button>
 
@@ -62,9 +67,23 @@ const AddUserModal = ({ refreshData }: AddUserModalProps) => {
         onOk={handleSubmit}
         onCancel={handleCancel}
         confirmLoading={confirmLoading}
-        destroyOnHidden
+        destroyOnClose
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            取消
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={confirmLoading}
+            onClick={handleSubmit}
+            style={{ background: '#1890ff', borderColor: '#1890ff' }}
+          >
+            确定
+          </Button>,
+        ]}
       >
-        <Form form={form} layout="vertical">
+        <Form form={form} autoComplete="off" layout="vertical" style={{ marginTop: 20 }}>
           <Form.Item
             name="username"
             label="用户名"
