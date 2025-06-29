@@ -28,7 +28,7 @@ interface userSkills {
   skillId?: number;
 }
 interface getSkills {
-  id?: number;
+  id: number;
   name?: string;
   description?: string;
 }
@@ -48,7 +48,7 @@ interface Currentpage {
   limit: number;
 }
 interface MyComponentProps {
-  currentRow: DataType;
+  currentRow?: DataType;
   realname: string | undefined;
   username: string | undefined;
   showModal: (record: DataType) => void;
@@ -63,7 +63,6 @@ const AddSkill: React.FC<MyComponentProps> = ({
   settableDate,
   currentpage,
 }) => {
-  console.log(currentRow.getSkills, 12);
   // 添加
   const [form] = Form.useForm();
   const [assignSkillToUser, { data: dataskill }] = useMutation(AssignSkillToUser);
@@ -258,15 +257,9 @@ const AddSkill: React.FC<MyComponentProps> = ({
 
 export default AddSkill;
 
-interface Values1 {
-  title: string;
-  description?: string;
-  modifier: string;
-}
-
 interface CollectionCreateFormProps {
   open: boolean;
-  onCreate: (values: Values1) => void;
+  onCreate: (values: getSkills) => void;
   onCancel: () => void;
 }
 

@@ -13,7 +13,7 @@ import {
 
 // import { GetUserByUsernameOrName } from '@/pages/graphql/query';
 interface DataType {
-  id?: number;
+  id: number;
   placeName?: string;
   createdAt?: string;
   address?: string;

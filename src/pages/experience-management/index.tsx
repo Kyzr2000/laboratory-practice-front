@@ -9,7 +9,7 @@ import TableDate from './components/table';
 
 const ExperienceManagement = () => {
   interface DataType {
-    id?: number;
+    id: number;
     placeName?: string;
     createdAt?: string;
     address?: string;

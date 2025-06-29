@@ -10,7 +10,7 @@ import {
 } from '@/pages/graphql/query';
 
 interface DataType {
-  id?: number;
+  id: number;
   name?: string;
   uuid?: string;
   createdAt?: string;
