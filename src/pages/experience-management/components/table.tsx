@@ -76,7 +76,6 @@ const TableDate: React.FC<MyComponentProps> = ({
     onCompleted(data) {
       settableDate(data.getExperienceByExperiencenameOrName);
     },
-    fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
   });
 
@@ -101,16 +100,21 @@ const TableDate: React.FC<MyComponentProps> = ({
   // 删除的回调
   const deleteexperience = async (id: number) => {
     console.log(deleteExperience);
-    console.log(id);
+    console.log(data.length);
+    if (data.length === 1) {
+      setcurrentpage({ page: currentpage.page - 1, limit: currentpage.limit });
+    }
 
-    deleteExperience({ variables: { data: Number(id) } });
-
-    refnum();
-    settotal(num);
-    searchrefetch({
-      variables: { data: { page: currentpage.page, limit: currentpage.limit } },
+    deleteExperience({ variables: { data: Number(id) } }).then(() => {
+      refnum();
+      settotal(num);
+      searchrefetch({
+        variables: {
+          data: { page: currentpage.page, limit: currentpage.limit },
+        },
+      });
+      settableDate(searchdata.getExperienceByExperiencenameOrName);
     });
-    settableDate(searchdata.getExperienceByExperiencenameOrName);
   };
 
   // 修改

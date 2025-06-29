@@ -99,17 +99,20 @@ const TableDate: React.FC<MyComponentProps> = ({
 
   // 删除的回调
   const deleteskill = async (id: number) => {
+    if (data.length === 1) {
+      setcurrentpage({ page: currentpage.page - 1, limit: currentpage.limit });
+    }
     console.log(deleteSkill);
     console.log(id);
 
-    deleteSkill({ variables: { data: Number(id) } });
-
-    refnum();
-    settotal(num);
-    searchrefetch({
-      variables: { data: { page: currentpage.page, limit: currentpage.limit } },
+    deleteSkill({ variables: { data: Number(id) } }).then(() => {
+      refnum();
+      settotal(num);
+      searchrefetch({
+        variables: { data: { page: currentpage.page, limit: currentpage.limit } },
+      });
+      settableDate(searchdata.getSkillBySkillnameOrName);
     });
-    settableDate(searchdata.getSkillBySkillnameOrName);
   };
 
   // 修改

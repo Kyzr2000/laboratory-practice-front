@@ -141,6 +141,9 @@ const TableDate: React.FC<MyComponentProps> = ({
   const [deleteUser] = useMutation(DeleteUser);
   // 删除的回调
   const deleteuser = async (username: string | undefined) => {
+    if (data.length === 1) {
+      setcurrentpage({ page: currentpage.page - 1, limit: currentpage.limit });
+    }
     await deleteUser({ variables: { data: username } });
 
     refnum();

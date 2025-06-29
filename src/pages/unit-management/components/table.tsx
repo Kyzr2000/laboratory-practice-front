@@ -86,6 +86,9 @@ const TableDate: React.FC<MyComponentProps> = ({
 
   // 删除的回调
   const deleteunit = async (name: string | undefined) => {
+    if (data.length === 1) {
+      setcurrentpage({ page: currentpage.page - 1, limit: currentpage.limit });
+    }
     await deleteUnit({ variables: { data: name } });
 
     refnum();
