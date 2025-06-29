@@ -3,30 +3,36 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Button, Form, Input, Modal } from 'antd';
 import React, { useState } from 'react';
 
-import { AddUnit } from '@/pages/graphql/mutations';
+import { AddSkill } from '@/pages/graphql/mutations';
 import {
-  GetUnitByUnitnameOrName,
-  GetUnitByUnitnameOrNameNumber,
+  GetSkillBySkillnameOrName,
+  GetSkillBySkillnameOrNameNumber,
 } from '@/pages/graphql/query';
 
 interface DataType {
-  id?: number;
-  name?: string;
-  uuid?: string;
+  id: number;
+  description?: string;
   createdAt?: string;
+  name?: string;
+  user?: User | null;
+  userSkills?: userSkills | null;
 }
-
+interface User {
+  id: number;
+  username?: string;
+}
+interface userSkills {
+  userId: number;
+  skillId?: number;
+}
 interface Currentpage {
   page: number;
   limit: number;
 }
 interface Values {
-  id?: number;
+  description?: string;
   name?: string;
-  uuid?: string;
-  createdAt?: string;
 }
-
 interface MyComponentProps {
   settotal: React.Dispatch<React.SetStateAction<number | undefined>>;
   settableDate: React.Dispatch<React.SetStateAction<DataType[]>>;
@@ -41,7 +47,7 @@ const Add: React.FC<MyComponentProps> = ({
   setcurrentpage,
 }: MyComponentProps) => {
   const { data: datanumber, refetch: refetchnumber } = useQuery(
-    GetUnitByUnitnameOrNameNumber,
+    GetSkillBySkillnameOrNameNumber,
     {
       variables: {
         data: {
@@ -50,54 +56,56 @@ const Add: React.FC<MyComponentProps> = ({
         },
       },
       onCompleted(data) {
-        settotal(data.getUnitByUnitnameOrNameNumber);
+        settotal(data.GetSkillBySkillnameOrNameNumber);
       },
-      fetchPolicy: 'cache-and-network',
+      // fetchPolicy: "cache-and-network",
     },
   );
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
-  const { data, refetch } = useQuery(GetUnitByUnitnameOrName, {
+  const { data, refetch } = useQuery(GetSkillBySkillnameOrName, {
     variables: { data: { page: 1, limit: currentpage.limit } },
     onCompleted(data) {
-      settableDate(data.getUnitByUnitnameOrName);
+      settableDate(data.getSkillBySkillnameOrName);
     },
     fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
   });
 
-  const [add] = useMutation(AddUnit);
+  const [add] = useMutation(AddSkill);
 
   const onCreate = async (values: Values) => {
     await add({
       variables: {
         data: {
           name: values.name,
+          description: values.description,
         },
       },
     }).then(() => {
       refetchnumber();
-      settotal(datanumber.getUnitByUnitnameOrNameNumber);
+      console.log(datanumber);
       setcurrentpage({ page: 1, limit: currentpage.limit });
+      settotal(datanumber.getSkillBySkillnameOrNameNumber);
       refetch({
         variables: {
           data: { page: currentpage.page, limit: currentpage.limit },
         },
       });
     });
-    settableDate(data.getUnitByUnitnameOrName);
+    settableDate(data.getSkillBySkillnameOrName);
     setOpen(false);
   };
 
   return (
     <>
       <Button icon={<PlusOutlined />} type="primary" onClick={() => setOpen(true)}>
-        添加单位
+        添加技能
       </Button>
       {/* <pre>{JSON.stringify(formValues, null, 2)}</pre> */}
       <Modal
         open={open}
-        title="Create a new collection"
+        title="添加技能"
         okText="Create"
         cancelText="Cancel"
         okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
@@ -118,11 +126,23 @@ const Add: React.FC<MyComponentProps> = ({
       >
         <Form.Item
           name="name"
-          label="单位名称"
+          label="技能名称"
           rules={[
             {
               required: true,
-              message: '请输入您的单位名称',
+              message: '请输入您的技能名称',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          label="技能描述"
+          rules={[
+            {
+              required: true,
+              message: '请输入您的技能描述',
             },
           ]}
         >

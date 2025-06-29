@@ -5,31 +5,27 @@ import React from 'react';
 import {} from '@/pages/graphql/query';
 
 interface MyComponentProps {
-  setusername: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setrealname: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setname: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-const Search: React.FC<MyComponentProps> = ({
-  setusername,
-  setrealname,
-}: MyComponentProps) => {
+const Search: React.FC<MyComponentProps> = ({ setname }: MyComponentProps) => {
   const [form] = Form.useForm();
   interface Values {
-    username?: string;
-    realname?: string;
+    name?: string;
   }
   const onFinish = (values: Values) => {
-    setusername(values.username);
-    setrealname(values.realname);
+    setname(values.name);
+    console.log(values.name);
+    console.log(values, form.getFieldValue('name'));
   };
 
   return (
     <Form layout={'inline'} form={form} onFinish={onFinish}>
-      <Form.Item name="username" label="用户名">
-        <Input placeholder="请输入用户名" />
-      </Form.Item>
-      <Form.Item name="realname" label="姓名">
-        <Input placeholder="请输入姓名" />
+      <Form.Item name="name" label="技能名称">
+        {/* <Tooltip trigger={['focus']} title={'请输入单位名'} 
+        placement="bottomLeft" color={'#08A19F88'}>  */}
+        <Input placeholder="请输入技能名称" />
+        {/* </Tooltip>  */}
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>

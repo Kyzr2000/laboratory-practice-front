@@ -19,7 +19,9 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
+import ExperienceManagement from '../experience-management';
 import BaseInformation from '../scale-base-information';
+import SkillManagement from '../skill-management';
 import UnitManagement from '../unit-management';
 import UserManagement from '../user-management';
 
@@ -48,6 +50,8 @@ const menuItems: MenuItem[] = [
     submenus: [
       { text: '用户管理', component: <UserManagement /> },
       { text: '单位管理', component: <UnitManagement /> },
+      { text: '社会经历管理', component: <ExperienceManagement /> },
+      { text: '技能管理', component: <SkillManagement /> },
     ],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
@@ -103,7 +107,7 @@ export const Sidebar: React.FC = () => {
               onClick={() => handleSubMenuClick(index)}
               sx={{
                 backgroundColor: activeSubMenuIndex === index ? '#e6e6e6' : 'inherit',
-                color: activeSubMenuIndex === index ? '#1ca49c' : 'gray',
+                color: activeSubMenuIndex === index ? '#40a9ff' : 'gray',
               }}
             >
               <ListItemText sx={{ textAlign: 'center' }} primary={submenu.text} />
@@ -126,7 +130,14 @@ export const Sidebar: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: 'green' }}>
+      <AppBar
+        position="static"
+        sx={{
+          backgroundColor: '#ffffff',
+          color: 'black',
+          boxShadow: '  10px 0px 10px rgba(24, 144, 255, 0.5)',
+        }}
+      >
         <Toolbar>
           <Box
             sx={{
@@ -146,7 +157,7 @@ export const Sidebar: React.FC = () => {
                 >
                   <Avatar alt="Remy Sharp" src="/src/assets/top_touxiang@2x.png" />
                   <Typography
-                    sx={{ marginLeft: '8px', fontSize: '14px', color: 'white' }}
+                    sx={{ marginLeft: '8px', fontSize: '14px', color: 'black' }}
                   >
                     你好,ADMIN
                   </Typography>
@@ -215,7 +226,12 @@ export const Sidebar: React.FC = () => {
           }}
         >
           <Toolbar
-            sx={{ backgroundColor: 'green', color: 'white', justifyContent: 'center' }}
+            sx={{
+              backgroundColor: '#ffffff',
+              color: 'black',
+              justifyContent: 'center',
+              boxShadow: '  0 0 10px rgba(24, 144, 255, 0.5)',
+            }}
           >
             培训练习框架
           </Toolbar>
@@ -229,7 +245,7 @@ export const Sidebar: React.FC = () => {
                       <ListItemText
                         primary={item.text}
                         sx={{
-                          color: activeIndex === index ? '#1ca49c' : 'gray',
+                          color: activeIndex === index ? '#40a9ff' : 'gray',
                         }}
                       />
                       {item.submenus &&

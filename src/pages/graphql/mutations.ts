@@ -108,7 +108,7 @@ export const AddUnit = gql`
     }
   }
 `;
-// 删除
+// 删除单位
 export const DeleteUnit = gql`
   mutation DeleteUnit($data: String!) {
     deleteUnit(data: $data) {
@@ -119,7 +119,7 @@ export const DeleteUnit = gql`
     }
   }
 `;
-// 修改用户
+// 修改单位
 export const UpdateUnit1 = gql`
   mutation UpdateUnit1($data: updateunit1!) {
     updateUnit1(data: $data) {
@@ -127,6 +127,145 @@ export const UpdateUnit1 = gql`
       name
       uuid
       createdAt
+    }
+  }
+`;
+// 社会实践管理模块
+// 创建实践
+export const AddExperience = gql`
+  mutation AddExperience($data: AddExperience!) {
+    addExperience(data: $data) {
+      address
+      createdAt
+      endDate
+      id
+      placeName
+      startDate
+      user {
+        username
+      }
+    }
+  }
+`;
+// 删除实践
+export const DeleteExperience = gql`
+  mutation DeleteExperience($data: Int!) {
+    deleteExperience(data: $data) {
+      address
+      createdAt
+      endDate
+      id
+      placeName
+      startDate
+      user {
+        username
+      }
+    }
+  }
+`;
+// 修改实践
+export const UpdateExperience1 = gql`
+  mutation UpdateExperience1($data: updateexperience1!) {
+    updateExperience1(data: $data) {
+      address
+      createdAt
+      endDate
+      id
+      placeName
+      startDate
+      user {
+        username
+      }
+    }
+  }
+`;
+
+// 技能管理模块
+// 创建技能
+export const AddSkill = gql`
+  mutation AddSkill($data: AddSkill!) {
+    addSkill(data: $data) {
+      createdAt
+      description
+      id
+      name
+      user {
+        username
+      }
+      userSkills {
+        userId
+        skillId
+      }
+    }
+  }
+`;
+// 删除技能
+export const DeleteSkill = gql`
+  mutation DeleteSkill($data: Int!) {
+    deleteSkill(data: $data) {
+      createdAt
+      description
+      id
+      name
+      user {
+        username
+      }
+      userSkills {
+        userId
+        skillId
+      }
+    }
+  }
+`;
+// 修改技能
+export const UpdateSkill1 = gql`
+  mutation UpdateExperience1($data: updateskill1!) {
+    updateSkill1(data: $data) {
+      createdAt
+      description
+      id
+      name
+      user {
+        username
+      }
+      userSkills {
+        userId
+        skillId
+      }
+    }
+  }
+`;
+// 给用户添加技能
+export const AssignSkillToUser = gql`
+  mutation AssignSkillToUser($data: AssignSkillInput!) {
+    assignSkillToUser(data: $data) {
+      userId
+      skillId
+      skill {
+        name
+        description
+      }
+      user {
+        getSkills {
+          name
+          description
+        }
+      }
+    }
+  }
+`;
+// 给用户解绑技能
+export const DeleteSkillToUser = gql`
+  mutation DeleteSkillToUser($data: AssignSkillInput!) {
+    deleteSkillToUser(data: $data) {
+      userId
+      skillId
+      user {
+        getSkills {
+          name
+          description
+        }
+      }
     }
   }
 `;

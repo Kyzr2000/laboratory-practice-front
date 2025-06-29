@@ -1,15 +1,33 @@
 .ant-modal {
-    // border-top-right-radius: 50px,!important;
-    //     border-top-left-radius: 80px;
-    //     border-bottom-left-radius: 80px;
     form {
-    border-radius: 8px;
-    // border-top-right-radius: 50px,!important;
-    width: 400px;
-    max-height: 500px;
-    overflow-y: auto;/* 表单单独滚动 */
-    
-    .ant-modal-content{
-        border-radius: 0.1px;
+        border-radius: 8px;
+        max-height: 500px;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 8px;
+            background-color: #F5F5F5;
+            display: block !important;
+            border-radius:0 7px 7px 0;
+            transition: 5px;
+            
+        }
+
+
+        &::-webkit-scrollbar-track {
+            background-color: transparent;
+            border-radius: 8px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 8px;
+            background-color: #5558;
+            height: 30px;
+        }
+
+        .ant-modal-content {
+            border-radius: 0.1px;
+        }
+
     }
-}}
+}

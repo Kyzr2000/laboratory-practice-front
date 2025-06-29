@@ -3,10 +3,10 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Button, Form, Input, Modal } from 'antd';
 import React, { useState } from 'react';
 
-import { AddUnit } from '@/pages/graphql/mutations';
+import { AddExperience } from '@/pages/graphql/mutations';
 import {
-  GetUnitByUnitnameOrName,
-  GetUnitByUnitnameOrNameNumber,
+  GetExperienceByExperiencenameOrName,
+  GetExperienceByExperiencenameOrNameNumber,
 } from '@/pages/graphql/query';
 
 interface DataType {
@@ -21,12 +21,13 @@ interface Currentpage {
   limit: number;
 }
 interface Values {
-  id?: number;
-  name?: string;
-  uuid?: string;
+  placeName?: string;
   createdAt?: string;
+  address?: string;
+  startDate?: string;
+  endDate?: string;
+  userName: string;
 }
-
 interface MyComponentProps {
   settotal: React.Dispatch<React.SetStateAction<number | undefined>>;
   settableDate: React.Dispatch<React.SetStateAction<DataType[]>>;
@@ -41,7 +42,7 @@ const Add: React.FC<MyComponentProps> = ({
   setcurrentpage,
 }: MyComponentProps) => {
   const { data: datanumber, refetch: refetchnumber } = useQuery(
-    GetUnitByUnitnameOrNameNumber,
+    GetExperienceByExperiencenameOrNameNumber,
     {
       variables: {
         data: {
@@ -50,54 +51,59 @@ const Add: React.FC<MyComponentProps> = ({
         },
       },
       onCompleted(data) {
-        settotal(data.getUnitByUnitnameOrNameNumber);
+        settotal(data.getExperienceByExperiencenameOrNameNumber);
       },
-      fetchPolicy: 'cache-and-network',
+      // fetchPolicy: "cache-and-network",
     },
   );
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
-  const { data, refetch } = useQuery(GetUnitByUnitnameOrName, {
+  const { data, refetch } = useQuery(GetExperienceByExperiencenameOrName, {
     variables: { data: { page: 1, limit: currentpage.limit } },
     onCompleted(data) {
-      settableDate(data.getUnitByUnitnameOrName);
+      settableDate(data.getExperienceByExperiencenameOrName);
     },
     fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
   });
 
-  const [add] = useMutation(AddUnit);
+  const [add] = useMutation(AddExperience);
 
   const onCreate = async (values: Values) => {
     await add({
       variables: {
         data: {
-          name: values.name,
+          placeName: values.placeName,
+          address: values.address,
+          startDate: values.startDate,
+          endDate: values.endDate,
+          userName: values.userName,
         },
       },
     }).then(() => {
       refetchnumber();
-      settotal(datanumber.getUnitByUnitnameOrNameNumber);
+      console.log(datanumber);
       setcurrentpage({ page: 1, limit: currentpage.limit });
+      settotal(datanumber.getExperienceByExperiencenameOrNameNumber);
       refetch({
         variables: {
           data: { page: currentpage.page, limit: currentpage.limit },
         },
       });
     });
-    settableDate(data.getUnitByUnitnameOrName);
+    settableDate(data.getExperienceByExperiencenameOrName);
     setOpen(false);
   };
 
   return (
     <>
-      <Button icon={<PlusOutlined />} type="primary" onClick={() => setOpen(true)}>
-        添加单位
+      <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpen(true)}>
+        添加社会经验
       </Button>
       {/* <pre>{JSON.stringify(formValues, null, 2)}</pre> */}
       <Modal
         open={open}
-        title="Create a new collection"
+        title="添加社会经历"
         okText="Create"
         cancelText="Cancel"
         okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
@@ -117,12 +123,60 @@ const Add: React.FC<MyComponentProps> = ({
         )}
       >
         <Form.Item
-          name="name"
-          label="单位名称"
+          name="placeName"
+          label="工作地"
           rules={[
             {
               required: true,
-              message: '请输入您的单位名称',
+              message: '请输入您的工作地',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="address"
+          label="实践地址"
+          rules={[
+            {
+              required: true,
+              message: '请输入您的实践地址',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="startDate"
+          label="开始时间"
+          rules={[
+            {
+              required: true,
+              message: '请输入您的开始时间',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="endDate"
+          label="结束时间"
+          rules={[
+            {
+              required: true,
+              message: '请输入您的结束时间',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="userName"
+          label="用户名"
+          rules={[
+            {
+              required: true,
+              message: '请输入您的用户名',
             },
           ]}
         >

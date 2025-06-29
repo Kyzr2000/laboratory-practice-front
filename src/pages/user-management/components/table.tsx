@@ -2,7 +2,7 @@
 import './table.less';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { DeleteOutlined, SyncOutlined } from '@mui/icons-material';
+import { DeleteOutlined, EditOutlined } from '@mui/icons-material';
 import type { CascaderProps, TableProps } from 'antd';
 import {
   Button,
@@ -16,13 +16,15 @@ import {
   Space,
   Table,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { DeleteUser, UpdateUser1 } from '@/pages/graphql/mutations';
 import {
   GetUserByUsernameOrName,
   GetUserByUsernameOrNameNumber,
 } from '@/pages/graphql/query';
+
+import AddSkill from './addSkill';
 
 // import { GetUserByUsernameOrName } from '@/pages/graphql/query';
 const { Option } = Select;
@@ -38,6 +40,17 @@ interface DataType {
   address?: string | null;
   introduction?: string | null;
   unit?: Unit | null;
+  userSkills?: userSkills | null;
+  getSkills?: getSkills[];
+}
+interface userSkills {
+  userId: number;
+  skillId?: number;
+}
+interface getSkills {
+  id: number;
+  name?: string;
+  description?: string;
 }
 interface Unit {
   name?: string;
@@ -177,6 +190,7 @@ const TableDate: React.FC<MyComponentProps> = ({
   const [form] = Form.useForm();
   const [formusername, setformusername] = useState<string>();
   const [open, setOpen] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState<Values>();
 
   // 表单的电话
   const prefixSelector = (
@@ -216,61 +230,99 @@ const TableDate: React.FC<MyComponentProps> = ({
     refnum();
   };
   //
+  // 延迟设置表单值确保Form组件已挂载
+  useEffect(() => {
+    if (open && currentRecord) {
+      // 延迟设置表单值确保Form组件已挂载
+      setTimeout(() => {
+        form.setFieldsValue(currentRecord);
+      }, 10);
+    }
+  }, [open, currentRecord, form]);
+  //
 
   const columns: TableProps<DataType>['columns'] = [
     {
       title: '用户名',
       dataIndex: 'username',
       key: 'username',
-      render: (text) => <a>{text}</a>,
+      align: 'center',
     },
 
     {
       title: '姓名',
       dataIndex: 'realname',
       key: 'realname',
+      align: 'center',
     },
     {
       title: '年龄',
       dataIndex: 'age',
       key: 'age',
+      align: 'center',
     },
     {
       title: '电话号',
       dataIndex: 'telephone',
       key: 'telephone',
+      align: 'center',
     },
     {
       title: '邮箱',
       dataIndex: 'email',
       key: 'email',
+      align: 'center',
     },
     {
       title: '简介',
       dataIndex: 'introduction',
       key: 'introduction',
+      align: 'center',
+    },
+    {
+      title: '技能',
+      align: 'center',
+      render: (record) => (
+        <Space size="middle">
+          <Button
+            type="primary"
+            variant="outlined"
+            color="primary"
+            style={{ fontSize: 16 }}
+            onClick={() => showModal(record)}
+          >
+            绑定的技能
+          </Button>
+        </Space>
+      ),
+      key: 'userSkills',
     },
     {
       title: '单位',
       render: (_, record) => record.unit?.name || '未关联单位',
       key: 'unit',
+      align: 'center',
     },
     {
       title: '操作',
       key: 'action',
+      align: 'center',
       render: (_, record) => (
         <Space size="middle">
-          <Popconfirm
-            title="确认更改?"
-            okText="确认"
-            cancelText="取消"
-            onConfirm={() => {
+          <Button
+            variant="outlined"
+            color="primary"
+            style={{ width: 85 }}
+            icon={<EditOutlined />}
+            onClick={() => {
               setOpen(true);
               setformusername(record.username);
+              setCurrentRecord({ ...record, unitName: record.unit?.name });
+              // form.setFieldsValue({ ...record});
             }}
           >
-            <Button icon={<SyncOutlined />}>修改</Button>
-          </Popconfirm>
+            修改
+          </Button>
 
           <Popconfirm
             title="确认删除?"
@@ -278,7 +330,7 @@ const TableDate: React.FC<MyComponentProps> = ({
             cancelText="取消"
             onConfirm={() => deleteuser(record.username)}
           >
-            <Button danger icon={<DeleteOutlined />}>
+            <Button style={{ width: 85 }} danger icon={<DeleteOutlined />}>
               删除
             </Button>
           </Popconfirm>
@@ -288,6 +340,21 @@ const TableDate: React.FC<MyComponentProps> = ({
   ];
 
   const data: DataType[] = [...tableDate];
+  // 技能
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentRow, setCurrentRow] = useState<DataType>();
+
+  const showModal = (record: DataType) => {
+    setCurrentRow(record);
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <>
@@ -305,6 +372,23 @@ const TableDate: React.FC<MyComponentProps> = ({
         }}
       />
       <Modal
+        title="技能"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="确认"
+        cancelText="取消"
+      >
+        <AddSkill
+          currentRow={currentRow}
+          currentpage={currentpage}
+          username={username}
+          realname={realname}
+          settableDate={settableDate}
+          showModal={showModal}
+        />
+      </Modal>
+      <Modal
         open={open}
         title="更改信息"
         okText="确认"
@@ -317,7 +401,7 @@ const TableDate: React.FC<MyComponentProps> = ({
             layout="vertical"
             form={form}
             name="form_in_modal"
-            initialValues={{ modifier: 'public' }}
+            initialValues={{ ...currentRecord }}
             clearOnDestroy
             onFinish={(values) => onUpdata(values)}
           >

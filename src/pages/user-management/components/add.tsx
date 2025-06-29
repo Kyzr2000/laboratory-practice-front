@@ -1,6 +1,9 @@
 import './add.less';
 
+import { UserAddOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@apollo/client';
+import { DivisionUtil } from '@pansy/china-division';
+import CascaderOptions from '@pansy/china-division';
 import type { CascaderProps } from 'antd';
 import {
   Button,
@@ -16,7 +19,6 @@ import React, { useState } from 'react';
 
 import { AddUser } from '@/pages/graphql/mutations';
 import { GetAllUser, GetPageAllUsers } from '@/pages/graphql/query';
-
 // import ChinaRegionCascader from './ChinaRegionCascader';s
 // import { GetAllUser } from '@/pages/graphql/query';
 
@@ -72,40 +74,55 @@ const Add: React.FC<MyComponentProps> = ({
   currentpage,
   settableDate,
 }: MyComponentProps) => {
-  const residences: CascaderProps<DataNodeType>['options'] = [
-    {
-      value: '浙江',
-      label: '浙江',
-      children: [
-        {
-          value: 'hangzhou',
-          label: 'Hangzhou',
-          children: [
-            {
-              value: 'xihu',
-              label: 'West Lake',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      value: '江苏',
-      label: '江苏',
-      children: [
-        {
-          value: '南京',
-          label: '南京',
-          children: [
-            {
-              value: '中华门',
-              label: '中华门',
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  // const divisionUtil = new DivisionUtil(CascaderOptions as DataNodeType[]);
+  // console.log(divisionUtil);
+
+  // const residences: CascaderProps<DataNodeType>["options"] = divisionUtil
+  //   .getProvinces()
+  //   .map((province) => ({
+  //     value: province.value,
+  //     label: province.label,
+  //     children: divisionUtil.getChildrenByCode(province.value)?.map((city) => ({
+  //       value: city.value,
+  //       label: city.label,
+  //       children: divisionUtil
+  //         .getChildrenByCode(city.value)
+  //         ?.map((district) => ({
+  //           value: district.value,
+  //           label: district.label,
+  //         })),
+  //     })),
+  //   }));
+
+  // 初始化行政区划工具
+  const divisionUtil = new DivisionUtil(CascaderOptions);
+
+  // 初始化省市区数据
+
+  const provinces = divisionUtil.getProvinces();
+
+  // 转换数据为Cascader所需格式
+  const residences: CascaderProps<DataNodeType>['options'] = provinces.map((province) => {
+    const cities = divisionUtil.getChildrenByCode(province.value) || [];
+
+    return {
+      value: province.value,
+      label: province.label,
+      children: cities.map((city) => {
+        const districts = divisionUtil.getChildrenByCode(city.value) || [];
+
+        return {
+          value: city.value,
+          label: city.label,
+          children: districts.map((district) => ({
+            value: district.value,
+            label: district.label,
+          })),
+        };
+      }),
+    };
+  });
+
   const tailFormItemLayout = {
     wrapperCol: {
       xs: {
@@ -164,7 +181,7 @@ const Add: React.FC<MyComponentProps> = ({
       },
     }).then(() => {
       refetchnumber();
-      settotal(datanumber);
+      settotal(datanumber.getAllUsers);
       refetch({
         variables: {
           data: { page: currentpage.page, limit: currentpage.limit },
@@ -177,7 +194,7 @@ const Add: React.FC<MyComponentProps> = ({
 
   return (
     <>
-      <Button type="primary" onClick={() => setOpen(true)}>
+      <Button type="primary" icon={<UserAddOutlined />} onClick={() => setOpen(true)}>
         添加用户
       </Button>
       {/* <pre>{JSON.stringify(formValues, null, 2)}</pre> */}
@@ -309,7 +326,7 @@ const Add: React.FC<MyComponentProps> = ({
             },
           ]}
         >
-          <Cascader options={residences} />
+          <Cascader options={residences} expandTrigger={'click'} />
         </Form.Item>
         <Form.Item
           name="telephone"

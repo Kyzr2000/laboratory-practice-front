@@ -7,16 +7,19 @@ import Add from './components/add';
 import Search from './components/search';
 import TableDate from './components/table';
 
-const UserManagement = () => {
+const SkillManagement = () => {
   interface DataType {
+    id: number;
+    placeName?: string;
+    createdAt?: string;
+    address?: string;
+    startDate?: string;
+    endDate?: string;
+    user?: User | null;
+  }
+  interface User {
+    id: number;
     username?: string;
-    password?: string;
-    realname?: string;
-    gender?: number | null;
-    age?: number | null;
-    telephone?: string | null;
-    email?: string | null;
-    introduction?: string | null;
   }
   interface Currentpage {
     page: number;
@@ -29,8 +32,8 @@ const UserManagement = () => {
     limit: 10,
   }); // 表格所有数据
   const [total, settotal] = useState<number>();
-  const [username, setusername] = useState<string>();
-  const [realname, setrealname] = useState<string>();
+  const [name, setname] = useState<string>();
+
   return (
     <div className="User">
       <ConfigProvider
@@ -53,12 +56,12 @@ const UserManagement = () => {
         }}
       >
         <div className="UserList">
-          <span></span>用户列表
+          <span></span>技能列表
         </div>
         <Divider style={{ borderColor: '#00000022' }} />
         <Row gutter={[0, 20]} justify="space-between">
           <Col>
-            <Search setusername={setusername} setrealname={setrealname} />
+            <Search setname={setname} />
           </Col>
           <Col>
             <Add
@@ -70,8 +73,7 @@ const UserManagement = () => {
           </Col>
           <Col span={24}>
             <TableDate
-              username={username}
-              realname={realname}
+              name={name}
               total={total}
               settotal={settotal}
               tableDate={tableDate}
@@ -86,4 +88,4 @@ const UserManagement = () => {
     </div>
   );
 };
-export default UserManagement;
+export default SkillManagement;

@@ -86,6 +86,15 @@ export const GetUserByUsernameOrName = gql`
         uuid
         createdAt
       }
+      getSkills {
+        id
+        name
+        description
+      }
+      getUserSkills {
+        userId
+        skillId
+      }
     }
   }
 `;
@@ -135,5 +144,64 @@ export const GetUnitByUnitnameOrName = gql`
 export const GetUnitByUnitnameOrNameNumber = gql`
   query GetUnitByUnitnameOrNameNumber($data: SearchUnit!) {
     getUnitByUnitnameOrNameNumber(data: $data)
+  }
+`;
+// 社会经历管理模块
+// 查找社会经历
+export const GetExperienceByExperiencenameOrName = gql`
+  query GetExperienceByExperiencenameOrName($data: SearchExperience!) {
+    getExperienceByExperiencenameOrName(data: $data) {
+      address
+      createdAt
+      endDate
+      id
+      placeName
+      startDate
+      user {
+        username
+      }
+    }
+  }
+`;
+export const GetExperienceByExperiencenameOrNameNumber = gql`
+  query GetExperienceByExperiencenameOrNameNumber($data: SearchExperience!) {
+    getExperienceByExperiencenameOrNameNumber(data: $data)
+  }
+`;
+// 技能管理模块
+// 查找技能
+export const GetSkillBySkillnameOrName = gql`
+  query GetSkillBySkillnameOrName($data: SearchSkill!) {
+    getSkillBySkillnameOrName(data: $data) {
+      createdAt
+      description
+      id
+      name
+      getUsers {
+        id
+        username
+      }
+    }
+  }
+`;
+export const GetSkillBySkillnameOrNameNumber = gql`
+  query GetSkillBySkillnameOrNameNumber($data: SearchSkill!) {
+    getSkillBySkillnameOrNameNumber(data: $data)
+  }
+`;
+export const Getskill = gql`
+  query Getskill($data: Int!) {
+    getskill(data: $data) {
+      user {
+        username
+        getSkills {
+          name
+          description
+        }
+      }
+      skill {
+        name
+      }
+    }
   }
 `;

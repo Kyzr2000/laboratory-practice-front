@@ -5,18 +5,34 @@ import type { TableProps } from 'antd';
 import { Button, Form, Input, Modal, Popconfirm, Space, Table } from 'antd';
 import React, { useState } from 'react';
 
-import { DeleteUnit, UpdateUnit1 } from '@/pages/graphql/mutations';
+import { DeleteSkill, UpdateSkill1 } from '@/pages/graphql/mutations';
 import {
-  GetUnitByUnitnameOrName,
-  GetUnitByUnitnameOrNameNumber,
+  GetSkillBySkillnameOrName,
+  GetSkillBySkillnameOrNameNumber,
 } from '@/pages/graphql/query';
 
 // import { GetUserByUsernameOrName } from '@/pages/graphql/query';
 interface DataType {
-  id?: number;
-  name?: string;
-  uuid?: string;
+  id: number;
+  description?: string;
   createdAt?: string;
+  name?: string;
+  user?: User | null;
+  userSkills?: userSkills | null;
+  getUsers?: getUsers[] | null;
+}
+
+interface getUsers {
+  id: number;
+  username?: string;
+}
+interface User {
+  id: number;
+  username?: string;
+}
+interface userSkills {
+  userId: number;
+  skillId?: number;
 }
 interface Currentpage {
   page: number;
@@ -34,10 +50,7 @@ interface MyComponentProps {
 }
 
 interface Values {
-  id?: number;
-  name?: string;
-  uuid?: string;
-  createdAt?: string;
+  description?: string;
 }
 
 const TableDate: React.FC<MyComponentProps> = ({
@@ -53,7 +66,7 @@ const TableDate: React.FC<MyComponentProps> = ({
     data: searchdata,
     refetch: searchrefetch,
     loading,
-  } = useQuery(GetUnitByUnitnameOrName, {
+  } = useQuery(GetSkillBySkillnameOrName, {
     variables: {
       data: {
         page: currentpage.page,
@@ -62,13 +75,13 @@ const TableDate: React.FC<MyComponentProps> = ({
       },
     },
     onCompleted(data) {
-      settableDate(data.getUnitByUnitnameOrName);
+      settableDate(data.getSkillBySkillnameOrName);
     },
     fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
   });
 
-  const { data: num, refetch: refnum } = useQuery(GetUnitByUnitnameOrNameNumber, {
+  const { data: num, refetch: refnum } = useQuery(GetSkillBySkillnameOrNameNumber, {
     variables: {
       data: {
         page: currentpage.page,
@@ -77,22 +90,25 @@ const TableDate: React.FC<MyComponentProps> = ({
       },
     },
     onCompleted(data) {
-      settotal(data.getUnitByUnitnameOrNameNumber);
+      settotal(data.getSkillBySkillnameOrNameNumber);
     },
     // fetchPolicy: "cache-and-network",
   });
-  const [deleteUnit] = useMutation(DeleteUnit);
+  const [deleteSkill] = useMutation(DeleteSkill);
 
   // 删除的回调
-  const deleteunit = async (name: string | undefined) => {
-    await deleteUnit({ variables: { data: name } });
+  const deleteskill = async (id: number) => {
+    console.log(deleteSkill);
+    console.log(id);
+
+    deleteSkill({ variables: { data: Number(id) } });
 
     refnum();
     settotal(num);
     searchrefetch({
       variables: { data: { page: currentpage.page, limit: currentpage.limit } },
     });
-    settableDate(searchdata.getUnitByUnitnameOrName);
+    settableDate(searchdata.getSkillBySkillnameOrName);
   };
 
   // 修改
@@ -102,18 +118,15 @@ const TableDate: React.FC<MyComponentProps> = ({
   const [formusername, setformusername] = useState<DataType>();
   const [open, setOpen] = useState(false);
 
-  console.log(formusername);
-
-  const [updateUnit1] = useMutation(UpdateUnit1);
+  const [updateSkill1] = useMutation(UpdateSkill1);
   // // 更新的回调
-  const onUpdata = (values: Values) => {
-    console.log(values);
 
-    updateUnit1({
+  const onUpdata = (values: Values) => {
+    updateSkill1({
       variables: {
         data: {
-          uuid: formusername?.uuid,
-          name: values.name,
+          id: formusername?.id,
+          description: values.description,
         },
       },
     }).then(() => {
@@ -123,37 +136,74 @@ const TableDate: React.FC<MyComponentProps> = ({
         },
       });
     });
-    settableDate(searchdata.getUnitByUnitnameOrName);
+    settableDate(searchdata.getSkillBySkillnameOrName);
 
     setOpen(false);
     refnum();
   };
   //
+  console.log(searchdata);
 
+  // 技能绑定的用户start
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentRow, setCurrentRow] = useState<DataType>();
+  const showModal = (record: DataType) => {
+    setIsModalOpen(true);
+    setCurrentRow(record);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  // 技能绑定的用户end
   const columns: TableProps<DataType>['columns'] = [
     {
-      title: '单位名',
+      title: '技能名称',
       dataIndex: 'name',
       key: 'name',
       align: 'center',
     },
     {
-      title: '编号',
-      dataIndex: 'uuid',
-      key: 'uuid',
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
       align: 'center',
     },
     {
+      title: '用户',
+      align: 'center',
+      render: (record) => (
+        <>
+          <Button
+            type="primary"
+            variant="outlined"
+            color="primary"
+            style={{ fontSize: 16 }}
+            onClick={() => {
+              showModal(record);
+              console.log(record);
+            }}
+          >
+            绑定的用户
+          </Button>
+        </>
+      ),
+      key: 'getUsers',
+    },
+    {
       title: '创建时间',
+      align: 'center',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      align: 'center',
     },
 
     {
       title: '操作',
-      key: 'action',
       align: 'center',
+      key: 'action',
       render: (_, record) => (
         <Space size="middle">
           <Button
@@ -166,16 +216,16 @@ const TableDate: React.FC<MyComponentProps> = ({
               setformusername(record);
             }}
           >
-            修改{' '}
+            修改
           </Button>
 
           <Popconfirm
             okText="确认"
             cancelText="取消"
             title="确认删除?"
-            onConfirm={() => deleteunit(record.name)}
+            onConfirm={() => deleteskill(record.id)}
           >
-            <Button style={{ width: 85 }} danger icon={<DeleteOutlined />}>
+            <Button danger style={{ width: 85 }} icon={<DeleteOutlined />}>
               删除
             </Button>
           </Popconfirm>
@@ -183,6 +233,7 @@ const TableDate: React.FC<MyComponentProps> = ({
       ),
     },
   ];
+  console.log(currentRow);
 
   const newReversedArray = [...tableDate];
   const data: DataType[] = [...newReversedArray];
@@ -202,6 +253,30 @@ const TableDate: React.FC<MyComponentProps> = ({
           },
         }}
       />
+      <Modal
+        title="绑定用户"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="确认"
+        cancelText="取消"
+      >
+        <div>
+          {currentRow?.getUsers?.length ? (
+            <div>
+              {currentRow.getUsers.map((user) => (
+                <div key={user.id}>
+                  <span>{user.username}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>
+              <span>未绑定用户</span>
+            </div>
+          )}
+        </div>
+      </Modal>
       <Modal
         open={open}
         title="更改信息"
@@ -224,12 +299,12 @@ const TableDate: React.FC<MyComponentProps> = ({
         )}
       >
         <Form.Item
-          name="name"
-          label="单位名称"
+          name="description"
+          label="技能描述"
           rules={[
             {
               required: true,
-              message: '请输入您的单位名称',
+              message: '请输入您的技能描述',
             },
           ]}
         >
