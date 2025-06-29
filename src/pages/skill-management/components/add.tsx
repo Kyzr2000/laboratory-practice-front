@@ -106,8 +106,8 @@ const Add: React.FC<MyComponentProps> = ({
       <Modal
         open={open}
         title="添加技能"
-        okText="Create"
-        cancelText="Cancel"
+        okText="确认"
+        cancelText="取消"
         okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
         onCancel={() => setOpen(false)}
         destroyOnHidden

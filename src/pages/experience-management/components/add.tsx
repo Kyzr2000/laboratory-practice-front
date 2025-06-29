@@ -1,6 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@apollo/client';
-import { Button, Form, Input, Modal } from 'antd';
+import { Button, DatePicker, Form, Input, Modal } from 'antd';
+import type dayjs from 'dayjs';
 import React, { useState } from 'react';
 
 import { AddExperience } from '@/pages/graphql/mutations';
@@ -24,7 +25,7 @@ interface Values {
   placeName?: string;
   createdAt?: string;
   address?: string;
-  startDate?: string;
+  startDate: [dayjs.Dayjs, dayjs.Dayjs];
   endDate?: string;
   userName: string;
 }
@@ -34,7 +35,7 @@ interface MyComponentProps {
   currentpage: Currentpage;
   setcurrentpage: React.Dispatch<React.SetStateAction<Currentpage>>;
 }
-
+const { RangePicker } = DatePicker;
 const Add: React.FC<MyComponentProps> = ({
   settotal,
   currentpage,
@@ -75,8 +76,8 @@ const Add: React.FC<MyComponentProps> = ({
         data: {
           placeName: values.placeName,
           address: values.address,
-          startDate: values.startDate,
-          endDate: values.endDate,
+          startDate: values.startDate[0].toISOString(),
+          endDate: values.startDate[1].toISOString(),
           userName: values.userName,
         },
       },
@@ -104,8 +105,8 @@ const Add: React.FC<MyComponentProps> = ({
       <Modal
         open={open}
         title="添加社会经历"
-        okText="Create"
-        cancelText="Cancel"
+        okText="确认"
+        cancelText="取消"
         okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
         onCancel={() => setOpen(false)}
         destroyOnHidden
@@ -156,9 +157,13 @@ const Add: React.FC<MyComponentProps> = ({
             },
           ]}
         >
-          <Input />
+          <RangePicker
+            placeholder={['开始时间', '结束时间']}
+            showTime={{ format: 'HH:mm' }}
+            format="YYYY-MM-DD HH:mm"
+          />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           name="endDate"
           label="结束时间"
           rules={[
@@ -169,7 +174,7 @@ const Add: React.FC<MyComponentProps> = ({
           ]}
         >
           <Input />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           name="userName"
           label="用户名"

@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { DeleteOutlined, EditOutlined } from '@mui/icons-material';
 import type { TableProps } from 'antd';
 import { Button, Form, Input, Modal, Popconfirm, Space, Table } from 'antd';
+import dayjs from 'dayjs';
 import React, { useState } from 'react';
 
 import { DeleteSkill, UpdateSkill1 } from '@/pages/graphql/mutations';
@@ -198,6 +199,7 @@ const TableDate: React.FC<MyComponentProps> = ({
       align: 'center',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      render: (_, record) => dayjs(record.createdAt).format('YYYY-MM-DD HH:mm:ss'),
     },
 
     {

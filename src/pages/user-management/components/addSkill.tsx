@@ -272,9 +272,9 @@ const CollectionCreateForm: React.FC<CollectionCreateFormProps> = ({
   return (
     <Modal
       open={open}
-      title="Create a new collection"
-      okText="Create"
-      cancelText="Cancel"
+      title="修改技能"
+      okText="确认"
+      cancelText="取消"
       onCancel={onCancel}
       onOk={() => {
         form

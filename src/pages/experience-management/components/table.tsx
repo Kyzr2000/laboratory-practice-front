@@ -2,7 +2,9 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { DeleteOutlined, EditOutlined } from '@mui/icons-material';
 import type { TableProps } from 'antd';
-import { Button, Form, Input, Modal, Popconfirm, Space, Table } from 'antd';
+import { Button, DatePicker, Form, Input, Modal, Popconfirm, Space, Table } from 'antd';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import React, { useState } from 'react';
 
 import { DeleteExperience, UpdateExperience1 } from '@/pages/graphql/mutations';
@@ -45,7 +47,7 @@ interface Values {
   placeName?: string;
   createdAt?: string;
   address?: string;
-  startDate?: string;
+  startDate: [Dayjs, dayjs.Dayjs];
   endDate?: string;
   userName: string;
 }
@@ -95,7 +97,7 @@ const TableDate: React.FC<MyComponentProps> = ({
     },
   );
   const [deleteExperience] = useMutation(DeleteExperience);
-
+  const { RangePicker } = DatePicker;
   // 删除的回调
   const deleteexperience = async (id: number) => {
     console.log(deleteExperience);
@@ -128,8 +130,8 @@ const TableDate: React.FC<MyComponentProps> = ({
           id: formusername?.id,
           placeName: values.placeName,
           address: values.address,
-          startDate: values.startDate,
-          endDate: values.endDate,
+          startDate: values.startDate[0].toISOString(),
+          endDate: values.startDate[1].toISOString(),
           userName: values.userName,
         },
       },
@@ -165,12 +167,14 @@ const TableDate: React.FC<MyComponentProps> = ({
       dataIndex: 'startDate',
       key: 'startDate',
       align: 'center',
+      render: (_, record) => dayjs(record.startDate).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '结束时间',
       dataIndex: 'endDate',
       key: 'endDate',
       align: 'center',
+      render: (_, record) => dayjs(record.endDate).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '用户',
@@ -183,6 +187,7 @@ const TableDate: React.FC<MyComponentProps> = ({
       align: 'center',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      render: (_, record) => dayjs(record.createdAt).format('YYYY-MM-DD HH:mm:ss'),
     },
 
     {
@@ -292,20 +297,24 @@ const TableDate: React.FC<MyComponentProps> = ({
             },
           ]}
         >
-          <Input />
+          <RangePicker
+            placeholder={['开始时间', '结束时间']}
+            showTime={{ format: 'HH:mm' }}
+            format="YYYY-MM-DD HH:mm"
+          />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           name="endDate"
           label="结束时间"
           rules={[
             {
               required: true,
-              message: '请输入您的结束时间',
+              message: "请输入您的结束时间",
             },
           ]}
         >
           <Input />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           name="userName"
           label="用户名"

@@ -97,9 +97,9 @@ const Add: React.FC<MyComponentProps> = ({
       {/* <pre>{JSON.stringify(formValues, null, 2)}</pre> */}
       <Modal
         open={open}
-        title="Create a new collection"
-        okText="Create"
-        cancelText="Cancel"
+        title="添加单位"
+        okText="确认"
+        cancelText="取消"
         okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
         onCancel={() => setOpen(false)}
         destroyOnHidden
