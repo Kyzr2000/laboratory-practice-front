@@ -1,52 +1,54 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLazyQuery } from '@apollo/client';
+import type { Experience, SearchExperienceInput } from '../type';
+import { FIND_EXPERIENCE } from '../graphql/experienceGql';
 
-import { SEARCH_USER } from '../graphql/userQueries';
-import type { SearchUserInput, User } from '../types';
-
-export const useUserManagement = () => {
-  // 用户状态
-  const [users, setUsers] = useState<User[]>([]);
-  const [searchParams, setSearchParams] = useState<SearchUserInput>({
+export const useExperienceManagement = () => {
+  const [experience, setExperience] = useState<Experience[]>([]);
+  const [searchParams, setSearchParams] = useState<SearchExperienceInput>({
+    name: '',
     username: '',
-    realname: '',
   });
-  // 分页信息
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
     total: 0,
   });
 
-  const [getUsers, { loading, error, data, refetch }] = useLazyQuery(SEARCH_USER, {
-    fetchPolicy: 'network-only',
-    variables: {
-      searchUserInput: searchParams,
-      page: pagination.current,
-      pageSize: pagination.pageSize,
+  const [getExperience, { loading, error, data, refetch }] = useLazyQuery(
+    FIND_EXPERIENCE,
+    {
+      fetchPolicy: 'network-only',
+      variables: {
+        searchInput: searchParams,
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+      },
     },
-  });
+  );
+
+  // 使用 useCallback 包裹 fetchData 函数
+  useEffect(() => {
+    getExperience();
+  }, [getExperience]);
 
   useEffect(() => {
-    getUsers();
-  }, [getUsers]);
-
-  useEffect(() => {
-    if (data?.searchUser) {
-      setUsers(data.searchUser.users || []);
+    if (data?.findExperience) {
+      setExperience(data.findExperience.experience || []);
       setPagination((prev) => ({
         ...prev,
-        total: data.searchUser.total || 0,
+        total: data.findExperience.total || 0,
       }));
     }
   }, [data]);
 
   const handleSearch = useCallback(
-    (values: SearchUserInput) => {
+    (values: SearchExperienceInput) => {
       setSearchParams(values);
       setPagination((prev) => ({ ...prev, current: 1 }));
       refetch({
-        searchUserInput: values,
+        searchInput: values,
         page: 1,
         pageSize: pagination.pageSize,
       });
@@ -58,7 +60,7 @@ export const useUserManagement = () => {
     (page: number, pageSize: number) => {
       setPagination({ current: page, pageSize, total: pagination.total });
       refetch({
-        searchUserInput: searchParams,
+        searchInput: searchParams,
         page,
         pageSize,
       });
@@ -71,7 +73,7 @@ export const useUserManagement = () => {
   }, [refetch]);
 
   return {
-    users,
+    experience,
     loading,
     error,
     pagination,

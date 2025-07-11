@@ -21,6 +21,9 @@ import React, { useState } from 'react';
 
 import BaseInformation from '../scale-base-information';
 import UserManagement from '../user-management';
+import UnitManagement from '../unit';
+import ExperienceManagement from '../experience-management';
+import SkillManagement from '../skill';
 
 type MenuItem = {
   text: string;
@@ -44,7 +47,12 @@ const menuItems: MenuItem[] = [
   {
     text: '基础设置（练习）',
     icon: <Settings />,
-    submenus: [{ text: '用户管理', component: <UserManagement /> }],
+    submenus: [
+      { text: '用户管理', component: <UserManagement /> },
+      { text: '单位管理', component: <UnitManagement /> },
+      { text: '经历管理', component: <ExperienceManagement /> },
+      { text: '技能管理', component: <SkillManagement /> },
+    ],
     auth: ['ADMIN', 'DIRECTIOR', 'DOCTOR'],
   },
 ];

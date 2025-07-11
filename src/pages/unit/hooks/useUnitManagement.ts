@@ -1,52 +1,49 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import type { FindUnitsInput, Unit } from '../types';
 import { useLazyQuery } from '@apollo/client';
+import { FIND_UNITS } from '../graphql/unitGql';
 
-import { SEARCH_USER } from '../graphql/userQueries';
-import type { SearchUserInput, User } from '../types';
-
-export const useUserManagement = () => {
-  // 用户状态
-  const [users, setUsers] = useState<User[]>([]);
-  const [searchParams, setSearchParams] = useState<SearchUserInput>({
-    username: '',
-    realname: '',
+export const useUnitManagement = () => {
+  const [units, setUnits] = useState<Unit[]>();
+  const [searchParams, setSearchParams] = useState<FindUnitsInput>({
+    unitNumber: '',
+    name: '',
   });
-  // 分页信息
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
     total: 0,
   });
 
-  const [getUsers, { loading, error, data, refetch }] = useLazyQuery(SEARCH_USER, {
+  const [getUnit, { data, error, loading, refetch }] = useLazyQuery(FIND_UNITS, {
     fetchPolicy: 'network-only',
     variables: {
-      searchUserInput: searchParams,
+      findUnitsInput: searchParams,
       page: pagination.current,
       pageSize: pagination.pageSize,
     },
   });
 
   useEffect(() => {
-    getUsers();
-  }, [getUsers]);
-
+    getUnit();
+  }, [getUnit]);
   useEffect(() => {
-    if (data?.searchUser) {
-      setUsers(data.searchUser.users || []);
+    if (data?.findUnits) {
+      setUnits(data.findUnits.units || []);
       setPagination((prev) => ({
         ...prev,
-        total: data.searchUser.total || 0,
+        total: data.findUnits.total || 0,
       }));
     }
   }, [data]);
 
   const handleSearch = useCallback(
-    (values: SearchUserInput) => {
+    (values: FindUnitsInput) => {
       setSearchParams(values);
       setPagination((prev) => ({ ...prev, current: 1 }));
       refetch({
-        searchUserInput: values,
+        findUnitsInput: values,
         page: 1,
         pageSize: pagination.pageSize,
       });
@@ -58,7 +55,7 @@ export const useUserManagement = () => {
     (page: number, pageSize: number) => {
       setPagination({ current: page, pageSize, total: pagination.total });
       refetch({
-        searchUserInput: searchParams,
+        findUnitsInput: searchParams,
         page,
         pageSize,
       });
@@ -71,7 +68,7 @@ export const useUserManagement = () => {
   }, [refetch]);
 
   return {
-    users,
+    units,
     loading,
     error,
     pagination,
@@ -79,6 +76,5 @@ export const useUserManagement = () => {
     handlePaginationChange,
     refreshData,
     searchParams,
-    setSearchParams,
   };
 };

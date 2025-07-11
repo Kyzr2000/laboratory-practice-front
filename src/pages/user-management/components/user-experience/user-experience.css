@@ -1,0 +1,34 @@
+/* .ant-table-row {
+  height: 10px;
+} */
+
+.ant-modal {
+  position: relative;
+  top: 100px;
+  left: 100px;
+}
+
+.user-experience-model .ant-table {
+  /* background-color: gray; */
+  height: 540px;
+}
+
+.user-experience-card {
+  position: relative;
+  height: 670px;
+}
+
+.user-experience-model .ant-table-cell {
+  font-size: 12px;
+}
+
+.user-experience-model .ant-table-cell .address-fs {
+  font-size: 10px;
+}
+
+.user-experience-model .ant-pagination {
+  margin: 0;
+  position: absolute;
+  bottom: 1.5%;
+  right: 0;
+}

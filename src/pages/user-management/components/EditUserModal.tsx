@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Modal, Form, Input, Select, Button, message } from 'antd';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 
-import { CHANGE_USER } from '../api/userMutations';
+import { CHANGE_USER } from '../graphql/userMutations';
 import type { User } from '../types';
+import type { Unit } from '@/pages/unit/types';
+import { GET_ALL_UNITS } from '@/pages/unit/graphql/unitGql';
+import { SettingFilled } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -16,14 +19,31 @@ const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [unitsLoading, setUnitsLoading] = useState(false);
   const [changeUserMutation] = useMutation(CHANGE_USER);
 
+  const [fetchUnits] = useLazyQuery(GET_ALL_UNITS, {
+    onCompleted: (data) => {
+      setUnits(data.findAllUnits || []);
+      setUnitsLoading(false);
+    },
+    onError: () => {
+      message.error('加载单位失败'), setUnitsLoading(false);
+    },
+    fetchPolicy: 'network-only',
+  });
+
   const showModal = async () => {
+    setUnitsLoading(true);
+    fetchUnits();
+
     form.setFieldsValue({
       ...user,
       oldUsername: user.username,
       gender: user.gender?.toString(),
+      // 设置单位编号初始值
+      unitNumber: user.unit?.unitNumber || null,
     });
     setVisible(true);
   };
@@ -42,6 +62,8 @@ const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
             oldUsername: user.username,
             gender: values.gender ? Number(values.gender) : null,
             age: values.age ? Number(values.age) : null,
+            // 确保unitNumber字段正确传递
+            unitNumber: values.unitNumber,
           },
         },
       });
@@ -60,6 +82,7 @@ const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
     <>
       <Button
         type="link"
+        icon={<SettingFilled />}
         className="row-button"
         onClick={showModal}
         style={{ color: '#1890ff' }}
@@ -73,7 +96,7 @@ const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
         onOk={handleSubmit}
         onCancel={handleCancel}
         confirmLoading={confirmLoading}
-        destroyOnClose
+        destroyOnHidden
         footer={[
           <Button key="back" onClick={handleCancel}>
             取消
@@ -119,6 +142,36 @@ const EditUserModal = ({ user, refreshData }: EditUserModalProps) => {
 
           <Form.Item name="age" label="年龄">
             <Input type="number" placeholder="输入年龄" />
+          </Form.Item>
+
+          {/* 添加单位编号字段 */}
+          <Form.Item
+            name="unitNumber"
+            label="单位编号"
+            rules={[{ message: '请输入单位编号' }]}
+          >
+            <Select
+              placeholder="请选择单位"
+              loading={unitsLoading}
+              allowClear
+              showSearch
+              optionFilterProp="label" // 使用 label 作为过滤属性
+              filterOption={(input, option) =>
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
+              {units.map((unit) => (
+                <Option
+                  key={unit.unitNumber}
+                  value={unit.unitNumber}
+                  label={unit.name} // 添加 label 属性
+                >
+                  {unit.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item name="isEnable" label="状态">

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Modal, Form, Input, Select, Button, message } from 'antd';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
-import { ADD_USER } from '../api/userMutations';
+import { ADD_USER } from '../graphql/userMutations';
+import { GET_ALL_UNITS } from '@/pages/unit/graphql/unitGql';
+import type { Unit } from '@/pages/unit/types';
 
 const { Option } = Select;
 
@@ -14,6 +16,9 @@ const AddUserModal = ({ refreshData }: AddUserModalProps) => {
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const { data: unitsData, loading: unitsLoading } = useQuery(GET_ALL_UNITS);
+  const units: Unit[] = unitsData?.findAllUnits || [];
 
   const [addUser] = useMutation(ADD_USER);
 
@@ -31,13 +36,18 @@ const AddUserModal = ({ refreshData }: AddUserModalProps) => {
       const values = await form.validateFields();
       setConfirmLoading(true);
 
+      // 准备提交数据
+      const submitData = {
+        ...values,
+        gender: values.gender ? Number(values.gender) : null,
+        age: values.age ? Number(values.age) : null,
+        // 确保unitNumber字段正确传递
+        unitNumber: values.unitNumber,
+      };
+
       await addUser({
         variables: {
-          addUserInput: {
-            ...values,
-            gender: values.gender ? Number(values.gender) : null,
-            age: values.age ? Number(values.age) : null,
-          },
+          addUserInput: submitData,
         },
       });
 
@@ -67,7 +77,7 @@ const AddUserModal = ({ refreshData }: AddUserModalProps) => {
         onOk={handleSubmit}
         onCancel={handleCancel}
         confirmLoading={confirmLoading}
-        destroyOnClose
+        destroyOnHidden
         footer={[
           <Button key="back" onClick={handleCancel}>
             取消
@@ -117,6 +127,27 @@ const AddUserModal = ({ refreshData }: AddUserModalProps) => {
 
           <Form.Item name="age" label="年龄">
             <Input type="number" placeholder="输入年龄" />
+          </Form.Item>
+
+          <Form.Item name="unitNumber" label="单位" rules={[{ message: '请选择单位' }]}>
+            <Select
+              placeholder="请选择单位"
+              loading={unitsLoading}
+              allowClear
+              showSearch
+              optionFilterProp="label"
+              filterOption={(input, option) => {
+                return String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase());
+              }}
+            >
+              {units.map((unit) => (
+                <Option key={unit.unitNumber} value={unit.unitNumber} label={unit.name}>
+                  {unit.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item name="isEnable" label="状态" initialValue={false}>

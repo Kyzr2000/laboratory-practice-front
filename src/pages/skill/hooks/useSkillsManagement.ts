@@ -1,52 +1,49 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import type { SearchSkillInput, Skill } from '../type';
 import { useLazyQuery } from '@apollo/client';
+import { GET_SKILLS } from '../graphql/querise';
 
-import { SEARCH_USER } from '../graphql/userQueries';
-import type { SearchUserInput, User } from '../types';
-
-export const useUserManagement = () => {
-  // 用户状态
-  const [users, setUsers] = useState<User[]>([]);
-  const [searchParams, setSearchParams] = useState<SearchUserInput>({
-    username: '',
-    realname: '',
-  });
-  // 分页信息
+export const useSkillsManagement = () => {
+  // 状态管理
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
     total: 0,
   });
+  const [searchParams, setSearchParams] = useState<SearchSkillInput>({
+    skillName: '',
+  });
 
-  const [getUsers, { loading, error, data, refetch }] = useLazyQuery(SEARCH_USER, {
-    fetchPolicy: 'network-only',
+  const [getSkills, { loading, error, data, refetch }] = useLazyQuery(GET_SKILLS, {
+    fetchPolicy: 'cache-and-network',
     variables: {
-      searchUserInput: searchParams,
+      skillName: searchParams.skillName,
       page: pagination.current,
       pageSize: pagination.pageSize,
     },
   });
 
   useEffect(() => {
-    getUsers();
-  }, [getUsers]);
+    getSkills();
+  }, [getSkills]);
 
   useEffect(() => {
-    if (data?.searchUser) {
-      setUsers(data.searchUser.users || []);
+    if (data?.getSkills) {
+      setSkills(data.getSkills.skills || []);
       setPagination((prev) => ({
         ...prev,
-        total: data.searchUser.total || 0,
+        total: data.getSkills.total || 0,
       }));
     }
   }, [data]);
 
   const handleSearch = useCallback(
-    (values: SearchUserInput) => {
+    (values: SearchSkillInput) => {
       setSearchParams(values);
       setPagination((prev) => ({ ...prev, current: 1 }));
       refetch({
-        searchUserInput: values,
+        skillName: values.skillName,
         page: 1,
         pageSize: pagination.pageSize,
       });
@@ -58,7 +55,7 @@ export const useUserManagement = () => {
     (page: number, pageSize: number) => {
       setPagination({ current: page, pageSize, total: pagination.total });
       refetch({
-        searchUserInput: searchParams,
+        skillName: searchParams.skillName,
         page,
         pageSize,
       });
@@ -69,9 +66,8 @@ export const useUserManagement = () => {
   const refreshData = useCallback(() => {
     refetch();
   }, [refetch]);
-
   return {
-    users,
+    skills,
     loading,
     error,
     pagination,

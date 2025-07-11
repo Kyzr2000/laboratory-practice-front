@@ -1,13 +1,15 @@
-import { Table, Button, Tag, Space, Typography, Modal } from 'antd';
+import { Table, Button, Tag, Space, Typography, Modal, message } from 'antd';
 import { DeleteOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 
 import { useMutation } from '@apollo/client';
 import type { ApolloError } from '@apollo/client';
 
-import { DELETE_USER } from '../api/userMutations';
+import { DELETE_USER } from '../graphql/userMutations';
 import EditUserModal from './EditUserModal';
 import type { User } from '../types';
+import UserExperience from './user-experience/UserExperience';
+import UserSkillsList from './user-skills/UserSkillsList';
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -65,9 +67,31 @@ const UserManagementTable = ({
         }
       },
       onError: (error) => {
-        console.error('删除用户失败:', error.message);
+        message.error('删除用户失败' + error.message);
       },
     });
+
+    // ------------------------------------------------------
+    // 跳转到前一页
+    // 获取要删除的用户在当前页数据中的索引
+    // const deleteIndex = users.findIndex((user) => user.username === username);
+    // const currentPage = pagination.current;
+    // const currentPageSize = pagination.pageSize;
+    // deleteUser({
+    //   variables: { username },
+    //   onCompleted: () => {
+    //     // 如果删除的是当前页第一条数据且不在第一页，则跳转前一页
+    //     if (deleteIndex === 0 && currentPage > 1) {
+    //       onPaginationChange(currentPage - 1, currentPageSize);
+    //     } else {
+    //       refreshData();
+    //     }
+    //     message.success('删除成功');
+    //   },
+    //   onError: () => {
+    //     message.error('删除用户失败:');
+    //   },
+    // });
   };
 
   const columns: ColumnsType<User> = [
@@ -76,22 +100,24 @@ const UserManagementTable = ({
       key: 'index',
       render: (_, __, index) =>
         (pagination.current - 1) * pagination.pageSize + index + 1,
-      width: 80,
+      width: 70,
       align: 'center',
       className: 'index-column',
     },
     {
       title: '用户名',
+      align: 'center',
       dataIndex: 'username',
       key: 'username',
-      width: 150,
+      width: 100,
       className: 'username-column',
     },
     {
       title: '姓名',
+      align: 'center',
       dataIndex: 'realname',
       key: 'realname',
-      width: 120,
+      width: 100,
       className: 'realname-column',
     },
     {
@@ -99,7 +125,7 @@ const UserManagementTable = ({
       dataIndex: 'gender',
       key: 'gender',
       render: (gender) => (gender === 0 ? '男' : '女'),
-      width: 80,
+      width: 70,
       align: 'center',
       className: 'gender-column',
     },
@@ -107,9 +133,17 @@ const UserManagementTable = ({
       title: '年龄',
       dataIndex: 'age',
       key: 'age',
-      width: 100,
+      width: 70,
       align: 'center',
       className: 'age-column',
+    },
+    {
+      title: '单位',
+      dataIndex: ['unit', 'name'], // 使用路径访问嵌套属性
+      key: 'unitName',
+      width: 120,
+      render: (_, record: User) => <span>{record.unit?.name || '——'}</span>,
+      align: 'center',
     },
     {
       title: '状态',
@@ -123,6 +157,22 @@ const UserManagementTable = ({
       width: 100,
       align: 'center',
       className: 'status-column',
+    },
+    {
+      title: '经历',
+      key: 'actions',
+      align: 'center',
+      render: (_, record) => <UserExperience user={record} />,
+      className: 'action-column',
+      width: 80,
+    },
+    {
+      title: '技能',
+      key: 'actions',
+      align: 'center',
+      render: (_, record) => <UserSkillsList refreshData={refreshData} user={record} />,
+      className: 'action-column',
+      width: 80,
     },
     {
       title: '操作',

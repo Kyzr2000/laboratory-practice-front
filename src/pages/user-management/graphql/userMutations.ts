@@ -10,6 +10,10 @@ export const ADD_USER = gql`
       gender
       age
       isEnable
+      unit {
+        name
+        unitNumber
+      }
     }
   }
 `;
@@ -28,6 +32,10 @@ export const CHANGE_USER = gql`
       gender
       age
       isEnable
+      unit {
+        name
+        unitNumber
+      }
     }
   }
 `;

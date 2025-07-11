@@ -26,6 +26,10 @@
   background-color: #fafafa !important;
 }
 
+.user-management-card .ant-card-body {
+  height: 709px;
+}
+
 .ant-spin-container {
   height: 609px;
   position: relative;
@@ -35,4 +39,49 @@
   position: absolute;
   right: 5%;
   bottom: -2%;
+}
+
+.user-skill-card .ant-card-body {
+  padding-top: 10px;
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.user-skill-table {
+  margin-top: 0;
+  position: relative;
+}
+
+.user-skill-table .ant-pagination {
+  display: flex;
+  z-index: 100;
+  padding-top: 3px;
+  padding-bottom: 17px;
+}
+
+.user-skill-table .select-button {
+  display: flex;
+  z-index: 100;
+  gap: 20px;
+  position: absolute;
+  bottom: 3.7%;
+  left: 0;
+}
+
+.selectAll-button.selected-all {
+  background-color: #1890ff;
+  color: white;
+  border-color: #1890ff;
+}
+
+.selectAll-button:hover {
+  background-color: #40a9ff;
+  color: white;
+}
+
+.selectAll-button.selected-all:hover {
+  background-color: #096dd9;
 }
