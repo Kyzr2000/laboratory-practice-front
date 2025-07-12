@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button, DatePicker, Form, Input, message, Modal, Space } from 'antd';
 import { SettingFilled, SwapRightOutlined } from '@ant-design/icons';
-import moment from 'moment';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 import { useMutation } from '@apollo/client';
 
@@ -26,7 +27,6 @@ const EditExperienceModal = ({ experience, refreshData }: EditExperienceModalPro
 
       const { address, startDate, endDate, ...restValues } = values;
       const [province, city, district] = address || [];
-      console.log(startDate, endDate);
 
       const input = {
         id: experience.id,
@@ -56,13 +56,38 @@ const EditExperienceModal = ({ experience, refreshData }: EditExperienceModalPro
   };
 
   const showModal = () => {
+    // 创建安全的日期对象
+    let startDateObj = null;
+    let endDateObj = null;
+
+    // 解析日期字符串
+    if (data.startDate) {
+      // 只取日期部分，忽略时间部分
+      const datePart = data.startDate.split('T')[0];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+        startDateObj = dayjs(datePart);
+      }
+    }
+
+    if (data.endDate) {
+      // 只取日期部分，忽略时间部分
+      const datePart = data.endDate.split('T')[0];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+        endDateObj = dayjs(datePart);
+      }
+    }
+
+    // 如果解析失败，使用当前日期
+    if (!startDateObj || !startDateObj.isValid()) {
+      startDateObj = dayjs();
+    }
+
     const initialValues = {
       ...data,
       username: user.username,
       address: [data.province, data.city, data.district],
-      // 确保日期值有效
-      startDate: data.startDate ? moment(data.startDate) : null,
-      endDate: data.endDate ? moment(data.endDate) : null,
+      startDate: startDateObj,
+      endDate: endDateObj && endDateObj.isValid() ? endDateObj : null,
     };
 
     form.setFieldsValue(initialValues);
@@ -72,6 +97,12 @@ const EditExperienceModal = ({ experience, refreshData }: EditExperienceModalPro
   const handleCancel = () => {
     form.resetFields();
     setVisible(false);
+  };
+
+  // 设置日期选择器可选的年份范围
+  const disabledDate = (current: Dayjs) => {
+    // 限制日期范围在1900年至2100年之间
+    return current && (current.year() < 1900 || current.year() > 2100);
   };
 
   return (
@@ -158,8 +189,10 @@ const EditExperienceModal = ({ experience, refreshData }: EditExperienceModalPro
               <DatePicker
                 style={{ width: '210px' }}
                 placeholder="开始时间"
-                // disabled
+                format="YYYY-MM-DD"
                 getPopupContainer={(trigger) => trigger.parentElement!}
+                disabledDate={disabledDate}
+                inputReadOnly={true}
               />
             </Form.Item>
             <span style={{ width: '20px', display: 'inline-block' }}>
@@ -171,6 +204,8 @@ const EditExperienceModal = ({ experience, refreshData }: EditExperienceModalPro
                 placeholder="结束时间（可选）"
                 format="YYYY-MM-DD"
                 getPopupContainer={(trigger) => trigger.parentElement!}
+                disabledDate={disabledDate}
+                inputReadOnly={true}
               />
             </Form.Item>
           </Space>
